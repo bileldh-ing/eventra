@@ -28,9 +28,7 @@ void main() {
     expect(taps, 1);
   });
 
-  testWidgets('GlassCircleButton shows badge and handles taps', (
-    tester,
-  ) async {
+  testWidgets('GlassCircleButton shows badge and handles taps', (tester) async {
     var taps = 0;
     await tester.pumpWidget(
       _wrap(

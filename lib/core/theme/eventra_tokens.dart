@@ -155,20 +155,12 @@ class EventraTokens extends ThemeExtension<EventraTokens> {
 
   /// rgba(188,71,245,0.35), blur 24, offset (0,10)
   List<BoxShadow> get primaryGlow => const [
-    BoxShadow(
-      color: Color(0x59BC47F5),
-      blurRadius: 24,
-      offset: Offset(0, 10),
-    ),
+    BoxShadow(color: Color(0x59BC47F5), blurRadius: 24, offset: Offset(0, 10)),
   ];
 
   /// Soft lavender shadow used by white cards, chips and the nav pill.
   List<BoxShadow> get softShadow => const [
-    BoxShadow(
-      color: Color(0x1A8A4FC8),
-      blurRadius: 24,
-      offset: Offset(0, 8),
-    ),
+    BoxShadow(color: Color(0x1A8A4FC8), blurRadius: 24, offset: Offset(0, 8)),
   ];
 
   @override

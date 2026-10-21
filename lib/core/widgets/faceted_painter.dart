@@ -21,10 +21,7 @@ class FacetedPainter extends CustomPainter {
       return List.generate(columns + 2, (c) {
         final jx = (rnd.nextDouble() - 0.5) * cellW * 0.7;
         final jy = (rnd.nextDouble() - 0.5) * cellW * 0.7;
-        return Offset(
-          (c - 0.5) * cellW + jx,
-          (r - 1) * cellW + jy - shift,
-        );
+        return Offset((c - 0.5) * cellW + jx, (r - 1) * cellW + jy - shift);
       });
     });
     final paint = Paint()..style = PaintingStyle.fill;
