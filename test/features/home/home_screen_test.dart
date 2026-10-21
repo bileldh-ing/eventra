@@ -206,6 +206,8 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('action-Upcoming Events')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('sort-priceLow')), findsOneWidget);
+    await tester.ensureVisible(find.byKey(const ValueKey('sort-priceLow')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('sort-priceLow')));
     await tester.pumpAndSettle();
     expect(find.text('Free'), findsWidgets);

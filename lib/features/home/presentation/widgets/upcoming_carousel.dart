@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 
 String carouselHeroTag(String id) => 'carousel-$id';
 
-/// PageView carousel (viewportFraction 0.78): the centered card is full size,
+/// PageView carousel (viewportFraction 0.8): the centered card is full size,
 /// neighbors scale to 0.9 and darken; photos shift with parallax.
 class UpcomingCarousel extends StatefulWidget {
   const UpcomingCarousel({
@@ -24,7 +24,7 @@ class UpcomingCarousel extends StatefulWidget {
 
 class _UpcomingCarouselState extends State<UpcomingCarousel> {
   late final PageController _controller = PageController(
-    viewportFraction: 0.78,
+    viewportFraction: 0.8,
   );
 
   @override
@@ -91,15 +91,15 @@ class CarouselSkeleton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SkeletonBox(
-                width: w * 0.78 - 16,
+                width: w * 0.8 - 16,
                 height: height * 0.9,
                 radius: 32,
               ),
               const SizedBox(width: 16),
-              SkeletonBox(width: w * 0.78 - 16, height: height, radius: 32),
+              SkeletonBox(width: w * 0.8 - 16, height: height, radius: 32),
               const SizedBox(width: 16),
               SkeletonBox(
-                width: w * 0.78 - 16,
+                width: w * 0.8 - 16,
                 height: height * 0.9,
                 radius: 32,
               ),

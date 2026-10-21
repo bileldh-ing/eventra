@@ -125,12 +125,10 @@ class EventCarouselCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
+                          FitTitle(
                             event.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                             style: EventraText.cardTitleOnPhoto.copyWith(
-                              fontSize: 22,
+                              fontSize: 20,
                               height: 1.2,
                             ),
                           ),
@@ -429,6 +427,57 @@ class EventListTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Single-line title that shrinks (down to [minFontSize]) to fit its width,
+/// like the mockup's card titles; wraps to two lines only when even the
+/// minimum size cannot fit.
+class FitTitle extends StatelessWidget {
+  const FitTitle(
+    this.text, {
+    required this.style,
+    super.key,
+    this.minFontSize = 16,
+  });
+
+  final String text;
+  final TextStyle style;
+  final double minFontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final scaler = MediaQuery.textScalerOf(context);
+        final base = DefaultTextStyle.of(context).style.merge(style);
+        var size = base.fontSize ?? 20;
+        while (size > minFontSize) {
+          final painter = TextPainter(
+            text: TextSpan(
+              text: text,
+              style: base.copyWith(fontSize: size),
+            ),
+            maxLines: 1,
+            textDirection: Directionality.of(context),
+            textScaler: scaler,
+          )..layout();
+          // A small margin: the paragraph's own line breaking can round a
+          // hair wider than TextPainter's measurement.
+          final fits = painter.width + 2 <= constraints.maxWidth;
+          painter.dispose();
+          if (fits) break;
+          size -= 0.5;
+        }
+        final oneLine = size > minFontSize;
+        return Text(
+          text,
+          maxLines: oneLine ? 1 : 2,
+          overflow: TextOverflow.ellipsis,
+          style: base.copyWith(fontSize: oneLine ? size : minFontSize + 1),
+        );
+      },
     );
   }
 }
