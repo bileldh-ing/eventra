@@ -69,4 +69,6 @@ Attendee, organizer and reviewer avatars come from https://randomuser.me (portra
 
 ## Map tiles
 
-Map tiles: (c) OpenStreetMap contributors, (c) CARTO (Positron basemap). Attribution is shown on every map.
+Map tiles: (c) OpenStreetMap contributors, drawn with a grayscale Positron-style filter (CARTO Positron is supported for builds with a CARTO key). Attribution is shown on every map.
+
+Map tile test fixtures: test/fixtures/tiles holds 132 OpenStreetMap tiles (zoom 15) around New City, NY, fetched once so map goldens render offline.
