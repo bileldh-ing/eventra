@@ -55,7 +55,8 @@ class _GradientPillButtonState extends State<GradientPillButton> {
             duration: t.motion.fast,
             height: height,
             width: widget.expand ? double.infinity : null,
-            padding: const EdgeInsets.symmetric(horizontal: 28),
+            // Compact buttons (Follow) get tighter padding and a smaller label.
+            padding: EdgeInsets.symmetric(horizontal: height < 48 ? 14 : 28),
             decoration: BoxDecoration(
               gradient: enabled ? t.primaryGradient : null,
               color: enabled ? null : const Color(0xFFD9D2E3),
@@ -74,7 +75,17 @@ class _GradientPillButtonState extends State<GradientPillButton> {
                   Icon(widget.icon, color: Colors.white, size: 22),
                   const SizedBox(width: 8),
                 ],
-                Text(widget.label, style: EventraText.button),
+                Flexible(
+                  child: Text(
+                    widget.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                    style: height < 48
+                        ? EventraText.button.copyWith(fontSize: 15)
+                        : EventraText.button,
+                  ),
+                ),
               ],
             ),
           ),

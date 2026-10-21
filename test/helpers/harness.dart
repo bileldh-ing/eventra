@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:eventra/app/app.dart';
 import 'package:eventra/app/router.dart';
 import 'package:eventra/core/location/location_service.dart';
+import 'package:eventra/core/map/map_layers.dart';
 import 'package:eventra/core/widgets/event_image.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fakes.dart';
+import 'map_tiles.dart';
 import 'seed.dart';
 
 /// Fixed "now" for every widget test: the seed generation day.
@@ -88,6 +90,8 @@ class TestApp {
     clockProvider.overrideWithValue(() => kTestNow),
     imageProviderFactory.overrideWithValue(fixtureImage),
     locationServiceProvider.overrideWithValue(location),
+    mapTileProviderProvider.overrideWithValue(FixtureTileProvider()),
+    loopingAnimationsProvider.overrideWithValue(false),
   ];
 
   Widget build({String initialLocation = '/home'}) => ProviderScope(
