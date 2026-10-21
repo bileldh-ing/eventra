@@ -1,7 +1,7 @@
 import 'package:eventra/app/app_shell.dart';
-import 'package:eventra/core/widgets/themed_placeholder.dart';
 import 'package:eventra/features/design_system/presentation/design_system_screen.dart';
 import 'package:eventra/features/event_details/presentation/event_details_screen.dart';
+import 'package:eventra/features/explore/presentation/explore_screen.dart';
 import 'package:eventra/features/favorites/presentation/favorites_screen.dart';
 import 'package:eventra/features/home/presentation/all_events_screen.dart';
 import 'package:eventra/features/home/presentation/home_screen.dart';
@@ -26,6 +26,11 @@ List<RouteBase> _eventRoutes() => [
         path: 'tickets',
         builder: (context, state) =>
             TicketsPlaceholderScreen(eventId: state.pathParameters['id']),
+      ),
+      GoRoute(
+        path: 'map',
+        builder: (context, state) =>
+            ExploreScreen(focusEventId: state.pathParameters['id']),
       ),
     ],
   ),
@@ -78,8 +83,7 @@ GoRouter buildRouter({String initialLocation = '/home'}) {
             routes: [
               GoRoute(
                 path: '/explore',
-                builder: (context, state) =>
-                    const ThemedPlaceholder(title: 'Explore'),
+                builder: (context, state) => const ExploreScreen(),
                 routes: _eventRoutes(),
               ),
             ],

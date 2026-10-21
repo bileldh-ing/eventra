@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// Hosts the four tab branches and the floating nav pill. The pill hides when
-/// a branch shows a nested page (for example Event Details).
+/// a branch shows a nested page (for example Event Details) and on the
+/// full-screen Explore map.
 class AppShell extends StatelessWidget {
   const AppShell({
     required this.navigationShell,
@@ -18,7 +19,9 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final showPill = tabRoots.contains(location);
+    // The Explore map is full screen (its own back button and Continue),
+    // as in the reference, so the pill hides there too.
+    final showPill = tabRoots.contains(location) && location != '/explore';
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     return Scaffold(
       body: Stack(
