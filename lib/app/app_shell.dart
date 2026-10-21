@@ -1,0 +1,45 @@
+import 'package:eventra/app/nav_pill.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+/// Hosts the four tab branches and the floating nav pill. The pill hides when
+/// a branch shows a nested page (for example Event Details).
+class AppShell extends StatelessWidget {
+  const AppShell({
+    required this.navigationShell,
+    required this.location,
+    super.key,
+  });
+
+  final StatefulNavigationShell navigationShell;
+  final String location;
+
+  static const tabRoots = ['/home', '/explore', '/favorites', '/profile'];
+
+  @override
+  Widget build(BuildContext context) {
+    final showPill = tabRoots.contains(location);
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned.fill(child: navigationShell),
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeOutCubic,
+            left: 24,
+            right: 24,
+            bottom: showPill ? 16 + bottomInset : -120,
+            child: NavPill(
+              currentIndex: navigationShell.currentIndex,
+              onSelected: (i) => navigationShell.goBranch(
+                i,
+                initialLocation: i == navigationShell.currentIndex,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

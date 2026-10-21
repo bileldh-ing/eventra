@@ -1,0 +1,20 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "build/**"
+    - android/**
+    - ios/**
+  language:
+    strict-casts: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    # Internal app code, not a published package: API docs on every public
+    # member add noise without value.
+    public_member_api_docs: false
+    # Keep the 80-column limit (dart format width).
+    lines_longer_than_80_chars: true

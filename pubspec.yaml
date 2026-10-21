@@ -1,0 +1,64 @@
+name: eventra
+description: "Eventra - Discover. Book. Feel the moment."
+publish_to: 'none'
+version: 0.4.0+4
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  # Network images with disk cache (spec: images).
+  cached_network_image: ^3.4.1
+  # Drift SQLite persistence for events/favorites (spec: local_data).
+  drift: ^2.28.0
+  flutter:
+    sdk: flutter
+  # Map tiles + markers with CARTO Positron, no API key (spec: maps).
+  flutter_map: ^8.2.0
+  # State management (spec: state).
+  flutter_riverpod: ^3.0.0
+  # Immutable models / unions (spec: state, freezed).
+  freezed_annotation: ^3.1.0
+  # Device location for locate-me / distances (spec: maps).
+  geolocator: ^14.0.2
+  # Declarative routing with shell route (spec: routing).
+  go_router: ^16.2.0
+  # Date formatting.
+  intl: ^0.20.2
+  # JSON serialization for seed data.
+  json_annotation: ^4.9.0
+  # LatLng type used by flutter_map.
+  latlong2: ^0.9.1
+  path: ^1.9.0
+  # Resolve the DB file location.
+  path_provider: ^2.1.5
+  # Share an event (spec: Event Details share).
+  share_plus: ^12.0.0
+  # Open external maps app for directions (spec: location card long-press).
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  build_runner: ^2.7.0
+  drift_dev: ^2.28.0
+  flutter_test:
+    sdk: flutter
+  freezed: ^3.2.0
+  json_serializable: ^6.11.0
+  mocktail: ^1.0.4
+  very_good_analysis: ^9.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/seed/
+  fonts:
+    - family: Urbanist
+      fonts:
+        - asset: assets/fonts/Urbanist-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Urbanist-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Urbanist-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Urbanist-Bold.ttf
+          weight: 700
