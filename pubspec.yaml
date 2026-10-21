@@ -9,6 +9,8 @@ environment:
 dependencies:
   # Network images with disk cache (spec: images).
   cached_network_image: ^3.4.1
+  # firstWhereOrNull and friends.
+  collection: ^1.19.0
   # Drift SQLite persistence for events/favorites (spec: local_data).
   drift: ^2.28.0
   flutter:
@@ -29,6 +31,8 @@ dependencies:
   json_annotation: ^4.12.0
   # LatLng type used by flutter_map.
   latlong2: ^0.9.1
+  # @immutable for pure-Dart domain classes.
+  meta: ^1.16.0
   path: ^1.9.0
   # Resolve the DB file location.
   path_provider: ^2.1.5

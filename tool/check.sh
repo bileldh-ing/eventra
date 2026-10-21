@@ -12,15 +12,19 @@ flutter analyze --no-pub
 echo "==> flutter test --coverage"
 flutter test --no-pub --coverage "$@"
 
-if command -v lcov >/dev/null 2>&1; then
-  lcov --summary coverage/lcov.info || true
-else
+if true; then
   python3 - <<'PY'
 import re
+# Hand-written code only: generated *.g.dart / *.freezed.dart are excluded.
 hit = found = 0
+skip = False
 for line in open("coverage/lcov.info"):
-    if line.startswith("LH:"): hit += int(line[3:])
+    if line.startswith("SF:"):
+        skip = line.strip().endswith((".g.dart", ".freezed.dart"))
+    elif skip:
+        continue
+    elif line.startswith("LH:"): hit += int(line[3:])
     elif line.startswith("LF:"): found += int(line[3:])
-print(f"line coverage: {hit}/{found} = {100*hit/max(found,1):.1f}%")
+print(f"line coverage (excluding generated): {hit}/{found} = {100*hit/max(found,1):.1f}%")
 PY
 fi

@@ -134,7 +134,8 @@
    "tags": [
     "music",
     "nearby",
-    "ticketed"
+    "ticketed",
+    "featured:1"
    ],
    "coverImageUrl": "https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1200&q=80&fm=jpg&fit=crop",
    "gallery": [
@@ -250,7 +251,8 @@
    "tags": [
     "music",
     "nearby",
-    "ticketed"
+    "ticketed",
+    "featured:2"
    ],
    "coverImageUrl": "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&q=80&fm=jpg&fit=crop",
    "gallery": [
@@ -366,7 +368,8 @@
    "tags": [
     "music",
     "nearby",
-    "ticketed"
+    "ticketed",
+    "featured:3"
    ],
    "coverImageUrl": "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200&q=80&fm=jpg&fit=crop",
    "gallery": [
@@ -3003,7 +3006,7 @@
    "id": "evt-027-new-neighbors-mixer",
    "title": "New Neighbors Mixer",
    "category": "social",
-   "description": "New Neighbors Mixer is an easy way to meet new people near you. Hosts at New City Library keep the evening relaxed with light icebreakers, small groups and plenty of time to talk. Come alone or bring a friend; everyone gets a name tag and a welcome drink token.",
+   "description": "New Neighbors Mixer is an easy way to meet new people near you. Hosts at Nanuet Public Library keep the evening relaxed with light icebreakers, small groups and plenty of time to talk. Come alone or bring a friend; everyone gets a name tag and a welcome drink token.",
    "startAt": "2026-10-24T19:00:00",
    "endAt": "2026-10-24T22:00:00",
    "tiers": [
@@ -3021,10 +3024,10 @@
    ],
    "capacity": 500,
    "soldCount": 348,
-   "venue": "New City Library",
-   "address": "220 N Main St, New City",
-   "latitude": 41.1531,
-   "longitude": -73.9905,
+   "venue": "Nanuet Public Library",
+   "address": "149 Church St, Nanuet",
+   "latitude": 41.0898,
+   "longitude": -74.0136,
    "organizerId": "org-meet",
    "rating": 4.8,
    "reviewCount": 618,
@@ -4865,7 +4868,7 @@
    "id": "evt-044-taste-of-rockland",
    "title": "Taste of Rockland",
    "category": "food",
-   "description": "Taste of Rockland is a celebration of good food at Clarkstown Town Hall Green. Local vendors, chefs and producers serve tasting portions throughout the day, with cooking demos on the main stage and seating areas for families. Vegetarian and gluten-free options are clearly labelled.",
+   "description": "Taste of Rockland is a celebration of good food at Bowline Point Park. Local vendors, chefs and producers serve tasting portions throughout the day, with cooking demos on the main stage and seating areas for families. Vegetarian and gluten-free options are clearly labelled.",
    "startAt": "2027-08-13T14:30:00",
    "endAt": "2027-08-13T20:30:00",
    "tiers": [
@@ -4905,10 +4908,10 @@
    ],
    "capacity": 300,
    "soldCount": 209,
-   "venue": "Clarkstown Town Hall Green",
-   "address": "10 Maple Ave, New City",
-   "latitude": 41.1474,
-   "longitude": -73.9897,
+   "venue": "Bowline Point Park",
+   "address": "50 Samsondale Ave, Haverstraw",
+   "latitude": 41.198,
+   "longitude": -73.96,
    "organizerId": "org-hudson",
    "rating": 4.2,
    "reviewCount": 288,

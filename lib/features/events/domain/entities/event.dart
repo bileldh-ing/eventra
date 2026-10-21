@@ -107,5 +107,16 @@ abstract class Event with _$Event {
 
   bool get isFree => price == 0;
 
+  /// Editorial rank from a 'featured:N' seed tag (1 = first), or null.
+  int? get featuredRank {
+    for (final t in tags) {
+      if (t.startsWith('featured:')) return int.tryParse(t.substring(9));
+    }
+    return null;
+  }
+
+  /// Editorially featured: shown first under the Recommended sort.
+  bool get featured => featuredRank != null;
+
   bool get isSoldOut => tiers.every((t) => t.remaining == 0);
 }
