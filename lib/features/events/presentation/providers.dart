@@ -9,6 +9,7 @@ import 'package:eventra/features/events/data/db/app_database.dart';
 import 'package:eventra/features/events/data/repositories/local_events_repository.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/domain/repositories/events_repository.dart';
+import 'package:eventra/features/onboarding/presentation/onboarding_providers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart'
@@ -151,8 +152,18 @@ class UserLocation {
 
 class UserLocationNotifier extends Notifier<UserLocation> {
   @override
-  UserLocation build() =>
-      const UserLocation(position: kDefaultLocation, fromDevice: false);
+  UserLocation build() {
+    // The city chosen in onboarding is the origin until GPS is allowed.
+    final city = ref.watch(homeCityProvider);
+    if (city == null) {
+      return const UserLocation(position: kDefaultLocation, fromDevice: false);
+    }
+    return UserLocation(
+      position: LatLng(city.lat, city.lng),
+      fromDevice: false,
+      label: city.label,
+    );
+  }
 
   /// Requests the device position; keeps the default when unavailable.
   Future<LocationOutcome> locate() async {

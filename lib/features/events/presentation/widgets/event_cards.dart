@@ -5,10 +5,12 @@ import 'package:eventra/core/utils/formatters.dart';
 import 'package:eventra/core/widgets/avatar_stack.dart';
 import 'package:eventra/core/widgets/event_image.dart';
 import 'package:eventra/core/widgets/glass.dart';
+import 'package:eventra/core/widgets/highlighted_text.dart';
 import 'package:eventra/core/widgets/pressable.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/presentation/widgets/bookmark_button.dart';
 import 'package:eventra/features/events/presentation/widgets/participants_sheet.dart';
+import 'package:eventra/features/feed/presentation/quick_preview.dart';
 import 'package:flutter/material.dart';
 
 /// Large photo card used by the Upcoming Events carousel.
@@ -42,6 +44,7 @@ class EventCarouselCard extends StatelessWidget {
       child: GestureDetector(
         key: ValueKey('card-${event.id}'),
         onTap: () => openEvent(context, event, heroTag: heroTag),
+        onLongPress: () => showQuickPreview(context, event, heroTag: heroTag),
         child: ClipRRect(
           borderRadius: radius,
           child: Stack(
@@ -254,6 +257,7 @@ class CompactEventCard extends StatelessWidget {
       key: ValueKey('compact-$heroTag'),
       pressedScale: 0.97,
       onTap: () => openEvent(context, event, heroTag: heroTag),
+      onLongPress: () => showQuickPreview(context, event, heroTag: heroTag),
       child: Container(
         width: 210,
         decoration: BoxDecoration(
@@ -341,11 +345,19 @@ class EventListTile extends StatelessWidget {
     required this.heroTag,
     super.key,
     this.trailing,
+    this.highlight = '',
+    this.onOpen,
   });
 
   final Event event;
   final String heroTag;
   final Widget? trailing;
+
+  /// Search text to emphasise in the title and address.
+  final String highlight;
+
+  /// Called just before Event Details opens (e.g. to remember a search).
+  final VoidCallback? onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -353,7 +365,11 @@ class EventListTile extends StatelessWidget {
     return Pressable(
       key: ValueKey('tile-${event.id}'),
       pressedScale: 0.98,
-      onTap: () => openEvent(context, event, heroTag: heroTag),
+      onTap: () {
+        onOpen?.call();
+        openEvent(context, event, heroTag: heroTag);
+      },
+      onLongPress: () => showQuickPreview(context, event, heroTag: heroTag),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -382,11 +398,14 @@ class EventListTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  HighlightedText(
                     event.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    query: highlight,
                     style: EventraText.cardTitle.copyWith(fontSize: 17),
+                    highlightStyle: TextStyle(
+                      color: t.primary,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -403,11 +422,16 @@ class EventListTile extends StatelessWidget {
                       ),
                       const SizedBox(width: 3),
                       Expanded(
-                        child: Text(
-                          event.address,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        child: HighlightedText(
+                          highlight.isEmpty
+                              ? event.address
+                              : '${event.venue}, ${event.address}',
+                          query: highlight,
                           style: EventraText.caption,
+                          highlightStyle: TextStyle(
+                            color: t.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ],

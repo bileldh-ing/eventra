@@ -23,3 +23,16 @@ String formatPrice(double price) {
 
 /// '18.4k' style compact counts.
 String formatCompact(int n) => NumberFormat.compact().format(n);
+
+/// 'Oct 24 - Oct 30' (inclusive day range; [endExclusive] is the day after).
+String formatDayRange(DateTime start, DateTime endExclusive) {
+  final last = DateTime(
+    endExclusive.year,
+    endExclusive.month,
+    endExclusive.day - 1,
+  );
+  final f = DateFormat('MMM d');
+  return last.isAfter(start)
+      ? '${f.format(start)} - ${f.format(last)}'
+      : f.format(start);
+}

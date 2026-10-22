@@ -175,6 +175,8 @@ void main() {
     await tester.pumpAndSettle();
     final freeCount = seed.where((e) => e.isFree).length;
     expect(find.text('Show ${seed.length} results'), findsOneWidget);
+    await tester.ensureVisible(find.byKey(const ValueKey('filter-free')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('filter-free')));
     await tester.pumpAndSettle();
     expect(find.text('Show $freeCount results'), findsOneWidget);
@@ -195,6 +197,7 @@ void main() {
       find.byKey(const ValueKey('search-input')),
       'pitchfork',
     );
+    await tester.pump(const Duration(milliseconds: 300));
     await tester.pumpAndSettle();
     expect(find.text('Pitchfork Music Night'), findsOneWidget);
   });
@@ -256,5 +259,42 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('home-avatar')));
     await tester.pumpAndSettle();
     expect(find.text('Invite Friends'), findsOneWidget);
+  });
+
+  testWidgets('long-press opens the quick preview with reasons and Save', (
+    tester,
+  ) async {
+    final app = await pumpHome(tester);
+    final id = idOf('Highland Music Festival');
+    await tester.longPress(find.byKey(ValueKey('card-$id')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('quick-preview')), findsOneWidget);
+    expect(find.text('Because you like Music'), findsOneWidget);
+    expect(find.byKey(const ValueKey('preview-price')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('preview-save')));
+    await tester.pumpAndSettle();
+    expect(app.favorites.ids, contains(id));
+
+    await tester.tap(find.byKey(const ValueKey('preview-open')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('quick-preview')), findsNothing);
+    expect(find.text('Get a Ticket'), findsOneWidget);
+  });
+
+  testWidgets('interest rows follow the user interests', (tester) async {
+    await pumpHome(tester);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('section-interest-music')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Because You Like Music'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('section-interest-tech')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Because You Like Tech'), findsOneWidget);
   });
 }

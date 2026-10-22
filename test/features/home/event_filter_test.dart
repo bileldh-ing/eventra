@@ -18,7 +18,7 @@ void main() {
 
   test('category, free and max price filters combine', () {
     final music = const EventFilter(
-      category: EventCategory.music,
+      categories: {EventCategory.music},
     ).apply(events, origin: origin);
     expect(music.every((e) => e.category == EventCategory.music), isTrue);
 
@@ -75,7 +75,7 @@ void main() {
     expect(f, const EventFilter(freeOnly: true, sort: EventSort.popular));
     expect(f.isDefault, isFalse);
     expect(
-      f.copyWith(category: () => EventCategory.art).category,
+      f.withCategory(EventCategory.art).category,
       EventCategory.art,
     );
     expect(EventFilter.none.isDefault, isTrue);
@@ -102,10 +102,8 @@ void main() {
   test('home sections are built from upcoming events', () {
     final s = HomeSections.from(events, DateTime(2026, 10, 21, 10));
     expect(s.trending.length, 8);
-    expect(
-      s.becauseYouLikeMusic.every((e) => e.category == EventCategory.music),
-      isTrue,
-    );
+    // No profile: no interest rows.
+    expect(s.interestRows, isEmpty);
     expect(s.free.every((e) => e.isFree), isTrue);
     expect(s.thisWeekend, isNotEmpty);
   });

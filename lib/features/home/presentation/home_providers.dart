@@ -1,5 +1,6 @@
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
+import 'package:eventra/features/feed/presentation/feed_providers.dart';
 import 'package:eventra/features/home/domain/event_filter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,15 +22,19 @@ final homeFilterProvider = NotifierProvider<HomeFilterNotifier, EventFilter>(
 /// Carousel / See All content: upcoming events through the active filter.
 final filteredEventsProvider = Provider<AsyncValue<List<Event>>>((ref) {
   final filter = ref.watch(homeFilterProvider);
-  final origin = ref.watch(userLocationProvider.select((l) => l.position));
+  final profile = ref.watch(feedProfileProvider);
   return ref
       .watch(upcomingEventsProvider)
-      .whenData((list) => filter.apply(list, origin: origin));
+      .whenData(
+        (list) => filter.apply(list, origin: profile.origin, profile: profile),
+      );
 });
 
 final homeSectionsProvider = Provider<AsyncValue<HomeSections>>((ref) {
-  final now = ref.watch(clockProvider)();
+  final profile = ref.watch(feedProfileProvider);
   return ref
       .watch(upcomingEventsProvider)
-      .whenData((list) => HomeSections.from(list, now));
+      .whenData(
+        (list) => HomeSections.from(list, profile.now, profile: profile),
+      );
 });

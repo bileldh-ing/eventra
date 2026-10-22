@@ -3,28 +3,25 @@ import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/core/widgets/state_views.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/events/presentation/widgets/event_cards.dart';
+import 'package:eventra/features/feed/presentation/feed_providers.dart';
 import 'package:eventra/features/home/domain/event_filter.dart';
+import 'package:eventra/features/home/presentation/filters_sheet.dart';
 import 'package:eventra/features/home/presentation/home_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// 'See All': every upcoming event for the active category, with sorting.
-class AllEventsScreen extends ConsumerStatefulWidget {
+/// 'See All': every upcoming event through the active filters, with sort
+/// chips (they edit the shared filter's sort).
+class AllEventsScreen extends ConsumerWidget {
   const AllEventsScreen({super.key});
 
   @override
-  ConsumerState<AllEventsScreen> createState() => _AllEventsScreenState();
-}
-
-class _AllEventsScreenState extends ConsumerState<AllEventsScreen> {
-  EventSort _sort = EventSort.recommended;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = context.tokens;
-    final category = ref.watch(homeFilterProvider).category;
-    final origin = ref.watch(userLocationProvider).position;
+    final filter = ref.watch(homeFilterProvider);
+    final profile = ref.watch(feedProfileProvider);
     final async = ref.watch(upcomingEventsProvider);
+    final category = filter.category;
     return Scaffold(
       backgroundColor: t.background,
       appBar: AppBar(
@@ -33,6 +30,22 @@ class _AllEventsScreenState extends ConsumerState<AllEventsScreen> {
           category == null ? 'Upcoming Events' : '${category.label} Events',
           style: EventraText.sectionTitle,
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: IconButton(
+              key: const ValueKey('all-filter'),
+              tooltip: 'Filters',
+              onPressed: () => showFiltersSheet(context),
+              icon: Badge(
+                isLabelVisible: filter.refinementCount > 0,
+                backgroundColor: t.primary,
+                label: Text('${filter.refinementCount}'),
+                child: const Icon(Icons.tune_rounded),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -48,8 +61,10 @@ class _AllEventsScreenState extends ConsumerState<AllEventsScreen> {
                     child: ChoiceChip(
                       key: ValueKey('sort-${s.name}'),
                       label: Text(s.label),
-                      selected: _sort == s,
-                      onSelected: (_) => setState(() => _sort = s),
+                      selected: filter.sort == s,
+                      onSelected: (_) => ref
+                          .read(homeFilterProvider.notifier)
+                          .set(filter.copyWith(sort: s)),
                     ),
                   ),
               ],
@@ -65,10 +80,24 @@ class _AllEventsScreenState extends ConsumerState<AllEventsScreen> {
                 ),
               ),
               data: (all) {
-                final list = EventFilter(
-                  category: category,
-                  sort: _sort,
-                ).apply(all, origin: origin);
+                final list = filter.apply(
+                  all,
+                  origin: profile.origin,
+                  profile: profile,
+                );
+                if (list.isEmpty) {
+                  return Center(
+                    child: MessageView(
+                      key: const ValueKey('all-empty'),
+                      icon: Icons.filter_alt_off_outlined,
+                      title: 'No events match',
+                      message: 'Loosen your filters to see more events.',
+                      actionLabel: 'Reset filters',
+                      onAction: () =>
+                          ref.read(homeFilterProvider.notifier).reset(),
+                    ),
+                  );
+                }
                 return ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
                   itemCount: list.length,

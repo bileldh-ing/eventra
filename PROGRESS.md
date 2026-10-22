@@ -194,6 +194,78 @@ horizontal scrollables); they now target the outer scroll view.
 
 **Gate (Phase 5):** dart format clean, `flutter analyze` No issues found, `flutter test` 111 passed / 0 failed across 20 files (run file-by-file with -j 1 due to sandbox memory).
 
+## Phase 6: Search, filters, smart feed (done)
+
+- **SmartFeedScorer** (`lib/features/feed/domain/smart_feed_scorer.dart`,
+  pure Dart, deterministic, no clock or randomness): score 0..100 =
+  interests 35 (event category covered by any chosen interest) + proximity
+  25 (full within 1 km, linear to 0 at 40 km, Haversine from the origin) +
+  popularity 15 (70% log-scaled attendance capped at 2,000, 30% rating) +
+  recency 15 (1 once started, halves every 14 days) + social/favorites 10
+  (1 for an organizer you saved before, else saved events in the same
+  category / 3; the event itself never counts). Ties break on start time
+  then id. Up to 3 reason chips, strongest contribution first: "Because you
+  like X", "Near you" (<= 5 km), "Trending" (>= 500 going), "Starts soon" /
+  "This week" (<= 7 days), "Like your saves".
+- **Upcoming order** (Recommended sort): editorial picks that match your
+  interests (or all of them when you have none) lead in editorial order,
+  everything else follows by score. The reference card stays first for a
+  music fan, while a sports-only user sees sports first.
+- **"Because You Like X" rows** from the Phase 5 interests (up to 2 rows; an
+  interest whose categories are already shown is skipped; "Recommended For
+  You" when there are no interests). Compact cards show the strongest other
+  reason, or the distance.
+- **Origin**: the onboarding home city now drives distances (Home, Explore,
+  filters, scorer) until device location is granted; changing the city
+  updates everything live.
+- **Filters sheet** (shared by Home, See All, Search and Explore):
+  multi-select categories, date presets (Today, Tomorrow, This Weekend, Next
+  7 days) plus a custom range picker (both end days included; events match
+  when they overlap the window), price range slider ($0 to $150+), distance
+  radius (1 to 50 km, "any" at the end, from the current origin), Free
+  only, Has tickets left, sort; Reset; live "Show N results". The filter
+  badge counts refinements. See All gained a filters button, sort chips that
+  edit the shared sort, and a reset empty state. Explore ignores the radius
+  and sort (its list is distance-sorted by design).
+- **Search screen**: 250 ms debounce, ranking (title prefix > word prefix >
+  title substring > venue/address > category, then soonest), highlighted
+  matches in title and venue/address, result count, filters button with
+  badge and "Clear filters"; recent searches persisted per account in
+  settings (max 10, case-insensitive de-dupe, newest first) with swipe to
+  delete + Undo and Clear all + Undo; trending chips (top categories by
+  attendance, then most attended events); no-results state with suggestion
+  chips and Clear filters / Clear search.
+- **Quick preview**: long-press on carousel cards, compact cards and list
+  tiles opens a blurred-backdrop popup with photo, price, date, distance,
+  venue, reason chips, Save, Share and View event (haptic on open).
+- Recent searches live in the settings store (shared_preferences) behind
+  `RecentSearchesRepository`; no new DB tables were needed.
+
+### Tests added (Phase 6)
+
+- `test/features/feed/smart_feed_scorer_test.dart`: weights sum to 100,
+  perfect event = 100 / irrelevant ~0, interest worth exactly 35,
+  proximity/popularity/recency/affinity boundaries, reason thresholds and
+  order (max 3), determinism under shuffling and tie-breaks, interests
+  reorder the feed, editorial pinning rules.
+- `test/features/feed/feed_location_test.dart`: default origin; home city
+  becomes the origin and follows a new choice.
+- `test/features/home/filters_logic_test.dart`: preset windows (incl. month
+  roll-over), overlap matching, custom range end-day inclusion, multi
+  categories, price range, distance radius, refinement count, set-order
+  equality, smart Recommended sort, interest rows.
+- `test/features/search/search_logic_test.dart` and
+  `recent_searches_repository_test.dart`: ranking, highlight ranges,
+  trending terms; add/trim/de-dupe/cap/remove/restore/clear, per-account
+  scope.
+- `test/features/search/search_screen_test.dart` (widgets): debounce,
+  highlighted results, recents saved on open; swipe delete + undo, clear all
+  + undo, tap a recent; no-results suggestions; filters narrow and clear.
+- `home_screen_test.dart`: long-press quick preview (reasons, Save, View
+  event) and interest rows.
+
+**Gate (Phase 6):** dart format clean, `flutter analyze` No issues found, `flutter test` 154 passed / 0 failed across 26 files (43 new tests in 6 new files plus 2 new Home widget tests; run file-by-file with -j 1 due to sandbox memory). Home, Event Details and Explore goldens unchanged.
+
 ---
 
 ## Known limitations
@@ -205,12 +277,16 @@ horizontal scrollables); they now target the outer scroll view.
   production build should point `MapStyle` at a provider with an agreement
   (CARTO with a key is already defined as `MapStyle.cartoPositron`).
 - Venue search is a local index over the seed (event, venue, address);
-  geocoding of arbitrary addresses and recent searches are not built yet.
+  geocoding of arbitrary addresses is not built.
 - Marker clustering and price/category mini-pins at high zoom are not built;
   the map shows the 40 nearest events as pins.
 - Location setup uses a city list rather than Explore in onboarding mode;
-  the chosen home city is stored for the Phase 6 smart feed and distances
-  still start from the demo location.
+  the chosen city is the origin for distances and the smart feed until GPS
+  is allowed.
+- Not built in Phase 6: voice search (needs `speech_to_text`), the "Friends
+  going" filter and friends signal (there is no social graph yet; the
+  social share of the score comes from your saves), reason chips on Event
+  Details (they are on the quick preview).
 - Not built in Phase 5: biometric login toggle (needs `local_auth`), Google /
   Apple sign-in (spec: feature-flagged, hidden when unavailable; they are
   hidden), a Firebase `AuthRepository`.

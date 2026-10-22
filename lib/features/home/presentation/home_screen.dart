@@ -1,11 +1,12 @@
 import 'package:eventra/core/theme/eventra_tokens.dart';
-import 'package:eventra/core/utils/geo.dart';
 import 'package:eventra/core/widgets/entrance.dart';
 import 'package:eventra/core/widgets/state_views.dart';
 import 'package:eventra/features/auth/domain/auth_models.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
+import 'package:eventra/features/feed/domain/smart_feed_scorer.dart';
+import 'package:eventra/features/feed/presentation/feed_providers.dart';
 import 'package:eventra/features/home/presentation/filters_sheet.dart';
 import 'package:eventra/features/home/presentation/home_providers.dart';
 import 'package:eventra/features/home/presentation/widgets/category_chips.dart';
@@ -17,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:latlong2/latlong.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -102,7 +102,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       selected: filter.category,
                       onSelected: (c) => ref
                           .read(homeFilterProvider.notifier)
-                          .set(filter.copyWith(category: () => c)),
+                          .set(filter.withCategory(c)),
                     ),
                   ),
                 ),
@@ -176,10 +176,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   List<Widget> _sections() {
     final sections = ref.watch(homeSectionsProvider).value;
     if (sections == null) return const [];
-    final origin = ref.watch(userLocationProvider.select((l) => l.position));
-    String distance(Event e) {
-      final km = haversineKm(origin, LatLng(e.latitude, e.longitude));
-      return '${km.toStringAsFixed(1)} km away';
+    final profile = ref.watch(feedProfileProvider);
+    const scorer = SmartFeedScorer();
+
+    // The strongest reason other than the row's own interest, else distance.
+    String reason(Event e) {
+      final s = scorer.score(e, profile);
+      for (final r in s.reasons) {
+        if (r.kind != FeedReasonKind.interest) {
+          return r.kind == FeedReasonKind.nearby
+              ? 'Near you · ${s.distanceKm.toStringAsFixed(1)} km'
+              : r.label;
+        }
+      }
+      return '${s.distanceKm.toStringAsFixed(1)} km away';
     }
 
     return [
@@ -191,14 +201,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           reasonFor: (e) => '${e.participantsCount} going',
         ),
       ),
-      SliverToBoxAdapter(
-        child: HomeSection(
-          id: 'music',
-          title: 'Because You Like Music',
-          events: sections.becauseYouLikeMusic,
-          reasonFor: distance,
+      for (final row in sections.interestRows)
+        SliverToBoxAdapter(
+          child: HomeSection(
+            id: 'interest-${row.interest?.name ?? 'for-you'}',
+            title: row.title,
+            events: row.events,
+            reasonFor: reason,
+          ),
         ),
-      ),
       SliverToBoxAdapter(
         child: HomeSection(
           id: 'free',

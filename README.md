@@ -24,16 +24,22 @@ match the code.*
 ### Home
 - Faceted gradient header with avatar, notification bell (unread dot) and the
   "Discover Amazing Events Near You" headline.
-- Glass search pill (opens live search) and a filters button (category,
-  price cap, free only, tickets left, sort) with a live result count.
+- Glass search pill (opens live search) and a filters button (categories,
+  dates, price range, distance, free only, tickets left, sort) with a live
+  "Show N results" count.
 - Category chips (See All, Cinema, Sports, Social, Music, Art, Tech, Food,
   Comedy) that really filter the feed.
 - "Upcoming Events" carousel: centered card full size, neighbours scaled and
   dimmed, parallax photos, location chip, bookmark, avatar stack (+N), date
   and an arrow button. Long titles shrink to fit on one line, as in the
   reference.
+- Smart feed: Upcoming is ordered by an on-device, explainable scorer
+  (interests, distance from your city or GPS, popularity, how soon, your
+  saves); "Because You Like ..." rows follow your interests. Long-press any
+  card for a blurred quick preview with reason chips ("Because you like
+  Music", "Near you", "Trending"), Save and Share.
 - More sections (trending, this weekend, free) with compact cards, "See All"
-  list with sorting, pull to refresh.
+  list with sorting and filters, pull to refresh.
 - Skeleton shimmer while loading, error state with retry, empty state that
   resets filters.
 - Favorites tab, notifications screen (mark all read), profile tab.
@@ -73,6 +79,12 @@ match the code.*
   demo location and says so.
 - Continue opens the selected venue's events (straight to details when the
   venue has a single event).
+
+### Search
+- Auto-focused field with debounced live results, best title matches first,
+  matched text highlighted; the shared filters narrow the results.
+- Recent searches saved per account (swipe to delete with undo, Clear all),
+  trending search chips, and a no-results state with suggestions.
 
 ### Onboarding and accounts
 - Splash with the brand logo, a 3-slide onboarding (shown once), then Log in,

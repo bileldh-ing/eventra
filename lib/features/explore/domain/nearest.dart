@@ -21,10 +21,11 @@ List<NearbyEvent> nearestEvents(
   LatLng origin, {
   String query = '',
   EventFilter filter = EventFilter.none,
+  DateTime? now,
 }) {
   final list = [
     for (final e in events)
-      if (matchesQuery(e, query) && filter.matches(e))
+      if (matchesQuery(e, query) && filter.matches(e, now: now))
         NearbyEvent(e, haversineKm(origin, LatLng(e.latitude, e.longitude))),
   ]..sort((a, b) => a.km.compareTo(b.km));
   return list;

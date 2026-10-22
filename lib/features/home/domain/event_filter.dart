@@ -1,6 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:eventra/core/utils/geo.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/domain/entities/event_category.dart';
+import 'package:eventra/features/feed/domain/smart_feed_scorer.dart';
+import 'package:eventra/features/onboarding/domain/interest.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:meta/meta.dart';
 
@@ -15,12 +18,80 @@ enum EventSort {
   final String label;
 }
 
-/// Immutable discovery filter shared by Home, See All and the Filters sheet.
+enum DatePreset {
+  any('Any time'),
+  today('Today'),
+  tomorrow('Tomorrow'),
+  thisWeekend('This Weekend'),
+  thisWeek('Next 7 days'),
+  custom('Pick dates');
+
+  const DatePreset(this.label);
+  final String label;
+}
+
+/// A half-open [start, end) window.
+@immutable
+class DateWindow {
+  const DateWindow(this.start, this.end);
+
+  /// Whole days from [first] to [last], both included.
+  factory DateWindow.days(DateTime first, DateTime last) => DateWindow(
+    DateTime(first.year, first.month, first.day),
+    DateTime(last.year, last.month, last.day + 1),
+  );
+
+  final DateTime start;
+  final DateTime end;
+
+  /// True when the event runs at any point inside the window.
+  bool overlaps(DateTime from, DateTime to) =>
+      from.isBefore(end) && to.isAfter(start);
+
+  @override
+  bool operator ==(Object other) =>
+      other is DateWindow && other.start == start && other.end == end;
+
+  @override
+  int get hashCode => Object.hash(start, end);
+}
+
+/// The window a preset covers relative to [now] (null = no date limit).
+DateWindow? presetWindow(DatePreset preset, DateTime now, DateWindow? custom) {
+  final today = DateTime(now.year, now.month, now.day);
+  return switch (preset) {
+    DatePreset.any => null,
+    DatePreset.today => DateWindow(
+      today,
+      DateTime(now.year, now.month, now.day + 1),
+    ),
+    DatePreset.tomorrow => DateWindow(
+      DateTime(now.year, now.month, now.day + 1),
+      DateTime(now.year, now.month, now.day + 2),
+    ),
+    DatePreset.thisWeekend => () {
+      final w = weekendRange(now);
+      return DateWindow(w.start, w.end);
+    }(),
+    DatePreset.thisWeek => DateWindow(
+      today,
+      DateTime(now.year, now.month, now.day + 7),
+    ),
+    DatePreset.custom => custom,
+  };
+}
+
+/// Immutable discovery filter shared by Home, See All, Search, Explore and
+/// the Filters sheet.
 @immutable
 class EventFilter {
   const EventFilter({
-    this.category,
+    this.categories = const {},
+    this.datePreset = DatePreset.any,
+    this.customRange,
+    this.minPrice,
     this.maxPrice,
+    this.maxDistanceKm,
     this.freeOnly = false,
     this.hasTicketsLeft = false,
     this.sort = EventSort.recommended,
@@ -28,78 +99,151 @@ class EventFilter {
 
   static const none = EventFilter();
 
-  /// null = "See All".
-  final EventCategory? category;
+  /// Empty = every category ("See All").
+  final Set<EventCategory> categories;
+  final DatePreset datePreset;
+
+  /// Used when [datePreset] is [DatePreset.custom].
+  final DateWindow? customRange;
+
+  /// Cheapest ticket bounds (null = open ended).
+  final double? minPrice;
   final double? maxPrice;
+
+  /// Radius from the current origin (null = any distance).
+  final double? maxDistanceKm;
   final bool freeOnly;
   final bool hasTicketsLeft;
   final EventSort sort;
 
-  bool get isDefault =>
-      category == null &&
-      maxPrice == null &&
-      !freeOnly &&
-      !hasTicketsLeft &&
-      sort == EventSort.recommended;
+  /// The single selected category (what the Home chips show), else null.
+  EventCategory? get category =>
+      categories.length == 1 ? categories.first : null;
 
-  /// Number of non-category refinements (badge on the filter button).
+  bool get hasDate =>
+      datePreset != DatePreset.any &&
+      (datePreset != DatePreset.custom || customRange != null);
+
+  bool get hasPrice => minPrice != null || maxPrice != null;
+
+  bool get isDefault => categories.isEmpty && refinementCount == 0;
+
+  /// Number of refinements beyond a single chip category (badge on the
+  /// filter button).
   int get refinementCount =>
-      (maxPrice != null ? 1 : 0) +
+      (categories.length > 1 ? 1 : 0) +
+      (hasDate ? 1 : 0) +
+      (hasPrice ? 1 : 0) +
+      (maxDistanceKm != null ? 1 : 0) +
       (freeOnly ? 1 : 0) +
       (hasTicketsLeft ? 1 : 0) +
       (sort != EventSort.recommended ? 1 : 0);
 
+  /// Chip selection: one category, or all when [c] is null.
+  EventFilter withCategory(EventCategory? c) =>
+      copyWith(categories: c == null ? const {} : {c});
+
+  EventFilter toggleCategory(EventCategory c) => copyWith(
+    categories: categories.contains(c)
+        ? ({...categories}..remove(c))
+        : {...categories, c},
+  );
+
   EventFilter copyWith({
-    EventCategory? Function()? category,
+    Set<EventCategory>? categories,
+    DatePreset? datePreset,
+    DateWindow? Function()? customRange,
+    double? Function()? minPrice,
     double? Function()? maxPrice,
+    double? Function()? maxDistanceKm,
     bool? freeOnly,
     bool? hasTicketsLeft,
     EventSort? sort,
   }) => EventFilter(
-    category: category != null ? category() : this.category,
+    categories: categories ?? this.categories,
+    datePreset: datePreset ?? this.datePreset,
+    customRange: customRange != null ? customRange() : this.customRange,
+    minPrice: minPrice != null ? minPrice() : this.minPrice,
     maxPrice: maxPrice != null ? maxPrice() : this.maxPrice,
+    maxDistanceKm: maxDistanceKm != null ? maxDistanceKm() : this.maxDistanceKm,
     freeOnly: freeOnly ?? this.freeOnly,
     hasTicketsLeft: hasTicketsLeft ?? this.hasTicketsLeft,
     sort: sort ?? this.sort,
   );
 
-  bool matches(Event e) {
-    if (category != null && e.category != category) return false;
+  /// [now] is needed for date presets and [origin] for the distance radius;
+  /// a criterion whose input is missing is not applied.
+  bool matches(Event e, {DateTime? now, LatLng? origin}) {
+    if (categories.isNotEmpty && !categories.contains(e.category)) {
+      return false;
+    }
     if (freeOnly && !e.isFree) return false;
+    if (minPrice != null && e.minPrice < minPrice!) return false;
     if (maxPrice != null && e.minPrice > maxPrice!) return false;
     if (hasTicketsLeft && e.isSoldOut) return false;
+    if (maxDistanceKm != null && origin != null) {
+      final km = haversineKm(origin, LatLng(e.latitude, e.longitude));
+      if (km > maxDistanceKm!) return false;
+    }
+    if (now != null) {
+      final w = presetWindow(datePreset, now, customRange);
+      if (w != null && !w.overlaps(e.startAt, e.endAt)) return false;
+    }
     return true;
   }
 
-  List<Event> apply(Iterable<Event> events, {required LatLng origin}) {
-    final list = events.where(matches).toList();
-    return sortEvents(list, sort, origin: origin);
+  /// Filters then sorts. The Recommended sort uses the smart feed when a
+  /// [profile] is given.
+  List<Event> apply(
+    Iterable<Event> events, {
+    required LatLng origin,
+    DateTime? now,
+    FeedProfile? profile,
+  }) {
+    final list = events
+        .where((e) => matches(e, now: now ?? profile?.now, origin: origin))
+        .toList();
+    return sortEvents(list, sort, origin: origin, profile: profile);
   }
 
   @override
   bool operator ==(Object other) =>
       other is EventFilter &&
-      other.category == category &&
+      const SetEquality<EventCategory>().equals(other.categories, categories) &&
+      other.datePreset == datePreset &&
+      other.customRange == customRange &&
+      other.minPrice == minPrice &&
       other.maxPrice == maxPrice &&
+      other.maxDistanceKm == maxDistanceKm &&
       other.freeOnly == freeOnly &&
       other.hasTicketsLeft == hasTicketsLeft &&
       other.sort == sort;
 
   @override
-  int get hashCode =>
-      Object.hash(category, maxPrice, freeOnly, hasTicketsLeft, sort);
+  int get hashCode => Object.hash(
+    Object.hashAllUnordered(categories),
+    datePreset,
+    customRange,
+    minPrice,
+    maxPrice,
+    maxDistanceKm,
+    freeOnly,
+    hasTicketsLeft,
+    sort,
+  );
 }
 
 List<Event> sortEvents(
   List<Event> events,
   EventSort sort, {
   required LatLng origin,
+  FeedProfile? profile,
 }) {
   final list = [...events];
   switch (sort) {
     case EventSort.recommended:
-      // Featured picks first, then soonest. Phase 6 replaces this with the
-      // SmartFeedScorer.
+      if (profile != null) return const SmartFeedScorer().feed(list, profile);
+      // Without a profile: featured picks first, then soonest.
       list.sort((a, b) {
         final ra = a.featuredRank ?? 1 << 20;
         final rb = b.featuredRank ?? 1 << 20;
@@ -145,38 +289,78 @@ bool matchesQuery(Event e, String query) {
   return (start: sat, end: sat.add(const Duration(days: 2)));
 }
 
+/// A "Because you like X" row.
+@immutable
+class InterestRow {
+  const InterestRow(this.interest, this.events);
+
+  /// null for the generic "Recommended for you" row (no interests yet).
+  final Interest? interest;
+  final List<Event> events;
+
+  String get title => interest == null
+      ? 'Recommended For You'
+      : 'Because You Like ${interest!.label}';
+}
+
 /// Home sections below the carousel.
 class HomeSections {
   const HomeSections({
     required this.trending,
-    required this.becauseYouLikeMusic,
+    required this.interestRows,
     required this.free,
     required this.thisWeekend,
   });
 
-  factory HomeSections.from(List<Event> upcoming, DateTime now) {
+  /// Rows are ordered by the smart feed when [profile] is given. Up to
+  /// [maxInterestRows] interest rows; an interest whose categories are all
+  /// covered by an earlier row is skipped.
+  factory HomeSections.from(
+    List<Event> upcoming,
+    DateTime now, {
+    FeedProfile? profile,
+    int maxInterestRows = 2,
+  }) {
+    const scorer = SmartFeedScorer();
+    List<Event> ranked(Iterable<Event> events) =>
+        profile == null ? events.toList() : scorer.rank(events, profile);
+
     final weekend = weekendRange(now);
     final byPopularity = [...upcoming]
       ..sort((a, b) => b.participantsCount.compareTo(a.participantsCount));
+
+    final rows = <InterestRow>[];
+    final covered = <EventCategory>{};
+    for (final i in profile?.interests ?? const <Interest>[]) {
+      if (rows.length >= maxInterestRows) break;
+      if (covered.containsAll(i.categories)) continue;
+      final events = ranked(
+        upcoming.where((e) => i.categories.contains(e.category)),
+      ).take(8).toList();
+      if (events.isEmpty) continue;
+      covered.addAll(i.categories);
+      rows.add(InterestRow(i, events));
+    }
+    if (rows.isEmpty && profile != null) {
+      rows.add(InterestRow(null, ranked(upcoming).take(8).toList()));
+    }
+
     return HomeSections(
       trending: byPopularity.take(8).toList(),
-      becauseYouLikeMusic: upcoming
-          .where((e) => e.category == EventCategory.music)
-          .take(8)
-          .toList(),
-      free: upcoming.where((e) => e.isFree).take(8).toList(),
-      thisWeekend: upcoming
-          .where(
-            (e) =>
-                !e.startAt.isBefore(weekend.start) &&
-                e.startAt.isBefore(weekend.end),
-          )
-          .toList(),
+      interestRows: rows,
+      free: ranked(upcoming.where((e) => e.isFree)).take(8).toList(),
+      thisWeekend: ranked(
+        upcoming.where(
+          (e) =>
+              !e.startAt.isBefore(weekend.start) &&
+              e.startAt.isBefore(weekend.end),
+        ),
+      ),
     );
   }
 
   final List<Event> trending;
-  final List<Event> becauseYouLikeMusic;
+  final List<InterestRow> interestRows;
   final List<Event> free;
   final List<Event> thisWeekend;
 }

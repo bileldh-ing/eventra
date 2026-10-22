@@ -29,11 +29,8 @@ final nearestEventsProvider = Provider<List<NearbyEvent>>((ref) {
     events,
     origin,
     query: query,
-    filter: EventFilter(
-      category: f.category,
-      maxPrice: f.maxPrice,
-      freeOnly: f.freeOnly,
-      hasTicketsLeft: f.hasTicketsLeft,
-    ),
+    // Distance is the list itself here, so the radius is not applied.
+    filter: f.copyWith(maxDistanceKm: () => null, sort: EventSort.recommended),
+    now: ref.watch(clockProvider)(),
   );
 });
