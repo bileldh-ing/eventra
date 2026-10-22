@@ -14,6 +14,7 @@ import 'package:eventra/features/tickets/domain/qr_token.dart';
 import 'package:eventra/features/tickets/domain/reminders.dart';
 import 'package:eventra/features/tickets/domain/ticketing_models.dart';
 import 'package:eventra/features/tickets/domain/tier_rules.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
@@ -157,10 +158,11 @@ class TicketingActions {
       await _notify(
         order,
         kind: NotificationKind.orderConfirmed,
-        title: 'Booking confirmed',
-        body:
-            '${order.ticketCount} ticket${order.ticketCount == 1 ? '' : 's'} '
-            'for ${order.event.title}. Your QR code is ready.',
+        title: AppLocale.l10n.ntBookingConfirmed,
+        body: AppLocale.l10n.ntBookingBody(
+          order.ticketCount,
+          order.event.title,
+        ),
       );
     }
     return r;
@@ -174,10 +176,11 @@ class TicketingActions {
       await _notify(
         order,
         kind: NotificationKind.refund,
-        title: 'Refund issued',
-        body:
-            '${formatCents(order.refundCents)} for ${order.event.title} is '
-            'on its way to your card.',
+        title: AppLocale.l10n.ntRefundIssued,
+        body: AppLocale.l10n.ntRefundBody(
+          formatCents(order.refundCents),
+          order.event.title,
+        ),
       );
     }
     return r;

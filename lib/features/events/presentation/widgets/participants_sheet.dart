@@ -4,6 +4,7 @@ import 'package:eventra/core/widgets/event_image.dart';
 import 'package:eventra/core/widgets/gradient_button.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/presentation/widgets/share_event.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Fictional attendee names paired with the placeholder avatars.
@@ -47,10 +48,10 @@ class ParticipantsSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+              padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 8),
               child: Text(
-                '${event.participantsCount} Participants',
-                style: EventraText.sectionTitle,
+                context.l10n.nParticipants(event.participantsCount),
+                style: context.text.sectionTitle,
               ),
             ),
             Flexible(
@@ -69,14 +70,14 @@ class ParticipantsSheet extends StatelessWidget {
                     ),
                     title: Text(
                       _names[i % _names.length],
-                      style: EventraText.body.copyWith(
+                      style: context.text.body.copyWith(
                         color: t.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     subtitle: Text(
-                      friend ? 'Friend - going' : 'Going',
-                      style: EventraText.caption,
+                      friend ? context.l10n.friendGoing : context.l10n.going,
+                      style: context.text.caption,
                     ),
                     trailing: friend
                         ? Icon(Icons.favorite_rounded, color: t.primary)
@@ -87,16 +88,16 @@ class ParticipantsSheet extends StatelessWidget {
             ),
             if (others > 0)
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 4, 24, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(24, 4, 24, 0),
                 child: Text(
-                  '+$others more people are going',
-                  style: EventraText.caption,
+                  context.l10n.morePeopleGoing(others),
+                  style: context.text.caption,
                 ),
               ),
             Padding(
               padding: const EdgeInsets.all(24),
               child: GradientPillButton(
-                label: 'Invite friends',
+                label: context.l10n.inviteFriends,
                 icon: Icons.person_add_alt_1_rounded,
                 onPressed: () => shareInvite(event),
               ),

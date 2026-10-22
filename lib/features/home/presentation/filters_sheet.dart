@@ -7,11 +7,12 @@ import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/feed/presentation/feed_providers.dart';
 import 'package:eventra/features/home/domain/event_filter.dart';
 import 'package:eventra/features/home/presentation/home_providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Upper end of the price slider; at the cap the bound is open ("Any").
+/// Upper end of the price slider; at the cap the bound is open ('Any').
 const kMaxPriceFilter = 150.0;
 
 /// Upper end of the distance slider; at the cap there is no radius.
@@ -59,7 +60,7 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
               start: current.start,
               end: current.end.subtract(const Duration(days: 1)),
             ),
-      helpText: 'Pick a date range',
+      helpText: context.l10n.pickDateRange,
     );
     if (picked == null || !mounted) return;
     _update(
@@ -88,7 +89,7 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
       child: Text(
         text,
         key: key,
-        style: EventraText.cardTitle.copyWith(fontSize: 17),
+        style: context.text.cardTitle.copyWith(fontSize: 17),
       ),
     );
 
@@ -103,11 +104,14 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 12, 0),
+              padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 12, 0),
               child: Row(
                 children: [
-                  const Expanded(
-                    child: Text('Filters', style: EventraText.sectionTitle),
+                  Expanded(
+                    child: Text(
+                      context.l10n.filtersTitle,
+                      style: context.text.sectionTitle,
+                    ),
                   ),
                   TextButton(
                     key: const ValueKey('filters-reset'),
@@ -115,7 +119,7 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
                         ? null
                         : () => _update(EventFilter.none),
                     child: Text(
-                      'Reset',
+                      context.l10n.actionReset,
                       style: TextStyle(
                         color: _draft.isDefault ? t.textHint : t.primary,
                       ),
@@ -127,18 +131,18 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
             Flexible(
               child: SingleChildScrollView(
                 key: const ValueKey('filters-scroll'),
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    label('Categories'),
+                    label(context.l10n.filtersCategories),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: [
                         FilterChip(
                           key: const ValueKey('filter-cat-all'),
-                          label: const Text('All'),
+                          label: Text(context.l10n.filtersAll),
                           selected: _draft.categories.isEmpty,
                           onSelected: (_) => _update(
                             _draft.copyWith(categories: const {}),
@@ -155,7 +159,7 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
                           ),
                       ],
                     ),
-                    label('Date'),
+                    label(context.l10n.filtersDate),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -182,8 +186,10 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
                       ],
                     ),
                     label(
-                      'Price: ${formatPrice(minPrice)} - '
-                      '${_priceLabel(maxPrice)}',
+                      context.l10n.filtersPriceRange(
+                        formatPrice(minPrice),
+                        _priceLabel(maxPrice),
+                      ),
                       key: const ValueKey('filter-price-label'),
                     ),
                     RangeSlider(
@@ -208,8 +214,10 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
                     ),
                     label(
                       distance >= kMaxDistanceFilter
-                          ? 'Distance: any'
-                          : 'Distance: within ${distance.round()} km',
+                          ? context.l10n.filtersDistanceAny
+                          : context.l10n.filtersDistanceWithin(
+                              distance.round().toString(),
+                            ),
                       key: const ValueKey('filter-distance-label'),
                     ),
                     Slider(
@@ -220,8 +228,8 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
                       divisions: 49,
                       activeColor: t.primary,
                       label: distance >= kMaxDistanceFilter
-                          ? 'Any'
-                          : '${distance.round()} km',
+                          ? context.l10n.filtersAny
+                          : context.l10n.filtersKm(distance.round().toString()),
                       onChanged: (v) => setState(
                         () => _draft = _draft.copyWith(
                           maxDistanceKm: () => v >= kMaxDistanceFilter
@@ -230,13 +238,16 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
                         ),
                       ),
                     ),
-                    Text('From $origin', style: EventraText.caption),
+                    Text(
+                      context.l10n.filtersFrom(origin),
+                      style: context.text.caption,
+                    ),
                     const SizedBox(height: 8),
                     SwitchListTile(
                       key: const ValueKey('filter-free'),
                       contentPadding: EdgeInsets.zero,
                       activeThumbColor: t.primary,
-                      title: const Text('Free only'),
+                      title: Text(context.l10n.filtersFreeOnly),
                       value: _draft.freeOnly,
                       onChanged: (v) => _update(_draft.copyWith(freeOnly: v)),
                     ),
@@ -244,12 +255,12 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
                       key: const ValueKey('filter-available'),
                       contentPadding: EdgeInsets.zero,
                       activeThumbColor: t.primary,
-                      title: const Text('Has tickets left'),
+                      title: Text(context.l10n.filtersHasTickets),
                       value: _draft.hasTicketsLeft,
                       onChanged: (v) =>
                           _update(_draft.copyWith(hasTicketsLeft: v)),
                     ),
-                    label('Sort by'),
+                    label(context.l10n.filtersSortBy),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -269,10 +280,10 @@ class _FiltersSheetState extends ConsumerState<FiltersSheet> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+              padding: const EdgeInsetsDirectional.fromSTEB(24, 12, 24, 16),
               child: GradientPillButton(
                 key: const ValueKey('filters-apply'),
-                label: count == 1 ? 'Show 1 result' : 'Show $count results',
+                label: context.l10n.filtersShowResults(count),
                 onPressed: () {
                   ref.read(homeFilterProvider.notifier).set(_draft);
                   Navigator.of(context).pop();

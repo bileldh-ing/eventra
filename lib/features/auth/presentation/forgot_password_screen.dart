@@ -4,6 +4,7 @@ import 'package:eventra/core/widgets/gradient_button.dart';
 import 'package:eventra/features/auth/domain/auth_models.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/auth/presentation/widgets/auth_widgets.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,7 +46,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       return;
     }
     if (_codeSent && _code.text.length < 6) {
-      setState(() => _error = 'Enter the 6-digit code.');
+      setState(() => _error = context.l10n.authEnterCode);
       _shake.currentState?.shake();
       return;
     }
@@ -68,8 +69,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         setState(() => _codeSent = true);
       case Success():
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Password updated. Log in with your new password.'),
+          SnackBar(
+            content: Text(context.l10n.authPasswordUpdated),
           ),
         );
         context.canPop() ? context.pop() : context.go('/auth/login');
@@ -82,11 +83,12 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return AuthScaffold(
-      title: _codeSent ? 'Set a new password' : 'Forgot password?',
+      title: _codeSent
+          ? context.l10n.authSetNewPassword
+          : context.l10n.authForgotPassword,
       subtitle: _codeSent
-          ? 'Enter the code we sent to ${_email.text.trim()} and choose a '
-                'new password.'
-          : 'Enter your account email and we will send you a reset code.',
+          ? context.l10n.authResetCodeSent(_email.text.trim())
+          : context.l10n.authResetIntro,
       onBack: context.canPop() ? context.pop : () => context.go('/auth/login'),
       child: Shake(
         key: _shake,
@@ -99,7 +101,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 key: const ValueKey('forgot-email'),
                 controller: _email,
                 enabled: !_codeSent,
-                label: 'Email',
+                label: context.l10n.fieldEmail,
                 icon: Icons.mail_outline_rounded,
                 keyboardType: TextInputType.emailAddress,
                 validator: AuthValidators.email,
@@ -115,7 +117,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 AuthField(
                   key: const ValueKey('forgot-password'),
                   controller: _password,
-                  label: 'New password',
+                  label: context.l10n.fieldNewPassword,
                   icon: Icons.lock_outline_rounded,
                   obscure: _obscure,
                   onToggleObscure: () => setState(() => _obscure = !_obscure),
@@ -130,17 +132,17 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               GradientPillButton(
                 key: const ValueKey('forgot-submit'),
                 label: _busy
-                    ? 'Please wait...'
+                    ? context.l10n.pleaseWait
                     : _codeSent
-                    ? 'Update password'
-                    : 'Send reset code',
+                    ? context.l10n.authUpdatePassword
+                    : context.l10n.authSendResetCode,
                 onPressed: _busy ? null : _submit,
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Demo mode: codes are not emailed; nothing leaves this device.',
+              Text(
+                context.l10n.authDemoNotice,
                 textAlign: TextAlign.center,
-                style: EventraText.caption,
+                style: context.text.caption,
               ),
             ],
           ),

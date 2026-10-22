@@ -1,5 +1,6 @@
 import 'package:eventra/app/app_shell.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
+import 'package:eventra/core/utils/formatters.dart';
 import 'package:eventra/core/widgets/entrance.dart';
 import 'package:eventra/core/widgets/state_views.dart';
 import 'package:eventra/features/auth/domain/auth_models.dart';
@@ -15,6 +16,7 @@ import 'package:eventra/features/home/presentation/widgets/home_header.dart';
 import 'package:eventra/features/home/presentation/widgets/home_section.dart';
 import 'package:eventra/features/home/presentation/widgets/upcoming_carousel.dart';
 import 'package:eventra/features/notifications/presentation/notifications_providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -110,8 +112,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               SliverToBoxAdapter(
                 child: SectionHeader(
-                  title: 'Upcoming Events',
-                  actionLabel: 'See All',
+                  title: context.l10n.homeUpcoming,
+                  actionLabel: context.l10n.seeAll,
                   onAction: () => context.push('/home/all'),
                 ),
               ),
@@ -153,9 +155,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return MessageView(
           key: const ValueKey('empty-view'),
           icon: Icons.event_busy_outlined,
-          title: 'No events match',
-          message: 'Try another category or reset your filters.',
-          actionLabel: 'Show all events',
+          title: context.l10n.noEventsMatch,
+          message: context.l10n.tryAnotherCategory,
+          actionLabel: context.l10n.showAllEvents,
           onAction: () => ref.read(homeFilterProvider.notifier).reset(),
         );
       }
@@ -186,20 +188,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       for (final r in s.reasons) {
         if (r.kind != FeedReasonKind.interest) {
           return r.kind == FeedReasonKind.nearby
-              ? 'Near you · ${s.distanceKm.toStringAsFixed(1)} km'
+              ? context.l10n.reasonNearYouKm(formatDecimal(s.distanceKm))
               : r.label;
         }
       }
-      return '${s.distanceKm.toStringAsFixed(1)} km away';
+      return context.l10n.distanceKmAway(formatDecimal(s.distanceKm));
     }
 
     return [
       SliverToBoxAdapter(
         child: HomeSection(
           id: 'trending',
-          title: 'Trending This Week',
+          title: context.l10n.homeTrendingWeek,
           events: sections.trending,
-          reasonFor: (e) => '${e.participantsCount} going',
+          reasonFor: (e) => context.l10n.nGoing(e.participantsCount),
         ),
       ),
       for (final row in sections.interestRows)
@@ -214,14 +216,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       SliverToBoxAdapter(
         child: HomeSection(
           id: 'free',
-          title: 'Free Events',
+          title: context.l10n.homeFreeEvents,
           events: sections.free,
         ),
       ),
       SliverToBoxAdapter(
         child: HomeSection(
           id: 'weekend',
-          title: 'This Weekend',
+          title: context.l10n.dateThisWeekend,
           events: sections.thisWeekend,
         ),
       ),

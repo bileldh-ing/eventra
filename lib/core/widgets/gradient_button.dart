@@ -59,7 +59,7 @@ class _GradientPillButtonState extends State<GradientPillButton> {
             padding: EdgeInsets.symmetric(horizontal: height < 48 ? 14 : 28),
             decoration: BoxDecoration(
               gradient: enabled ? t.primaryGradient : null,
-              color: enabled ? null : const Color(0xFFD9D2E3),
+              color: enabled ? null : context.tokens.disabled,
               borderRadius: BorderRadius.circular(height / 2),
               boxShadow: enabled ? t.primaryGlow : null,
             ),
@@ -82,8 +82,8 @@ class _GradientPillButtonState extends State<GradientPillButton> {
                     overflow: TextOverflow.fade,
                     softWrap: false,
                     style: height < 48
-                        ? EventraText.button.copyWith(fontSize: 15)
-                        : EventraText.button,
+                        ? context.text.button.copyWith(fontSize: 15)
+                        : context.text.button,
                   ),
                 ),
               ],

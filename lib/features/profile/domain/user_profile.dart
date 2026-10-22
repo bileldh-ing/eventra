@@ -1,3 +1,4 @@
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Avatar background choices for initials avatars.
@@ -73,16 +74,16 @@ abstract final class ProfileValidators {
 
   static String? name(String? v) {
     final s = v?.trim() ?? '';
-    if (s.length < 2) return 'Enter your name (2+ characters)';
-    if (s.length > 50) return 'Keep it under 50 characters';
+    if (s.length < 2) return AppLocale.l10n.valProfileName;
+    if (s.length > 50) return AppLocale.l10n.valUnderN('50');
     return null;
   }
 
   static String? bio(String? v) => (v?.trim().length ?? 0) > maxBio
-      ? 'Keep it under $maxBio characters'
+      ? AppLocale.l10n.valUnderN(maxBio.toString())
       : null;
 
   static String? city(String? v) => (v?.trim().length ?? 0) > maxCity
-      ? 'Keep it under $maxCity characters'
+      ? AppLocale.l10n.valUnderN(maxCity.toString())
       : null;
 }

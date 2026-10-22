@@ -13,6 +13,7 @@ import 'package:eventra/features/tickets/domain/pricing.dart';
 import 'package:eventra/features/tickets/domain/tier_rules.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:eventra/features/tickets/presentation/widgets/ticketing_widgets.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -80,7 +81,7 @@ class _TierPickerScreenState extends ConsumerState<TierPickerScreen> {
     Widget body;
     if (event.hasError || tiers.hasError) {
       body = MessageView.error(
-        message: 'We could not load the tickets for this event.',
+        message: context.l10n.tpLoadFailed,
         onRetry: () => ref.invalidate(tierAvailabilityProvider(widget.eventId)),
       );
     } else if (!event.hasValue || !tiers.hasValue) {
@@ -96,13 +97,13 @@ class _TierPickerScreenState extends ConsumerState<TierPickerScreen> {
       final ended = !now.isBefore(e.startAt);
       body = ListView(
         key: const ValueKey('tier-list'),
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 24),
         children: [
           _EventStrip(event: e),
           const SizedBox(height: 18),
           if (ended)
-            const InlineBanner(
-              message: 'This event has started; tickets are no longer sold.',
+            InlineBanner(
+              message: context.l10n.tpStarted,
             )
           else
             for (final a in list) ...[
@@ -116,20 +117,19 @@ class _TierPickerScreenState extends ConsumerState<TierPickerScreen> {
             ],
           const SizedBox(height: 4),
           if (_count >= kMaxTicketsPerOrder) ...[
-            const InlineBanner(
-              key: ValueKey('order-cap'),
+            InlineBanner(
+              key: const ValueKey('order-cap'),
               icon: Icons.info_outline_rounded,
-              message:
-                  'You reached the $kMaxTicketsPerOrder-ticket limit for one '
-                  'order.',
+              message: context.l10n.tpCapReached(
+                kMaxTicketsPerOrder.toString(),
+              ),
             ),
             const SizedBox(height: 10),
           ],
           Text(
-            'Up to $kMaxTicketsPerOrder tickets per order. Seats are held '
-            'for 10 minutes once you continue.',
+            context.l10n.tpUpTo(kMaxTicketsPerOrder.toString()),
             textAlign: TextAlign.center,
-            style: EventraText.caption.copyWith(color: t.textHint),
+            style: context.text.caption.copyWith(color: t.textHint),
           ),
         ],
       );
@@ -152,7 +152,7 @@ class _TierPickerScreenState extends ConsumerState<TierPickerScreen> {
       body: Column(
         children: [
           TicketingHeader(
-            title: 'Get a Ticket',
+            title: context.l10n.getTicket,
             onBack: () => Navigator.of(context).maybePop(),
           ),
           Expanded(child: body),
@@ -199,18 +199,18 @@ class _EventStrip extends StatelessWidget {
                   event.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: EventraText.cardTitle.copyWith(fontSize: 17),
+                  style: context.text.cardTitle.copyWith(fontSize: 17),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   formatCardDate(event.startAt),
-                  style: EventraText.caption.copyWith(color: t.primary),
+                  style: context.text.caption.copyWith(color: t.primary),
                 ),
                 Text(
                   event.venue,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: EventraText.caption,
+                  style: context.text.caption,
                 ),
               ],
             ),
@@ -245,7 +245,7 @@ class _TierCard extends StatelessWidget {
       curve: t.motion.standard,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: soldOut ? const Color(0xFFF6F4F9) : t.surface,
+        color: soldOut ? t.surfaceMuted : t.surface,
         borderRadius: BorderRadius.circular(t.radii.listCard),
         border: Border.all(
           color: selected ? t.primary : Colors.transparent,
@@ -265,7 +265,7 @@ class _TierCard extends StatelessWidget {
                   children: [
                     Text(
                       tier.tier.name,
-                      style: EventraText.cardTitle.copyWith(
+                      style: context.text.cardTitle.copyWith(
                         fontSize: 18,
                         color: soldOut ? t.textHint : t.textPrimary,
                       ),
@@ -273,9 +273,9 @@ class _TierCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       tier.unitCents == 0
-                          ? 'Free'
+                          ? context.l10n.priceFree
                           : formatCents(tier.unitCents),
-                      style: EventraText.cardTitle.copyWith(
+                      style: context.text.cardTitle.copyWith(
                         fontSize: 20,
                         color: soldOut ? t.textHint : t.primary,
                         fontWeight: FontWeight.w700,
@@ -287,7 +287,7 @@ class _TierCard extends StatelessWidget {
               if (soldOut)
                 StatusChip(
                   key: ValueKey('soldout-${tier.tierId}'),
-                  label: 'Sold out',
+                  label: context.l10n.soldOutLower,
                   color: t.textSecondary,
                 )
               else
@@ -315,7 +315,7 @@ class _TierCard extends StatelessWidget {
                         color: soldOut ? t.textHint : t.success,
                       ),
                       const SizedBox(width: 4),
-                      Text(p, style: EventraText.caption),
+                      Text(p, style: context.text.caption),
                     ],
                   ),
               ],
@@ -343,23 +343,26 @@ class _TierCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   soldOut
-                      ? 'All ${tier.capacity} tickets are gone'
-                      : '${tier.available} of ${tier.capacity} left',
+                      ? context.l10n.tpAllGone(tier.capacity.toString())
+                      : context.l10n.tpLeftOf(
+                          tier.available.toString(),
+                          tier.capacity.toString(),
+                        ),
                   key: ValueKey('remaining-${tier.tierId}'),
-                  style: EventraText.caption,
+                  style: context.text.caption,
                 ),
               ),
               if (tier.lowStock)
                 StatusChip(
                   key: ValueKey('lowstock-${tier.tierId}'),
-                  label: 'Only ${tier.available} left',
+                  label: context.l10n.tpOnlyLeft(tier.available.toString()),
                   color: t.accentOrange,
                   icon: Icons.local_fire_department_rounded,
                 )
               else if (!soldOut)
                 Text(
-                  'Max ${tier.maxSelectable} per order',
-                  style: EventraText.caption.copyWith(color: t.textHint),
+                  context.l10n.tpMaxPer(tier.maxSelectable.toString()),
+                  style: context.text.caption.copyWith(color: t.textHint),
                 ),
             ],
           ),
@@ -385,7 +388,7 @@ class _SummaryBar extends StatelessWidget {
     final t = context.tokens;
     final n = quote.ticketCount;
     return Container(
-      padding: EdgeInsets.fromLTRB(
+      padding: EdgeInsetsDirectional.fromSTEB(
         20,
         16,
         20,
@@ -394,11 +397,11 @@ class _SummaryBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: t.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x149A5BD6),
+            color: context.tokens.shadow(0.08),
             blurRadius: 24,
-            offset: Offset(0, -6),
+            offset: const Offset(0, -6),
           ),
         ],
       ),
@@ -412,8 +415,8 @@ class _SummaryBar extends StatelessWidget {
                 ? Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Text(
-                      'Choose your tickets to see the total.',
-                      style: EventraText.body.copyWith(color: t.textHint),
+                      context.l10n.tpChooseToSee,
+                      style: context.text.body.copyWith(color: t.textHint),
                     ),
                   )
                 : Padding(
@@ -421,17 +424,17 @@ class _SummaryBar extends StatelessWidget {
                     child: Column(
                       children: [
                         AmountRow(
-                          label: '$n ${n == 1 ? 'ticket' : 'tickets'}',
+                          label: context.l10n.nTickets(n),
                           cents: quote.subtotalCents,
                           valueKey: const ValueKey('picker-subtotal'),
                         ),
                         AmountRow(
-                          label: 'Fees and tax',
+                          label: context.l10n.feesAndTax,
                           cents: quote.feesCents + quote.taxCents,
                           valueKey: const ValueKey('picker-fees'),
                         ),
                         AmountRow(
-                          label: 'Total',
+                          label: context.l10n.total,
                           cents: quote.totalCents,
                           emphasize: true,
                           valueKey: const ValueKey('picker-total'),
@@ -442,7 +445,7 @@ class _SummaryBar extends StatelessWidget {
           ),
           GradientPillButton(
             key: const ValueKey('tier-continue'),
-            label: busy ? 'Holding your seats…' : 'Continue to checkout',
+            label: busy ? context.l10n.tpHolding : context.l10n.tpContinue,
             icon: busy ? null : Icons.lock_clock_rounded,
             onPressed: busy ? null : onContinue,
           ),

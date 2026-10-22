@@ -1,24 +1,39 @@
+import 'package:eventra/l10n/l10n.dart';
+
 /// Failure types surfaced to the UI. Never exposes raw exceptions.
 sealed class AppFailure {
-  const AppFailure(this.message);
-  final String message;
+  const AppFailure([this._message]);
+  final String? _message;
+
+  /// User-facing text in the active language. A specific message given at
+  /// construction wins over the type's default.
+  String get message => _message ?? defaultMessage;
+
+  String get defaultMessage;
 
   @override
   String toString() => message;
 }
 
 final class NetworkFailure extends AppFailure {
-  const NetworkFailure([
-    super.message = 'We could not reach Eventra. Check your connection.',
-  ]);
+  const NetworkFailure([super._message]);
+
+  @override
+  String get defaultMessage => AppLocale.l10n.errNetwork;
 }
 
 final class NotFoundFailure extends AppFailure {
-  const NotFoundFailure([super.message = 'This event is no longer available.']);
+  const NotFoundFailure([super._message]);
+
+  @override
+  String get defaultMessage => AppLocale.l10n.errEventGone;
 }
 
 final class StorageFailure extends AppFailure {
-  const StorageFailure([super.message = 'Local storage is unavailable.']);
+  const StorageFailure([super._message]);
+
+  @override
+  String get defaultMessage => AppLocale.l10n.errStorage;
 }
 
 enum AuthErrorCode {
@@ -33,7 +48,10 @@ enum AuthErrorCode {
 
 /// Sign-in / sign-up problems. [retryAfter] is set while locked out.
 final class AuthFailure extends AppFailure {
-  const AuthFailure(this.code, super.message, {this.retryAfter});
+  const AuthFailure(this.code, super._message, {this.retryAfter});
+
+  @override
+  String get defaultMessage => AppLocale.l10n.errUnknown;
   final AuthErrorCode code;
   final Duration? retryAfter;
 }
@@ -41,7 +59,10 @@ final class AuthFailure extends AppFailure {
 /// Ticketing problems (stock, holds, payment, promo, refunds). The enum
 /// lives with the ticketing domain.
 final class TicketingFailure extends AppFailure {
-  const TicketingFailure(this.code, super.message);
+  const TicketingFailure(this.code, super._message);
+
+  @override
+  String get defaultMessage => AppLocale.l10n.errUnknown;
   final TicketingError code;
 }
 
@@ -60,7 +81,10 @@ enum TicketingError {
 
 /// Review rule violations (eligibility, validation, ownership).
 final class ReviewFailure extends AppFailure {
-  const ReviewFailure(this.code, super.message);
+  const ReviewFailure(this.code, super._message);
+
+  @override
+  String get defaultMessage => AppLocale.l10n.errUnknown;
   final ReviewError code;
 }
 
@@ -74,7 +98,10 @@ enum ReviewError {
 }
 
 final class UnknownFailure extends AppFailure {
-  const UnknownFailure([super.message = 'Something went wrong.']);
+  const UnknownFailure([super._message]);
+
+  @override
+  String get defaultMessage => AppLocale.l10n.errUnknown;
 }
 
 /// Sealed success/failure result used by every repository.

@@ -10,6 +10,7 @@ import 'package:eventra/features/auth/presentation/widgets/auth_widgets.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/onboarding/domain/home_city.dart';
 import 'package:eventra/features/onboarding/presentation/onboarding_providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -47,9 +48,9 @@ class _LocationSetupScreenState extends ConsumerState<LocationSetupScreen> {
           p,
           (c) => LatLng(c.lat, c.lng),
         ).first;
-        _note = 'Nearest area to you: ${_city!.label}';
+        _note = context.l10n.locNearestArea(_city!.label);
       } else {
-        _note = 'Location is off, so pick your city below.';
+        _note = context.l10n.locOff;
       }
     });
   }
@@ -73,15 +74,15 @@ class _LocationSetupScreenState extends ConsumerState<LocationSetupScreen> {
               bottom: Radius.circular(t.radii.header),
             ),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(24, pad.top + 28, 24, 28),
+              padding: EdgeInsetsDirectional.fromSTEB(24, pad.top + 28, 24, 28),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Where are you?', style: EventraText.heroTitle),
+                  Text(context.l10n.locWhere, style: context.text.heroTitle),
                   const SizedBox(height: 6),
                   Text(
-                    'We use it to show events near you and measure distances.',
-                    style: EventraText.body.copyWith(
+                    context.l10n.locWhy,
+                    style: context.text.body.copyWith(
                       color: Colors.white,
                       fontSize: 16,
                     ),
@@ -115,8 +116,8 @@ class _LocationSetupScreenState extends ConsumerState<LocationSetupScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Use my current location',
-                              style: EventraText.cardTitle.copyWith(
+                              context.l10n.locUseCurrent,
+                              style: context.text.cardTitle.copyWith(
                                 fontSize: 16,
                               ),
                             ),
@@ -131,7 +132,7 @@ class _LocationSetupScreenState extends ConsumerState<LocationSetupScreen> {
                     Text(
                       _note!,
                       key: const ValueKey('location-note'),
-                      style: EventraText.caption.copyWith(color: Colors.white),
+                      style: context.text.caption.copyWith(color: Colors.white),
                     ),
                   ],
                 ],
@@ -140,7 +141,7 @@ class _LocationSetupScreenState extends ConsumerState<LocationSetupScreen> {
           ),
           Expanded(
             child: ListView.separated(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 12),
               itemCount: kHomeCities.length,
               separatorBuilder: (_, _) => const SizedBox(height: 10),
               itemBuilder: (context, i) {
@@ -183,7 +184,7 @@ class _LocationSetupScreenState extends ConsumerState<LocationSetupScreen> {
                           Expanded(
                             child: Text(
                               c.label,
-                              style: EventraText.cardTitle.copyWith(
+                              style: context.text.cardTitle.copyWith(
                                 fontSize: 16,
                               ),
                             ),
@@ -205,17 +206,17 @@ class _LocationSetupScreenState extends ConsumerState<LocationSetupScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(24, 4, 24, pad.bottom + 16),
+            padding: EdgeInsetsDirectional.fromSTEB(24, 4, 24, pad.bottom + 16),
             child: Column(
               children: [
                 GradientPillButton(
                   key: const ValueKey('location-continue'),
-                  label: 'Continue',
+                  label: context.l10n.actionContinue,
                   onPressed: _city == null ? null : _continue,
                 ),
                 AuthLinkButton(
                   key: const ValueKey('location-skip'),
-                  label: 'Skip for now',
+                  label: context.l10n.locSkip,
                   bold: false,
                   onPressed: () => context.go(safeFrom(widget.from) ?? '/home'),
                 ),

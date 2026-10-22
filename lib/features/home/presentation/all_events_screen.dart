@@ -7,6 +7,7 @@ import 'package:eventra/features/feed/presentation/feed_providers.dart';
 import 'package:eventra/features/home/domain/event_filter.dart';
 import 'package:eventra/features/home/presentation/filters_sheet.dart';
 import 'package:eventra/features/home/presentation/home_providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,15 +28,17 @@ class AllEventsScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: t.background,
         title: Text(
-          category == null ? 'Upcoming Events' : '${category.label} Events',
-          style: EventraText.sectionTitle,
+          category == null
+              ? context.l10n.homeUpcoming
+              : context.l10n.categoryEvents(category.label),
+          style: context.text.sectionTitle,
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsetsDirectional.only(end: 8),
             child: IconButton(
               key: const ValueKey('all-filter'),
-              tooltip: 'Filters',
+              tooltip: context.l10n.filtersTitle,
               onPressed: () => showFiltersSheet(context),
               icon: Badge(
                 isLabelVisible: filter.refinementCount > 0,
@@ -57,7 +60,7 @@ class AllEventsScreen extends ConsumerWidget {
               children: [
                 for (final s in EventSort.values)
                   Padding(
-                    padding: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsetsDirectional.only(end: 8),
                     child: ChoiceChip(
                       key: ValueKey('sort-${s.name}'),
                       label: Text(s.label),
@@ -90,16 +93,16 @@ class AllEventsScreen extends ConsumerWidget {
                     child: MessageView(
                       key: const ValueKey('all-empty'),
                       icon: Icons.filter_alt_off_outlined,
-                      title: 'No events match',
-                      message: 'Loosen your filters to see more events.',
-                      actionLabel: 'Reset filters',
+                      title: context.l10n.noEventsMatch,
+                      message: context.l10n.loosenFilters,
+                      actionLabel: context.l10n.resetFilters,
                       onAction: () =>
                           ref.read(homeFilterProvider.notifier).reset(),
                     ),
                   );
                 }
                 return ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 32),
                   itemCount: list.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 12),
                   itemBuilder: (context, i) => EventListTile(

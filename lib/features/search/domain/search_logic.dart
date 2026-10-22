@@ -17,7 +17,10 @@ int searchRank(Event e, String query) {
       e.address.toLowerCase().contains(q)) {
     return 2;
   }
-  if (e.category.label.toLowerCase().contains(q)) return 1;
+  if (e.category.label.toLowerCase().contains(q) ||
+      e.category.name.contains(q)) {
+    return 1;
+  }
   return 0;
 }
 

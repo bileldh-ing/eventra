@@ -33,11 +33,11 @@ class AppShell extends StatelessWidget {
       body: Stack(
         children: [
           Positioned.fill(child: navigationShell),
-          AnimatedPositioned(
+          AnimatedPositionedDirectional(
             duration: const Duration(milliseconds: 280),
             curve: Curves.easeOutCubic,
-            left: 24,
-            right: 24,
+            start: 24,
+            end: 24,
             bottom: showPill ? 16 + bottomInset : -120,
             child: NavPill(
               currentIndex: navigationShell.currentIndex,

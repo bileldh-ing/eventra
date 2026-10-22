@@ -5,12 +5,13 @@ import 'package:eventra/core/widgets/glass.dart';
 import 'package:eventra/core/widgets/gradient_button.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/onboarding/domain/interest.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// "What are you into?": pick at least three interests (they drive the
+/// 'interestsTitle': pick at least three interests (they drive the
 /// smart feed). In [editing] mode (from Profile) it saves and goes back.
 class InterestsScreen extends ConsumerStatefulWidget {
   const InterestsScreen({super.key, this.from, this.editing = false});
@@ -57,27 +58,26 @@ class _InterestsScreenState extends ConsumerState<InterestsScreen> {
         children: [
           Expanded(
             child: ListView(
-              padding: EdgeInsets.fromLTRB(24, pad.top + 16, 24, 24),
+              padding: EdgeInsetsDirectional.fromSTEB(24, pad.top + 16, 24, 24),
               children: [
                 if (widget.editing)
                   Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: AlignmentDirectional.centerStart,
                     child: WhiteCircleButton(
                       icon: Icons.arrow_back_rounded,
-                      semanticLabel: 'Back',
+                      semanticLabel: context.l10n.back,
                       onPressed: context.pop,
                     ),
                   ),
                 const SizedBox(height: 16),
                 Text(
-                  'What are you into?',
-                  style: EventraText.detailsTitle.copyWith(fontSize: 30),
+                  context.l10n.interestsTitle,
+                  style: context.text.detailsTitle.copyWith(fontSize: 30),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Pick at least ${Interest.minimum} so we can tailor your '
-                  'feed. You can change them later in Profile.',
-                  style: EventraText.body.copyWith(fontSize: 16),
+                  context.l10n.interestsSubtitle(Interest.minimum.toString()),
+                  style: context.text.body.copyWith(fontSize: 16),
                 ),
                 const SizedBox(height: 28),
                 Wrap(
@@ -99,21 +99,25 @@ class _InterestsScreenState extends ConsumerState<InterestsScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(24, 8, 24, pad.bottom + 20),
+            padding: EdgeInsetsDirectional.fromSTEB(24, 8, 24, pad.bottom + 20),
             child: Column(
               children: [
                 AnimatedSwitcher(
                   duration: t.motion.fast,
                   child: Text(
-                    _valid ? '${_picked.length} selected' : 'Choose $left more',
+                    _valid
+                        ? context.l10n.interestsSelected(_picked.length)
+                        : context.l10n.interestsChooseMore(left),
                     key: ValueKey(_picked.length),
-                    style: EventraText.caption,
+                    style: context.text.caption,
                   ),
                 ),
                 const SizedBox(height: 12),
                 GradientPillButton(
                   key: const ValueKey('interests-continue'),
-                  label: widget.editing ? 'Save' : 'Continue',
+                  label: widget.editing
+                      ? context.l10n.save
+                      : context.l10n.actionContinue,
                   onPressed: _valid ? _continue : null,
                 ),
               ],
@@ -172,7 +176,7 @@ class _InterestChip extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   interest.label,
-                  style: EventraText.body.copyWith(
+                  style: context.text.body.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: selected ? Colors.white : t.textPrimary,

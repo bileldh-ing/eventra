@@ -4,6 +4,7 @@ import 'package:eventra/core/widgets/gradient_button.dart';
 import 'package:eventra/features/auth/presentation/widgets/auth_widgets.dart';
 import 'package:eventra/features/tickets/domain/cards.dart';
 import 'package:eventra/features/tickets/domain/payment.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -59,7 +60,7 @@ class _CardFormSheetState extends State<CardFormSheet> {
       padding: EdgeInsets.only(bottom: insets),
       child: Container(
         key: const ValueKey('card-sheet'),
-        padding: EdgeInsets.fromLTRB(
+        padding: EdgeInsetsDirectional.fromSTEB(
           24,
           12,
           24,
@@ -83,7 +84,7 @@ class _CardFormSheetState extends State<CardFormSheet> {
                     width: 44,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE2DDEA),
+                      color: context.tokens.disabled,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -91,13 +92,16 @@ class _CardFormSheetState extends State<CardFormSheet> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const Expanded(
-                      child: Text('Add a card', style: EventraText.cardTitle),
+                    Expanded(
+                      child: Text(
+                        context.l10n.cfAddCard,
+                        style: context.text.cardTitle,
+                      ),
                     ),
                     Text(
                       _brand == CardBrand.unknown ? '' : _brand.label,
                       key: const ValueKey('card-brand'),
-                      style: EventraText.body.copyWith(
+                      style: context.text.body.copyWith(
                         color: t.primary,
                         fontWeight: FontWeight.w700,
                       ),
@@ -108,7 +112,7 @@ class _CardFormSheetState extends State<CardFormSheet> {
                 AuthField(
                   key: const ValueKey('card-number'),
                   controller: _number,
-                  label: 'Card number',
+                  label: context.l10n.cfNumber,
                   icon: Icons.credit_card_rounded,
                   keyboardType: TextInputType.number,
                   autofillHints: const [AutofillHints.creditCardNumber],
@@ -160,27 +164,24 @@ class _CardFormSheetState extends State<CardFormSheet> {
                 AuthField(
                   key: const ValueKey('card-name'),
                   controller: _name,
-                  label: 'Name on card',
+                  label: context.l10n.cfName,
                   icon: Icons.person_outline_rounded,
                   textInputAction: TextInputAction.done,
                   autofillHints: const [AutofillHints.creditCardName],
                   onSubmitted: (_) => _submit(),
                   validator: (v) => (v ?? '').trim().isEmpty
-                      ? 'Enter the name on the card.'
+                      ? context.l10n.cfEnterName
                       : null,
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Demo mode, no real charge. Test cards: 4242 4242 4242 4242 '
-                  'approves, 4000 0000 0000 0002 is declined, '
-                  '4000 0000 0000 3220 asks for 3-D Secure. We keep only the '
-                  'brand and last four digits.',
-                  style: EventraText.caption.copyWith(color: t.textHint),
+                  context.l10n.cfDemo,
+                  style: context.text.caption.copyWith(color: t.textHint),
                 ),
                 const SizedBox(height: 18),
                 GradientPillButton(
                   key: const ValueKey('card-save'),
-                  label: 'Use this card',
+                  label: context.l10n.cfUse,
                   onPressed: _submit,
                 ),
               ],

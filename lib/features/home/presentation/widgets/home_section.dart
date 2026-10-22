@@ -21,10 +21,10 @@ class SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.tokens;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 12, 0),
+      padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 12, 0),
       child: Row(
         children: [
-          Expanded(child: Text(title, style: EventraText.sectionTitle)),
+          Expanded(child: Text(title, style: context.text.sectionTitle)),
           if (actionLabel != null)
             TextButton(
               key: ValueKey('action-$title'),
@@ -32,7 +32,7 @@ class SectionHeader extends StatelessWidget {
               style: TextButton.styleFrom(foregroundColor: t.textPrimary),
               child: Text(
                 actionLabel!,
-                style: EventraText.body.copyWith(
+                style: context.text.body.copyWith(
                   color: t.textPrimary,
                   fontSize: 17,
                   fontWeight: FontWeight.w500,
@@ -75,7 +75,7 @@ class HomeSection extends StatelessWidget {
             height: 208,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 14),
+              padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 14),
               itemCount: events.length,
               separatorBuilder: (_, _) => const SizedBox(width: 14),
               itemBuilder: (context, i) => CompactEventCard(

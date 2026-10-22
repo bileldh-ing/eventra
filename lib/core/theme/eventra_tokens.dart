@@ -71,6 +71,33 @@ class EventraMotion {
   Curve get spring => Curves.elasticOut;
 }
 
+/// Dark palette (Phase 8b). Deep aubergine surfaces keep the brand's purple
+/// cast; text and primary are lifted so body copy clears WCAG AA (4.5:1) on
+/// every surface and the primary clears 3:1 for large text and icons.
+abstract final class EventraDarkPalette {
+  static const primary = Color(0xFFC86DF8);
+  static const primaryLight = Color(0xFFE9A2FF);
+  static const background = Color(0xFF0F0B19);
+  static const sheet = Color(0xFF191326);
+  static const surface = Color(0xFF1F1830);
+  static const surfaceMuted = Color(0xFF2A2240);
+  static const outline = Color(0xFF3A3152);
+  static const textPrimary = Color(0xFFF4EFFC);
+  static const textSecondary = Color(0xFFB9B1CC);
+  static const textHint = Color(0xFF8C85A2);
+  static const accentOrange = Color(0xFFF7AE70);
+  static const notificationRed = Color(0xFFFF5A5A);
+  static const success = Color(0xFF34D399);
+  static const error = Color(0xFFF87171);
+  static const glassFill = Color(0x2EFFFFFF);
+  static const glassBorder = Color(0x3DFFFFFF);
+  static const headerTopLeft = Color(0xFF7A2FA8);
+  static const headerMiddle = Color(0xFF5E3AA3);
+  static const headerRight = Color(0xFF3B4E98);
+  static const headerGlow = Color(0xFF2A5F7C);
+  static const mapBackground = Color(0xFF1B1726);
+}
+
 /// Design tokens exposed as a [ThemeExtension].
 @immutable
 class EventraTokens extends ThemeExtension<EventraTokens> {
@@ -89,6 +116,21 @@ class EventraTokens extends ThemeExtension<EventraTokens> {
     required this.error,
     required this.glassFill,
     required this.glassBorder,
+    this.surfaceMuted = const Color(0xFFF6F4F9),
+    this.outline = const Color(0xFFEDE6F5),
+    this.disabled = const Color(0xFFD9D2E3),
+    this.skeletonBase = const Color(0xFFEDE4F6),
+    this.skeletonHighlight = const Color(0xFFFBF7FE),
+    this.mapBackground = const Color(0xFFF2F2F0),
+    this.navInactive = const Color(0xFF3B3650),
+    this.shadowTint = const Color(0xFF8A4FC8),
+    this.headerColors = const [
+      EventraPalette.headerTopLeft,
+      EventraPalette.headerMiddle,
+      EventraPalette.headerRight,
+      EventraPalette.headerGlow,
+    ],
+    this.isDark = false,
     this.spacing = const EventraSpacing(),
     this.radii = const EventraRadii(),
     this.motion = const EventraMotion(),
@@ -97,9 +139,9 @@ class EventraTokens extends ThemeExtension<EventraTokens> {
     this.navPillHeight = 72,
   });
 
-  /// Tokens for [brightness]. The dark palette lands with the theming pass;
-  /// until then dark mode falls back to the light tokens.
-  static EventraTokens forBrightness(Brightness brightness) => light;
+  /// Tokens for [brightness].
+  static EventraTokens forBrightness(Brightness brightness) =>
+      brightness == Brightness.dark ? dark : light;
 
   static const light = EventraTokens(
     primary: EventraPalette.primary,
@@ -118,6 +160,38 @@ class EventraTokens extends ThemeExtension<EventraTokens> {
     glassBorder: EventraPalette.glassBorder,
   );
 
+  static const dark = EventraTokens(
+    primary: EventraDarkPalette.primary,
+    primaryLight: EventraDarkPalette.primaryLight,
+    background: EventraDarkPalette.background,
+    sheet: EventraDarkPalette.sheet,
+    surface: EventraDarkPalette.surface,
+    textPrimary: EventraDarkPalette.textPrimary,
+    textSecondary: EventraDarkPalette.textSecondary,
+    textHint: EventraDarkPalette.textHint,
+    accentOrange: EventraDarkPalette.accentOrange,
+    notificationRed: EventraDarkPalette.notificationRed,
+    success: EventraDarkPalette.success,
+    error: EventraDarkPalette.error,
+    glassFill: EventraDarkPalette.glassFill,
+    glassBorder: EventraDarkPalette.glassBorder,
+    surfaceMuted: EventraDarkPalette.surfaceMuted,
+    outline: EventraDarkPalette.outline,
+    disabled: Color(0xFF3F3757),
+    skeletonBase: Color(0xFF241D35),
+    skeletonHighlight: Color(0xFF332A48),
+    mapBackground: EventraDarkPalette.mapBackground,
+    navInactive: Color(0xFFCFC7E2),
+    shadowTint: Color(0xFF000000),
+    headerColors: [
+      EventraDarkPalette.headerTopLeft,
+      EventraDarkPalette.headerMiddle,
+      EventraDarkPalette.headerRight,
+      EventraDarkPalette.headerGlow,
+    ],
+    isDark: true,
+  );
+
   final Color primary;
   final Color primaryLight;
   final Color background;
@@ -132,6 +206,28 @@ class EventraTokens extends ThemeExtension<EventraTokens> {
   final Color error;
   final Color glassFill;
   final Color glassBorder;
+
+  /// Recessed surface: sold-out rows, inputs, chips at rest.
+  final Color surfaceMuted;
+
+  /// Hairlines, dividers, strength-meter tracks.
+  final Color outline;
+
+  /// Disabled button fill and stepper buttons.
+  final Color disabled;
+  final Color skeletonBase;
+  final Color skeletonHighlight;
+
+  /// Behind map tiles while they load.
+  final Color mapBackground;
+
+  /// Inactive nav pill icons.
+  final Color navInactive;
+
+  /// Hue of soft shadows (lavender in light, black in dark).
+  final Color shadowTint;
+  final List<Color> headerColors;
+  final bool isDark;
   final EventraSpacing spacing;
   final EventraRadii radii;
   final EventraMotion motion;
@@ -139,32 +235,39 @@ class EventraTokens extends ThemeExtension<EventraTokens> {
   final double buttonHeight;
   final double navPillHeight;
 
+  /// Brightness these tokens were made for.
+  Brightness get brightness => isDark ? Brightness.dark : Brightness.light;
+
+  /// Shadow color at [alpha], tinted for the current mode (dark mode needs a
+  /// stronger, neutral shadow to read against deep surfaces).
+  Color shadow(double alpha) =>
+      shadowTint.withValues(alpha: isDark ? (alpha * 3).clamp(0, 0.6) : alpha);
+
   /// centerLeft -> centerRight: #E58CFF -> #B83BF4
   LinearGradient get primaryGradient => const LinearGradient(
     colors: [EventraPalette.primaryLight, EventraPalette.primaryDeep],
   );
 
-  /// Diagonal header gradient with the soft cyan glow at the bottom.
-  LinearGradient get headerGradient => const LinearGradient(
+  /// Diagonal header gradient with the soft glow at the bottom.
+  LinearGradient get headerGradient => LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [
-      EventraPalette.headerTopLeft,
-      EventraPalette.headerMiddle,
-      EventraPalette.headerRight,
-      EventraPalette.headerGlow,
-    ],
-    stops: [0, 0.45, 0.82, 1],
+    colors: headerColors,
+    stops: const [0, 0.45, 0.82, 1],
   );
 
   /// rgba(188,71,245,0.35), blur 24, offset (0,10)
-  List<BoxShadow> get primaryGlow => const [
-    BoxShadow(color: Color(0x59BC47F5), blurRadius: 24, offset: Offset(0, 10)),
+  List<BoxShadow> get primaryGlow => [
+    BoxShadow(
+      color: isDark ? const Color(0x40BC47F5) : const Color(0x59BC47F5),
+      blurRadius: 24,
+      offset: const Offset(0, 10),
+    ),
   ];
 
-  /// Soft lavender shadow used by white cards, chips and the nav pill.
-  List<BoxShadow> get softShadow => const [
-    BoxShadow(color: Color(0x1A8A4FC8), blurRadius: 24, offset: Offset(0, 8)),
+  /// Soft shadow used by cards, chips and the nav pill.
+  List<BoxShadow> get softShadow => [
+    BoxShadow(color: shadow(0.1), blurRadius: 24, offset: const Offset(0, 8)),
   ];
 
   @override
@@ -184,6 +287,16 @@ class EventraTokens extends ThemeExtension<EventraTokens> {
       error: error,
       glassFill: glassFill,
       glassBorder: glassBorder,
+      surfaceMuted: surfaceMuted,
+      outline: outline,
+      disabled: disabled,
+      skeletonBase: skeletonBase,
+      skeletonHighlight: skeletonHighlight,
+      mapBackground: mapBackground,
+      navInactive: navInactive,
+      shadowTint: shadowTint,
+      headerColors: headerColors,
+      isDark: isDark,
       spacing: spacing,
       radii: radii,
       motion: motion,
@@ -212,6 +325,19 @@ class EventraTokens extends ThemeExtension<EventraTokens> {
       error: c(error, other.error),
       glassFill: c(glassFill, other.glassFill),
       glassBorder: c(glassBorder, other.glassBorder),
+      surfaceMuted: c(surfaceMuted, other.surfaceMuted),
+      outline: c(outline, other.outline),
+      disabled: c(disabled, other.disabled),
+      skeletonBase: c(skeletonBase, other.skeletonBase),
+      skeletonHighlight: c(skeletonHighlight, other.skeletonHighlight),
+      mapBackground: c(mapBackground, other.mapBackground),
+      navInactive: c(navInactive, other.navInactive),
+      shadowTint: c(shadowTint, other.shadowTint),
+      headerColors: [
+        for (var i = 0; i < headerColors.length; i++)
+          c(headerColors[i], other.headerColors[i]),
+      ],
+      isDark: t < 0.5 ? isDark : other.isDark,
       spacing: spacing,
       radii: radii,
       motion: motion,

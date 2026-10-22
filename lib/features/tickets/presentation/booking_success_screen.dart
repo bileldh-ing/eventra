@@ -11,6 +11,7 @@ import 'package:eventra/features/tickets/domain/ticketing_models.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:eventra/features/tickets/presentation/widgets/ticket_visuals.dart';
 import 'package:eventra/features/tickets/presentation/widgets/ticketing_widgets.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -55,13 +56,13 @@ class _BookingSuccessScreenState extends ConsumerState<BookingSuccessScreen>
           AsyncData(value: final Order o) => _content(t, o),
           AsyncData() => MessageView(
             icon: Icons.receipt_long_outlined,
-            title: 'Order not found',
-            message: 'Your tickets are in My Tickets.',
-            actionLabel: 'My Tickets',
+            title: context.l10n.bsOrderNotFound,
+            message: context.l10n.bsInMyTickets,
+            actionLabel: context.l10n.myTickets,
             onAction: () => context.go('/tickets'),
           ),
           AsyncError() => MessageView.error(
-            message: 'We could not load your order.',
+            message: context.l10n.bsLoadFailed,
             onRetry: () => ref.invalidate(orderProvider(widget.orderId)),
           ),
           _ => const Center(child: CircularProgressIndicator()),
@@ -89,9 +90,9 @@ class _BookingSuccessScreenState extends ConsumerState<BookingSuccessScreen>
     final top = MediaQuery.paddingOf(context).top;
     return Stack(
       children: [
-        Positioned(
-          left: 0,
-          right: 0,
+        PositionedDirectional(
+          start: 0,
+          end: 0,
           top: 0,
           height: 300 + top,
           child: FacetedGradient(
@@ -104,26 +105,26 @@ class _BookingSuccessScreenState extends ConsumerState<BookingSuccessScreen>
         ),
         ListView(
           key: const ValueKey('success-scroll'),
-          padding: EdgeInsets.fromLTRB(24, top + 28, 24, 32),
+          padding: EdgeInsetsDirectional.fromSTEB(24, top + 28, 24, 32),
           children: [
             Text(
-              "You're in!",
+              context.l10n.bsYoureIn,
               key: const ValueKey('success-title'),
               textAlign: TextAlign.center,
-              style: EventraText.heroTitle.copyWith(
+              style: context.text.heroTitle.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               o.totalCents == 0
-                  ? '${o.ticketCount} free '
-                        '${o.ticketCount == 1 ? 'spot' : 'spots'} reserved'
-                  : '${o.ticketCount} '
-                        '${o.ticketCount == 1 ? 'ticket' : 'tickets'} · '
-                        '${formatCents(o.totalCents)} paid',
+                  ? context.l10n.bsFreeReserved(o.ticketCount)
+                  : context.l10n.bsPaid(
+                      o.ticketCount,
+                      formatCents(o.totalCents),
+                    ),
               textAlign: TextAlign.center,
-              style: EventraText.body.copyWith(color: Colors.white),
+              style: context.text.body.copyWith(color: Colors.white),
             ),
             const SizedBox(height: 28),
             AnimatedBuilder(
@@ -155,10 +156,10 @@ class _BookingSuccessScreenState extends ConsumerState<BookingSuccessScreen>
                   Flexible(
                     child: Text(
                       reminders == 2
-                          ? "We'll remind you 24 hours and 2 hours before."
-                          : "We'll remind you 2 hours before.",
+                          ? context.l10n.bsRemindBoth
+                          : context.l10n.bsRemind2h,
                       key: const ValueKey('reminder-note'),
-                      style: EventraText.caption,
+                      style: context.text.caption,
                     ),
                   ),
                 ],
@@ -166,7 +167,9 @@ class _BookingSuccessScreenState extends ConsumerState<BookingSuccessScreen>
             const SizedBox(height: 22),
             GradientPillButton(
               key: const ValueKey('view-ticket'),
-              label: o.ticketCount > 1 ? 'View Tickets' : 'View Ticket',
+              label: o.ticketCount > 1
+                  ? context.l10n.bsViewTickets
+                  : context.l10n.bsViewTicket,
               icon: Icons.qr_code_2_rounded,
               onPressed: () => o.ticketCount > 1
                   ? context.go('/tickets')
@@ -179,7 +182,7 @@ class _BookingSuccessScreenState extends ConsumerState<BookingSuccessScreen>
                   child: _SecondaryButton(
                     key: const ValueKey('success-calendar'),
                     icon: Icons.event_available_rounded,
-                    label: 'Add to Calendar',
+                    label: context.l10n.addToCalendar,
                     onTap: () => addEventToCalendar(context, ref, e),
                   ),
                 ),
@@ -188,7 +191,7 @@ class _BookingSuccessScreenState extends ConsumerState<BookingSuccessScreen>
                   child: _SecondaryButton(
                     key: const ValueKey('success-invite'),
                     icon: Icons.group_add_outlined,
-                    label: 'Invite Friends',
+                    label: context.l10n.inviteFriendsTitle,
                     onTap: () => shareTicketInvite(ref, e),
                   ),
                 ),
@@ -198,7 +201,7 @@ class _BookingSuccessScreenState extends ConsumerState<BookingSuccessScreen>
             TextButton(
               key: const ValueKey('success-done'),
               onPressed: () => context.go('/tickets'),
-              child: const Text('Done'),
+              child: Text(context.l10n.done),
             ),
           ],
         ),
@@ -228,11 +231,11 @@ class _SuccessTicket extends StatelessWidget {
       decoration: ShapeDecoration(
         color: t.surface,
         shape: const TicketShapeBorder(notchY: photoH + infoH),
-        shadows: const [
+        shadows: [
           BoxShadow(
-            color: Color(0x339A5BD6),
+            color: context.tokens.shadow(0.2),
             blurRadius: 30,
-            offset: Offset(0, 14),
+            offset: const Offset(0, 14),
           ),
         ],
       ),
@@ -249,7 +252,7 @@ class _SuccessTicket extends StatelessWidget {
               SizedBox(
                 height: infoH,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 14, 20, 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -257,12 +260,12 @@ class _SuccessTicket extends StatelessWidget {
                         e.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: EventraText.cardTitle,
+                        style: context.text.cardTitle,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         ticketDate(e.startAt),
-                        style: EventraText.body.copyWith(
+                        style: context.text.body.copyWith(
                           color: t.primary,
                           fontWeight: FontWeight.w700,
                         ),
@@ -271,7 +274,7 @@ class _SuccessTicket extends StatelessWidget {
                         e.venue,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: EventraText.caption,
+                        style: context.text.caption,
                       ),
                     ],
                   ),
@@ -283,7 +286,7 @@ class _SuccessTicket extends StatelessWidget {
                     PerforationLine(progress: dashes.value),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 14, 20, 18),
+                padding: const EdgeInsetsDirectional.fromSTEB(20, 14, 20, 18),
                 child: Row(
                   children: [
                     Expanded(
@@ -292,7 +295,7 @@ class _SuccessTicket extends StatelessWidget {
                           for (final l in order.lines)
                             '${l.quantity}× ${l.tierName}',
                         ].join(' · '),
-                        style: EventraText.body.copyWith(
+                        style: context.text.body.copyWith(
                           color: t.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
@@ -359,7 +362,7 @@ class _SecondaryButton extends StatelessWidget {
         side: BorderSide(color: t.primary.withValues(alpha: 0.3)),
         minimumSize: const Size.fromHeight(52),
         shape: const StadiumBorder(),
-        textStyle: EventraText.body.copyWith(fontWeight: FontWeight.w700),
+        textStyle: context.text.body.copyWith(fontWeight: FontWeight.w700),
       ),
       onPressed: onTap,
       icon: Icon(icon, size: 20),

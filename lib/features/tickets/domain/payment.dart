@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:eventra/features/tickets/domain/cards.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:meta/meta.dart';
 
 /// What the buyer pays with: a saved card (by token) or a card typed in now.
@@ -118,7 +119,7 @@ class MockPaymentGateway implements PaymentGateway {
         return ChargeResult(
           status: ChargeStatus.authenticationFailed,
           amountCents: amount,
-          message: 'Card authentication was cancelled. You were not charged.',
+          message: AppLocale.l10n.payAuthCancelled,
         );
       }
     }
@@ -127,14 +128,14 @@ class MockPaymentGateway implements PaymentGateway {
       return ChargeResult(
         status: ChargeStatus.declined,
         amountCents: amount,
-        message: 'Your card was declined. Try another card.',
+        message: AppLocale.l10n.payDeclined,
       );
     }
     if (behaviour == timeoutNumber) {
       return ChargeResult(
         status: ChargeStatus.timeout,
         amountCents: amount,
-        message: 'The payment timed out. You were not charged; try again.',
+        message: AppLocale.l10n.payTimeout,
       );
     }
     capturedCount++;

@@ -1,3 +1,4 @@
+import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:flutter/material.dart';
 
 /// Shimmering skeleton wrapper: sweeps a light band over its grey children.
@@ -28,16 +29,13 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
       child: widget.child,
       builder: (context, child) {
         final x = _c.value * 3 - 1;
+        final t = context.tokens;
         return ShaderMask(
           blendMode: BlendMode.srcATop,
           shaderCallback: (rect) => LinearGradient(
             begin: Alignment(x - 1, -0.2),
             end: Alignment(x + 1, 0.2),
-            colors: const [
-              Color(0xFFEDE4F6),
-              Color(0xFFFBF7FE),
-              Color(0xFFEDE4F6),
-            ],
+            colors: [t.skeletonBase, t.skeletonHighlight, t.skeletonBase],
             stops: const [0.25, 0.5, 0.75],
           ).createShader(rect),
           child: child,
@@ -67,7 +65,7 @@ class SkeletonBox extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: const Color(0xFFEDE4F6),
+        color: context.tokens.skeletonBase,
         shape: circle ? BoxShape.circle : BoxShape.rectangle,
         borderRadius: circle ? null : BorderRadius.circular(radius),
       ),

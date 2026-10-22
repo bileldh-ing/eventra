@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:eventra/core/utils/formatters.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:latlong2/latlong.dart';
 
 /// Mean Earth radius (IUGG) in kilometres.
@@ -19,7 +21,9 @@ double haversineKm(LatLng a, LatLng b) {
 }
 
 /// '5.21KM' style label used in the Nearest Location list.
-String formatKm(double km) => '${km.toStringAsFixed(2)}KM';
+String formatKm(double km) => AppLocale.isEnglish
+    ? '${km.toStringAsFixed(2)}KM'
+    : AppLocale.l10n.distanceKm(formatDecimal(km, 2));
 
 /// Sorts [items] by distance from [origin], nearest first. Stable for ties.
 List<T> sortByDistance<T>(

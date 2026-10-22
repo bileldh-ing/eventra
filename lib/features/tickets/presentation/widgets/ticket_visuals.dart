@@ -1,5 +1,6 @@
 import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
+import 'package:eventra/core/utils/formatters.dart';
 import 'package:eventra/core/widgets/event_image.dart';
 import 'package:eventra/core/widgets/pressable.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
@@ -8,21 +9,22 @@ import 'package:eventra/features/tickets/domain/qr_token.dart';
 import 'package:eventra/features/tickets/domain/ticketing_models.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:eventra/features/tickets/presentation/widgets/ticketing_widgets.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 'Sat, Dec 24 · 11:00 PM'
 String ticketDate(DateTime d) =>
-    '${DateFormat('EEE, MMM d').format(d)} · ${DateFormat('h:mm a').format(d)}';
+    '${formatWeekdayMonthDay(d)} · ${formatTime(d)}';
 
-Color statusColor(EventraTokens t, String label) => switch (label) {
-  'Valid' => t.success,
-  'Cancelled' => t.error,
-  _ => t.textSecondary,
-};
+Color statusColor(EventraTokens t, TicketDisplayStatus status) =>
+    switch (status) {
+      TicketDisplayStatus.valid => t.success,
+      TicketDisplayStatus.cancelled => t.error,
+      _ => t.textSecondary,
+    };
 
 Uri eventLink(String eventId) =>
     Uri.parse('https://eventra.app/event/$eventId');
@@ -33,6 +35,7 @@ Future<void> addEventToCalendar(
   EventSnapshot e,
 ) async {
   final messenger = ScaffoldMessenger.of(context);
+  final l10n = context.l10n;
   final ok = await ref
       .read(calendarServiceProvider)
       .add(
@@ -41,7 +44,7 @@ Future<void> addEventToCalendar(
           start: e.startAt,
           end: e.endAt,
           location: '${e.venue}, ${e.address}',
-          description: 'Your Eventra ticket is in the app. ${eventLink(e.id)}',
+          description: l10n.tvCalDesc(eventLink(e.id).toString()),
         ),
       );
   messenger
@@ -49,7 +52,7 @@ Future<void> addEventToCalendar(
     ..showSnackBar(
       SnackBar(
         content: Text(
-          ok ? 'Added to your calendar' : 'Could not open your calendar.',
+          ok ? l10n.tvCalAdded : l10n.tvCalFailed,
         ),
       ),
     );
@@ -58,14 +61,18 @@ Future<void> addEventToCalendar(
 Future<void> shareTicketInvite(WidgetRef ref, EventSnapshot e) => ref
     .read(shareServiceProvider)
     .share(
-      text:
-          "I'm going to ${e.title} on ${ticketDate(e.startAt)} at ${e.venue}. "
-          'Join me! ${eventLink(e.id)}',
-      subject: 'Come with me to ${e.title}',
+      text: AppLocale.l10n.tvInviteText(
+        e.title,
+        ticketDate(e.startAt),
+        e.venue,
+        eventLink(e.id).toString(),
+      ),
+      subject: AppLocale.l10n.shareInviteSubject(e.title),
     );
 
 Future<void> openDirections(BuildContext context, EventSnapshot e) async {
   final messenger = ScaffoldMessenger.of(context);
+  final l10n = context.l10n;
   final uri = Uri.parse(
     'https://www.google.com/maps/dir/?api=1&destination='
     '${e.latitude},${e.longitude}',
@@ -80,7 +87,7 @@ Future<void> openDirections(BuildContext context, EventSnapshot e) async {
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text('Could not open maps. ${e.address}')),
+        SnackBar(content: Text(l10n.tvMapsFailed(e.address))),
       );
   }
 }
@@ -124,7 +131,7 @@ class TicketAction extends StatelessWidget {
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: EventraText.caption.copyWith(color: t.textPrimary),
+                style: context.text.caption.copyWith(color: t.textPrimary),
               ),
             ],
           ),
@@ -171,7 +178,7 @@ class RotatingQr extends ConsumerWidget {
                   border: Border.all(color: t.primary.withValues(alpha: 0.15)),
                 ),
                 child: Semantics(
-                  label: 'Ticket QR code. Refreshes every 30 seconds.',
+                  label: context.l10n.tvQrLabel,
                   child: QrImageView(
                     key: ValueKey('qr-$data'),
                     data: data,
@@ -203,8 +210,8 @@ class RotatingQr extends ConsumerWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Code refreshes in ${left}s',
-                    style: EventraText.caption,
+                    context.l10n.tvRefreshIn(left.toString()),
+                    style: context.text.caption,
                   ),
                 ],
               ),
@@ -214,8 +221,8 @@ class RotatingQr extends ConsumerWidget {
       ),
       AsyncError() => SizedBox.square(
         dimension: size,
-        child: const InlineBanner(
-          message: 'The secure code could not be created on this device.',
+        child: InlineBanner(
+          message: context.l10n.tvQrFailed,
         ),
       ),
       _ => SizedBox.square(
@@ -243,8 +250,9 @@ class WalletTicketCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.tokens;
     final e = entry.event;
-    final status = ticketStatusLabel(entry, now);
-    final dim = status != 'Valid';
+    final display = ticketDisplayStatus(entry, now);
+    final status = display.label;
+    final dim = display != TicketDisplayStatus.valid;
     const photoH = 104.0;
     return Semantics(
       button: true,
@@ -286,23 +294,23 @@ class WalletTicketCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Positioned(
-                      left: 18,
-                      right: 18,
+                    PositionedDirectional(
+                      start: 18,
+                      end: 18,
                       bottom: 12,
                       child: Text(
                         e.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: EventraText.cardTitleOnPhoto.copyWith(
+                        style: context.text.cardTitleOnPhoto.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    Positioned(
+                    PositionedDirectional(
                       top: 12,
-                      right: 12,
+                      end: 12,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -315,8 +323,8 @@ class WalletTicketCard extends StatelessWidget {
                         child: Text(
                           status,
                           key: ValueKey('status-${entry.ticket.id}'),
-                          style: EventraText.caption.copyWith(
-                            color: statusColor(t, status),
+                          style: context.text.caption.copyWith(
+                            color: statusColor(t, display),
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -326,7 +334,7 @@ class WalletTicketCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(18, 14, 14, 14),
+                padding: const EdgeInsetsDirectional.fromSTEB(18, 14, 14, 14),
                 child: Row(
                   children: [
                     Expanded(
@@ -335,7 +343,7 @@ class WalletTicketCard extends StatelessWidget {
                         children: [
                           Text(
                             ticketDate(e.startAt),
-                            style: EventraText.body.copyWith(
+                            style: context.text.body.copyWith(
                               color: t.primary,
                               fontWeight: FontWeight.w700,
                             ),
@@ -345,13 +353,16 @@ class WalletTicketCard extends StatelessWidget {
                             e.venue,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: EventraText.caption,
+                            style: context.text.caption,
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            '${entry.ticket.tierName} · Ticket '
-                            '${entry.ticket.seq} of ${entry.order.ticketCount}',
-                            style: EventraText.caption.copyWith(
+                            context.l10n.tvTierSeq(
+                              entry.ticket.tierName,
+                              entry.ticket.seq.toString(),
+                              entry.order.ticketCount.toString(),
+                            ),
+                            style: context.text.caption.copyWith(
                               color: t.textPrimary,
                               fontWeight: FontWeight.w600,
                             ),

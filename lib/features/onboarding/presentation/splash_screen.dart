@@ -5,6 +5,7 @@ import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/core/widgets/faceted_painter.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -103,8 +104,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               FadeTransition(
                 opacity: logo,
                 child: Text(
-                  'Eventra',
-                  style: EventraText.heroTitle.copyWith(
+                  context.l10n.appTitle,
+                  style: context.text.heroTitle.copyWith(
                     fontSize: 40,
                     letterSpacing: 0.5,
                   ),
@@ -114,8 +115,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               FadeTransition(
                 opacity: tagline,
                 child: Text(
-                  'Discover. Book. Feel the moment.',
-                  style: EventraText.body.copyWith(
+                  context.l10n.appTagline,
+                  style: context.text.body.copyWith(
                     color: Colors.white,
                     fontSize: 16,
                   ),

@@ -1,3 +1,4 @@
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
@@ -99,28 +100,31 @@ class LocalReminderScheduler implements ReminderScheduler {
   }) async {
     final times = reminderTimes(request.start, now ?? DateTime.now());
     if (times.isEmpty || !await _init()) return const [];
-    const details = NotificationDetails(
+    final l = AppLocale.l10n;
+    final details = NotificationDetails(
       android: AndroidNotificationDetails(
         'event_reminders',
-        'Event reminders',
-        channelDescription: 'Reminders 24 hours and 2 hours before events',
+        l.remChannel,
+        channelDescription: l.remChannelDesc,
         importance: Importance.high,
         priority: Priority.high,
       ),
-      iOS: DarwinNotificationDetails(),
+      iOS: const DarwinNotificationDetails(),
     );
     final done = <DateTime>[];
     for (final at in times) {
       final slot = kReminderOffsets.indexOf(request.start.difference(at));
-      final lead = slot == 0 ? 'tomorrow' : 'in 2 hours';
       try {
         await _plugin.zonedSchedule(
           id: reminderId(request.orderId, slot),
           scheduledDate: tz.TZDateTime.from(at.toUtc(), tz.UTC),
           notificationDetails: details,
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-          title: '${request.eventTitle} starts $lead',
-          body: '${request.venue}. Your ticket is ready in Eventra.',
+          // Text is fixed at scheduling time in the language active then.
+          title: slot == 0
+              ? l.remTitleTomorrow(request.eventTitle)
+              : l.remTitleSoon(request.eventTitle),
+          body: l.remBody(request.venue),
           payload: request.ticketId,
         );
         done.add(at);

@@ -5,6 +5,7 @@ import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/reviews/domain/review.dart';
 import 'package:eventra/features/reviews/presentation/review_widgets.dart';
 import 'package:eventra/features/reviews/presentation/reviews_providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -53,11 +54,11 @@ class _AllReviewsScreenState extends ConsumerState<AllReviewsScreen> {
       backgroundColor: t.background,
       appBar: AppBar(
         backgroundColor: t.background,
-        title: const Text('Reviews', style: EventraText.sectionTitle),
+        title: Text(context.l10n.statReviews, style: context.text.sectionTitle),
         actions: [
           PopupMenuButton<ReviewSort>(
             key: const ValueKey('reviews-sort'),
-            tooltip: 'Sort reviews',
+            tooltip: context.l10n.sortReviews,
             icon: const Icon(Icons.sort_rounded),
             initialValue: _sort,
             onSelected: (s) => setState(() => _sort = s),
@@ -67,9 +68,9 @@ class _AllReviewsScreenState extends ConsumerState<AllReviewsScreen> {
                   key: ValueKey('reviews-sort-${s.name}'),
                   value: s,
                   child: Text(switch (s) {
-                    ReviewSort.newest => 'Newest',
-                    ReviewSort.highest => 'Highest rated',
-                    ReviewSort.lowest => 'Lowest rated',
+                    ReviewSort.newest => context.l10n.revNewest,
+                    ReviewSort.highest => context.l10n.revHighest,
+                    ReviewSort.lowest => context.l10n.revLowest,
                   }),
                 ),
             ],
@@ -80,17 +81,17 @@ class _AllReviewsScreenState extends ConsumerState<AllReviewsScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: MessageView.error(
-            message: 'Reviews could not load.',
+            message: context.l10n.revLoadFailed,
             onRetry: () => ref.invalidate(allReviewsProvider(widget.eventId)),
           ),
         ),
         data: (all) {
           final list = shown(all);
           return ListView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 32),
             children: [
               if (event != null) ...[
-                Text(event.title, style: EventraText.cardTitle),
+                Text(event.title, style: context.text.cardTitle),
                 const SizedBox(height: 12),
               ],
               RatingSummaryCard(summary: summary),
@@ -103,10 +104,12 @@ class _AllReviewsScreenState extends ConsumerState<AllReviewsScreen> {
                   children: [
                     for (final s in <int?>[null, 5, 4, 3, 2, 1])
                       Padding(
-                        padding: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsetsDirectional.only(end: 8),
                         child: ChoiceChip(
                           key: ValueKey('reviews-filter-${s ?? 'all'}'),
-                          label: Text(s == null ? 'All' : '$s ★'),
+                          label: Text(
+                            s == null ? context.l10n.filtersAll : '$s ★',
+                          ),
                           selected: _stars == s,
                           onSelected: (_) => setState(() => _stars = s),
                         ),
@@ -115,13 +118,13 @@ class _AllReviewsScreenState extends ConsumerState<AllReviewsScreen> {
                 ),
               ),
               if (list.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.only(top: 40),
+                Padding(
+                  padding: const EdgeInsets.only(top: 40),
                   child: MessageView(
-                    key: ValueKey('reviews-none'),
+                    key: const ValueKey('reviews-none'),
                     icon: Icons.reviews_outlined,
-                    title: 'No reviews here',
-                    message: 'Try another star filter.',
+                    title: context.l10n.revNoneHere,
+                    message: context.l10n.revTryAnotherStar,
                   ),
                 ),
               for (final r in list) ...[

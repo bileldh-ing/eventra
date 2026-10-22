@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:eventra/features/events/data/db/app_database.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/notifications/domain/app_notification.dart';
+import 'package:eventra/l10n/l10n.dart';
 
 /// Persistent notification inbox, one per scope (user id or 'guest').
 class NotificationsRepository {
@@ -109,16 +110,16 @@ class NotificationsRepository {
       AppNotification(
         id: 'seed-friends-$scope',
         kind: NotificationKind.friendGoing,
-        title: '2 friends are going',
-        body: 'Sarah and Liam saved ${pitchfork.title}.',
+        title: AppLocale.l10n.seedFriendsTitle,
+        body: AppLocale.l10n.seedFriendsBody(pitchfork.title),
         time: now.subtract(const Duration(minutes: 25)),
         eventId: pitchfork.id,
       ),
       AppNotification(
         id: 'seed-soon-$scope',
         kind: NotificationKind.reminder,
-        title: 'Coming up soon',
-        body: '${pick(0).title} is one of the next events near you.',
+        title: AppLocale.l10n.seedSoonTitle,
+        body: AppLocale.l10n.seedSoonBody(pick(0).title),
         time: now.subtract(const Duration(hours: 3)),
         eventId: pick(0).id,
       ),
@@ -126,8 +127,8 @@ class NotificationsRepository {
         AppNotification(
           id: 'seed-review-$scope',
           kind: NotificationKind.reviewPrompt,
-          title: 'How was ${past.first.title}?',
-          body: 'Attendees are sharing reviews. Tap to read them.',
+          title: AppLocale.l10n.seedReviewTitle(past.first.title),
+          body: AppLocale.l10n.seedReviewBody,
           time: now.subtract(const Duration(days: 1)),
           eventId: past.first.id,
           read: true,
@@ -135,8 +136,8 @@ class NotificationsRepository {
       AppNotification(
         id: 'seed-new-$scope',
         kind: NotificationKind.newEvent,
-        title: 'New in Music near you',
-        body: '${pick(5).title} was just announced.',
+        title: AppLocale.l10n.seedNewTitle,
+        body: AppLocale.l10n.seedNewBody(pick(5).title),
         time: now.subtract(const Duration(days: 1, hours: 2)),
         eventId: pick(5).id,
         read: true,
@@ -144,8 +145,8 @@ class NotificationsRepository {
       AppNotification(
         id: 'seed-price-$scope',
         kind: NotificationKind.priceDrop,
-        title: 'Early Bird price available',
-        body: 'Save 20% on ${pick(9).title} while Early Bird lasts.',
+        title: AppLocale.l10n.seedPriceTitle,
+        body: AppLocale.l10n.seedPriceBody(pick(9).title),
         time: now.subtract(const Duration(days: 2)),
         eventId: pick(9).id,
         read: true,

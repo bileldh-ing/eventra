@@ -1,7 +1,8 @@
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
-/// App languages. The choice is persisted now; strings are wired up with
-/// the localization pass.
+/// App languages. Labels are endonyms, so they stay in their own language
+/// whatever the current locale is.
 enum AppLanguage {
   en('English', 'EN'),
   fr('Français', 'FR'),
@@ -10,6 +11,11 @@ enum AppLanguage {
   const AppLanguage(this.label, this.code);
   final String label;
   final String code;
+
+  Locale get locale => Locale(name);
+
+  /// Arabic lays the UI out right to left.
+  bool get isRtl => this == AppLanguage.ar;
 }
 
 /// User preferences, persisted per device.
@@ -77,7 +83,7 @@ class AppSettings {
 }
 
 String themeModeLabel(ThemeMode m) => switch (m) {
-  ThemeMode.system => 'System',
-  ThemeMode.light => 'Light',
-  ThemeMode.dark => 'Dark',
+  ThemeMode.system => AppLocale.l10n.themeSystem,
+  ThemeMode.light => AppLocale.l10n.themeLight,
+  ThemeMode.dark => AppLocale.l10n.themeDark,
 };

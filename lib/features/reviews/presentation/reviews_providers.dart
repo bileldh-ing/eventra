@@ -5,6 +5,7 @@ import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/reviews/data/reviews_repository.dart';
 import 'package:eventra/features/reviews/domain/review.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
@@ -86,8 +87,8 @@ class ReviewActions {
   Future<Result<Review>> create(Event event, int rating, String text) async {
     final user = _ref.read(authControllerProvider).user;
     if (user == null) {
-      return const Result.failure(
-        ReviewFailure(ReviewError.notAllowed, 'Log in to write a review.'),
+      return Result.failure(
+        ReviewFailure(ReviewError.notAllowed, AppLocale.l10n.revLoginToWrite),
       );
     }
     final r = await _repo.create(

@@ -98,9 +98,9 @@ class GlassCircleButton extends StatelessWidget {
                 ),
               ),
               if (badge)
-                Positioned(
+                PositionedDirectional(
                   top: size * 0.26,
-                  right: size * 0.3,
+                  end: size * 0.3,
                   child: Container(
                     key: const ValueKey('notification-dot'),
                     width: 8,

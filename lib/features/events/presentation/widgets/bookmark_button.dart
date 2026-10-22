@@ -1,5 +1,6 @@
 import 'package:eventra/core/widgets/glass.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -40,12 +41,13 @@ class _BookmarkButtonState extends ConsumerState<BookmarkButton>
   Future<void> _toggle() async {
     _pop.forward(from: 0);
     final messenger = ScaffoldMessenger.maybeOf(context);
+    final failed = context.l10n.favUpdateFailed;
     final saved = await ref
         .read(favoritesProvider.notifier)
         .toggle(widget.eventId);
     if (saved == null) {
       messenger?.showSnackBar(
-        const SnackBar(content: Text('Could not update favorites. Try again.')),
+        SnackBar(content: Text(failed)),
       );
     }
   }
@@ -58,7 +60,7 @@ class _BookmarkButtonState extends ConsumerState<BookmarkButton>
       child: GlassCircleButton(
         key: ValueKey('bookmark-${widget.eventId}'),
         icon: saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-        semanticLabel: saved ? 'Remove from favorites' : 'Save to favorites',
+        semanticLabel: saved ? context.l10n.favRemove : context.l10n.favSave,
         size: widget.size,
         iconSize: widget.iconSize,
         onPressed: _toggle,

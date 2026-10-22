@@ -5,6 +5,7 @@ import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/core/widgets/faceted_painter.dart';
 import 'package:eventra/core/widgets/glass.dart';
 import 'package:eventra/features/auth/domain/auth_models.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -42,7 +43,7 @@ class AuthScaffold extends StatelessWidget {
                 bottom: Radius.circular(t.radii.header),
               ),
               child: Padding(
-                padding: EdgeInsets.fromLTRB(24, top + 12, 24, 72),
+                padding: EdgeInsetsDirectional.fromSTEB(24, top + 12, 24, 72),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -53,16 +54,16 @@ class AuthScaffold extends StatelessWidget {
                           : GlassCircleButton(
                               key: const ValueKey('auth-back'),
                               icon: Icons.arrow_back_rounded,
-                              semanticLabel: 'Back',
+                              semanticLabel: context.l10n.back,
                               onPressed: onBack,
                             ),
                     ),
                     const SizedBox(height: 20),
-                    Text(title, style: EventraText.heroTitle),
+                    Text(title, style: context.text.heroTitle),
                     const SizedBox(height: 6),
                     Text(
                       subtitle,
-                      style: EventraText.body.copyWith(
+                      style: context.text.body.copyWith(
                         color: Colors.white.withValues(alpha: 0.92),
                         fontSize: 16,
                       ),
@@ -76,7 +77,7 @@ class AuthScaffold extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 20),
                   decoration: BoxDecoration(
                     color: t.surface,
                     borderRadius: BorderRadius.circular(t.radii.sheet),
@@ -88,7 +89,7 @@ class AuthScaffold extends StatelessWidget {
             ),
             if (footer != null)
               Padding(
-                padding: EdgeInsets.fromLTRB(
+                padding: EdgeInsetsDirectional.fromSTEB(
                   24,
                   0,
                   24,
@@ -155,15 +156,17 @@ class AuthField extends StatelessWidget {
       onChanged: onChanged,
       inputFormatters: inputFormatters,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      style: EventraText.body.copyWith(color: t.textPrimary, fontSize: 16),
+      style: context.text.body.copyWith(color: t.textPrimary, fontSize: 16),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: EventraText.body.copyWith(color: t.textHint),
+        labelStyle: context.text.body.copyWith(color: t.textHint),
         prefixIcon: Icon(icon, color: t.textHint),
         suffixIcon: onToggleObscure == null
             ? null
             : IconButton(
-                tooltip: obscure ? 'Show password' : 'Hide password',
+                tooltip: obscure
+                    ? context.l10n.showPassword
+                    : context.l10n.hidePassword,
                 icon: Icon(
                   obscure
                       ? Icons.visibility_outlined
@@ -183,7 +186,7 @@ class AuthField extends StatelessWidget {
         focusedBorder: border(t.primary, 1.5),
         errorBorder: border(t.error),
         focusedErrorBorder: border(t.error, 1.5),
-        errorStyle: EventraText.caption.copyWith(color: t.error),
+        errorStyle: context.text.caption.copyWith(color: t.error),
       ),
     );
   }
@@ -220,7 +223,7 @@ class AuthErrorBanner extends StatelessWidget {
                       liveRegion: true,
                       child: Text(
                         message!,
-                        style: EventraText.caption.copyWith(color: t.error),
+                        style: context.text.caption.copyWith(color: t.error),
                       ),
                     ),
                   ),
@@ -290,11 +293,11 @@ class PasswordStrengthMeter extends StatelessWidget {
     };
     return Semantics(
       label: s == PasswordStrength.empty
-          ? 'Password strength'
-          : 'Password strength ${s.label}',
+          ? context.l10n.pwStrengthLabel
+          : context.l10n.pwStrengthValue(s.label),
       excludeSemantics: true,
       child: Padding(
-        padding: const EdgeInsets.only(top: 10, left: 4, right: 4),
+        padding: const EdgeInsetsDirectional.only(top: 10, start: 4, end: 4),
         child: Row(
           children: [
             for (var i = 1; i <= 4; i++) ...[
@@ -304,7 +307,7 @@ class PasswordStrengthMeter extends StatelessWidget {
                   curve: t.motion.standard,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: i <= s.level ? color : const Color(0xFFEDE6F5),
+                    color: i <= s.level ? color : context.tokens.outline,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -319,7 +322,7 @@ class PasswordStrengthMeter extends StatelessWidget {
                   s.label,
                   key: ValueKey(s),
                   textAlign: TextAlign.end,
-                  style: EventraText.caption.copyWith(color: color),
+                  style: context.text.caption.copyWith(color: color),
                 ),
               ),
             ),
@@ -450,7 +453,7 @@ class _OtpBoxesState extends State<OtpBoxes> {
         duration: t.motion.fast,
         child: Text(
           digit,
-          style: EventraText.cardTitle.copyWith(fontSize: 24),
+          style: context.text.cardTitle.copyWith(fontSize: 24),
         ),
       ),
     );
@@ -472,8 +475,8 @@ class DemoCodeHint extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        'Debug build: the demo code is $kDemoOtpCode',
-        style: EventraText.caption.copyWith(color: t.primary),
+        context.l10n.authDebugCode(kDemoOtpCode),
+        style: context.text.caption.copyWith(color: t.primary),
       ),
     );
   }
@@ -504,7 +507,7 @@ class AuthLinkButton extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: EventraText.body.copyWith(
+        style: context.text.body.copyWith(
           color: onPressed == null ? t.textHint : t.primary,
           fontWeight: bold ? FontWeight.w600 : FontWeight.w500,
         ),

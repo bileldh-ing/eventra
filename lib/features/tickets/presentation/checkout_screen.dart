@@ -24,6 +24,7 @@ import 'package:eventra/features/tickets/domain/ticketing_models.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:eventra/features/tickets/presentation/widgets/card_form_sheet.dart';
 import 'package:eventra/features/tickets/presentation/widgets/ticketing_widgets.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -65,7 +66,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       body: Column(
         children: [
           TicketingHeader(
-            title: 'Checkout',
+            title: context.l10n.coCheckout,
             onBack: () => Navigator.of(context).maybePop(),
           ),
           Expanded(child: child),
@@ -76,7 +77,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     if (hold.hasError || (event?.hasError ?? false)) {
       return page(
         MessageView.error(
-          message: 'We could not load your checkout.',
+          message: context.l10n.coLoadFailed,
           onRetry: () => ref.invalidate(holdProvider(holdId)),
         ),
       );
@@ -89,11 +90,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       return page(
         MessageView(
           icon: Icons.receipt_long_outlined,
-          title: 'Checkout not found',
-          message:
-              'This selection is no longer available. Pick your '
-              'tickets again.',
-          actionLabel: 'Back',
+          title: context.l10n.coNotFound,
+          message: context.l10n.coSelectionGone,
+          actionLabel: context.l10n.back,
           onAction: () => Navigator.of(context).maybePop(),
         ),
       );
@@ -102,9 +101,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       return page(
         MessageView(
           icon: Icons.check_circle_outline_rounded,
-          title: 'Already booked',
-          message: 'These tickets are in your wallet.',
-          actionLabel: 'My Tickets',
+          title: context.l10n.coAlreadyBooked,
+          message: context.l10n.coInWallet,
+          actionLabel: context.l10n.myTickets,
           onAction: () => context.go('/tickets'),
         ),
       );
@@ -224,7 +223,7 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
     if (!(_form.currentState?.validate() ?? false)) return;
     final quote = _quote;
     if (!quote.isFree && _method == null) {
-      setState(() => _error = 'Choose how to pay.');
+      setState(() => _error = context.l10n.tkChoosePay);
       return;
     }
     setState(() {
@@ -276,21 +275,20 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
     final release = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Leave checkout?'),
-        content: const Text(
-          'Your tickets are held for you. Leaving releases them for other '
-          'fans.',
+        title: Text(context.l10n.coLeaveQ),
+        content: Text(
+          context.l10n.coLeaveBody,
         ),
         actions: [
           TextButton(
             key: const ValueKey('stay-checkout'),
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Stay'),
+            child: Text(context.l10n.coStay),
           ),
           TextButton(
             key: const ValueKey('release-hold'),
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Release tickets'),
+            child: Text(context.l10n.coRelease),
           ),
         ],
       ),
@@ -317,7 +315,7 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
           children: [
             Column(
               children: [
-                TicketingHeader(title: 'Checkout', onBack: _leave),
+                TicketingHeader(title: context.l10n.coCheckout, onBack: _leave),
                 ClockTicker(
                   clock: _clock,
                   builder: (context, now) => _HoldBanner(
@@ -334,7 +332,12 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                     key: _form,
                     child: ListView(
                       key: const ValueKey('checkout-scroll'),
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                        20,
+                        8,
+                        20,
+                        24,
+                      ),
                       children: [
                         _summary(t),
                         const SizedBox(height: 16),
@@ -347,7 +350,7 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                         ],
                         const SizedBox(height: 16),
                         SectionCard(
-                          title: 'Price details',
+                          title: context.l10n.coPriceDetails,
                           child: PriceBreakdown(quote: quote),
                         ),
                         const SizedBox(height: 14),
@@ -363,7 +366,7 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                             Expanded(
                               child: Text(
                                 RefundPolicy.summary,
-                                style: EventraText.caption.copyWith(
+                                style: context.text.caption.copyWith(
                                   color: t.textHint,
                                 ),
                               ),
@@ -404,7 +407,7 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                   ),
                   child: Text(
                     '${l.quantity}×',
-                    style: EventraText.caption.copyWith(
+                    style: context.text.caption.copyWith(
                       color: t.primary,
                       fontWeight: FontWeight.w700,
                     ),
@@ -414,12 +417,14 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                 Expanded(
                   child: Text(
                     l.tierName,
-                    style: EventraText.body.copyWith(color: t.textPrimary),
+                    style: context.text.body.copyWith(color: t.textPrimary),
                   ),
                 ),
                 Text(
-                  l.unitCents == 0 ? 'Free' : formatCents(l.subtotalCents),
-                  style: EventraText.body.copyWith(
+                  l.unitCents == 0
+                      ? context.l10n.priceFree
+                      : formatCents(l.subtotalCents),
+                  style: context.text.body.copyWith(
                     color: t.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
@@ -432,24 +437,23 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
   );
 
   Widget _attendee() => SectionCard(
-    title: 'Attendee details',
+    title: context.l10n.coAttendee,
     child: Column(
       children: [
         AuthField(
           key: const ValueKey('attendee-name'),
           controller: _name,
-          label: 'Full name',
+          label: context.l10n.fieldFullName,
           icon: Icons.person_outline_rounded,
           autofillHints: const [AutofillHints.name],
-          validator: (v) => (v ?? '').trim().length < 2
-              ? 'Enter the name on the tickets.'
-              : null,
+          validator: (v) =>
+              (v ?? '').trim().length < 2 ? context.l10n.coEnterHolder : null,
         ),
         const SizedBox(height: 12),
         AuthField(
           key: const ValueKey('attendee-email'),
           controller: _email,
-          label: 'Email for your tickets',
+          label: context.l10n.coEmailForTickets,
           icon: Icons.mail_outline_rounded,
           keyboardType: TextInputType.emailAddress,
           autofillHints: const [AutofillHints.email],
@@ -457,14 +461,14 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
           validator: (v) =>
               RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch((v ?? '').trim())
               ? null
-              : 'Enter a valid email.',
+              : context.l10n.coValidEmail,
         ),
       ],
     ),
   );
 
   Widget _promoSection(EventraTokens t) => SectionCard(
-    title: 'Promo code',
+    title: context.l10n.coPromo,
     child: AnimatedSize(
       duration: t.motion.medium,
       curve: t.motion.standard,
@@ -480,22 +484,24 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                     children: [
                       Text(
                         _applied!.code,
-                        style: EventraText.body.copyWith(
+                        style: context.text.body.copyWith(
                           color: t.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Text(
-                        '${_applied!.label} · saves '
-                        '${formatCents(_quote.discountCents)}',
-                        style: EventraText.caption.copyWith(color: t.success),
+                        context.l10n.coPromoSaves(
+                          _applied!.displayLabel,
+                          formatCents(_quote.discountCents),
+                        ),
+                        style: context.text.caption.copyWith(color: t.success),
                       ),
                     ],
                   ),
                 ),
                 IconButton(
                   key: const ValueKey('promo-remove'),
-                  tooltip: 'Remove promo code',
+                  tooltip: context.l10n.coRemovePromo,
                   onPressed: _stage == _Stage.idle
                       ? () => setState(() => _applied = null)
                       : null,
@@ -514,13 +520,13 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                         controller: _promo,
                         textCapitalization: TextCapitalization.characters,
                         onSubmitted: (_) => _applyPromo(),
-                        style: EventraText.body.copyWith(
+                        style: context.text.body.copyWith(
                           color: t.textPrimary,
                           fontSize: 16,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Enter code',
-                          hintStyle: EventraText.body.copyWith(
+                          hintText: context.l10n.coEnterCode,
+                          hintStyle: context.text.body.copyWith(
                             color: t.textHint,
                           ),
                           filled: true,
@@ -541,7 +547,7 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                       width: 96,
                       child: GradientPillButton(
                         key: const ValueKey('promo-apply'),
-                        label: _checkingPromo ? '…' : 'Apply',
+                        label: _checkingPromo ? '…' : context.l10n.coApply,
                         height: 46,
                         onPressed: _checkingPromo ? null : _applyPromo,
                       ),
@@ -553,7 +559,7 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                   Text(
                     _promoError!,
                     key: const ValueKey('promo-error'),
-                    style: EventraText.caption.copyWith(color: t.error),
+                    style: context.text.caption.copyWith(color: t.error),
                   ),
                 ],
               ],
@@ -573,9 +579,9 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
       _ => false,
     };
     return SectionCard(
-      title: 'Payment method',
+      title: context.l10n.coPayment,
       trailing: StatusChip(
-        label: 'Demo mode',
+        label: context.l10n.coDemoMode,
         color: t.accentOrange,
         icon: Icons.science_outlined,
       ),
@@ -605,8 +611,10 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                   Icon(Icons.add_card_rounded, color: t.primary),
                   const SizedBox(width: 8),
                   Text(
-                    _newCard == null ? 'Add a new card' : 'Use another card',
-                    style: EventraText.body.copyWith(
+                    _newCard == null
+                        ? context.l10n.coAddCard
+                        : context.l10n.coUseAnother,
+                    style: context.text.body.copyWith(
                       color: t.primary,
                       fontWeight: FontWeight.w700,
                     ),
@@ -623,7 +631,7 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
   Widget _payBar(EventraTokens t, PriceQuote quote) {
     final expired = _expired;
     return Container(
-      padding: EdgeInsets.fromLTRB(
+      padding: EdgeInsetsDirectional.fromSTEB(
         20,
         14,
         20,
@@ -632,11 +640,11 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
       decoration: BoxDecoration(
         color: t.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x149A5BD6),
+            color: context.tokens.shadow(0.08),
             blurRadius: 24,
-            offset: Offset(0, -6),
+            offset: const Offset(0, -6),
           ),
         ],
       ),
@@ -653,8 +661,8 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
           GradientPillButton(
             key: const ValueKey('pay-button'),
             label: quote.isFree
-                ? 'Confirm free reservation'
-                : 'Pay ${formatCents(quote.totalCents)}',
+                ? context.l10n.coConfirmFree
+                : context.l10n.coPay(formatCents(quote.totalCents)),
             icon: Icons.lock_rounded,
             onPressed: expired || _stage != _Stage.idle ? null : _pay,
           ),
@@ -679,15 +687,21 @@ class _MethodTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.tokens;
     final (id, subtitle) = switch (method) {
-      SavedCardMethod(:final card) => (card.id, 'Expires ${card.expiry}'),
-      NewCardMethod(:final expiry) => ('new', 'New card · expires $expiry'),
+      SavedCardMethod(:final card) => (
+        card.id,
+        context.l10n.coExpires(card.expiry),
+      ),
+      NewCardMethod(:final expiry) => (
+        'new',
+        context.l10n.coNewCardExpires(expiry),
+      ),
     };
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Semantics(
         selected: selected,
         button: true,
-        label: '${method.brand.label} ending ${method.last4}',
+        label: context.l10n.coCardEnding(method.brand.label, method.last4),
         child: Pressable(
           key: ValueKey('method-$id'),
           onTap: onTap,
@@ -714,12 +728,12 @@ class _MethodTile extends StatelessWidget {
                     children: [
                       Text(
                         '${method.brand.label} •••• ${method.last4}',
-                        style: EventraText.body.copyWith(
+                        style: context.text.body.copyWith(
                           color: t.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text(subtitle, style: EventraText.caption),
+                      Text(subtitle, style: context.text.caption),
                     ],
                   ),
                 ),
@@ -807,11 +821,11 @@ class _HoldBanner extends StatelessWidget {
     final mm = left.inMinutes.toString().padLeft(2, '0');
     final ss = (left.inSeconds % 60).toString().padLeft(2, '0');
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 8),
       child: AnimatedContainer(
         key: const ValueKey('hold-banner'),
         duration: t.motion.medium,
-        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(20),
@@ -833,10 +847,10 @@ class _HoldBanner extends StatelessWidget {
                 liveRegion: expired,
                 child: Text(
                   expired
-                      ? 'Your hold expired and the tickets were released.'
-                      : 'Tickets held for $mm:$ss',
+                      ? context.l10n.coHoldExpired
+                      : context.l10n.coHeldFor('$mm:$ss'),
                   key: const ValueKey('hold-text'),
-                  style: EventraText.body.copyWith(
+                  style: context.text.body.copyWith(
                     color: color,
                     fontWeight: FontWeight.w700,
                   ),
@@ -847,7 +861,7 @@ class _HoldBanner extends StatelessWidget {
               TextButton(
                 key: const ValueKey('hold-restart'),
                 onPressed: onRestart,
-                child: const Text('Choose again'),
+                child: Text(context.l10n.coChooseAgain),
               ),
           ],
         ),
@@ -867,7 +881,7 @@ class _ThreeDsSheet extends StatelessWidget {
     return Container(
       key: const ValueKey('three-ds-sheet'),
       margin: const EdgeInsets.all(12),
-      padding: EdgeInsets.fromLTRB(
+      padding: EdgeInsetsDirectional.fromSTEB(
         24,
         24,
         24,
@@ -890,18 +904,17 @@ class _ThreeDsSheet extends StatelessWidget {
             child: Icon(Icons.shield_outlined, color: t.primary, size: 32),
           ),
           const SizedBox(height: 14),
-          const Text('Confirm with your bank', style: EventraText.cardTitle),
+          Text(context.l10n.co3dsTitle, style: context.text.cardTitle),
           const SizedBox(height: 8),
           Text(
-            'Approve a payment of ${formatCents(amountCents)} to Eventra with '
-            '$cardLabel. This is a simulated 3-D Secure check.',
+            context.l10n.co3dsBody(formatCents(amountCents), cardLabel),
             textAlign: TextAlign.center,
-            style: EventraText.body,
+            style: context.text.body,
           ),
           const SizedBox(height: 22),
           GradientPillButton(
             key: const ValueKey('three-ds-approve'),
-            label: 'Approve',
+            label: context.l10n.coApprove,
             icon: Icons.fingerprint_rounded,
             onPressed: () => Navigator.of(context).pop(true),
           ),
@@ -909,7 +922,7 @@ class _ThreeDsSheet extends StatelessWidget {
           TextButton(
             key: const ValueKey('three-ds-cancel'),
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
         ],
       ),
@@ -983,15 +996,17 @@ class _ProcessingOverlay extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    done ? 'Payment confirmed' : 'Processing payment…',
+                    done
+                        ? context.l10n.coPaymentConfirmed
+                        : context.l10n.coProcessing,
                     textAlign: TextAlign.center,
-                    style: EventraText.cardTitle.copyWith(fontSize: 17),
+                    style: context.text.cardTitle.copyWith(fontSize: 17),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    done ? 'Issuing your tickets' : 'Please keep the app open',
+                    done ? context.l10n.coIssuing : context.l10n.coKeepOpen,
                     textAlign: TextAlign.center,
-                    style: EventraText.caption,
+                    style: context.text.caption,
                   ),
                 ],
               ),

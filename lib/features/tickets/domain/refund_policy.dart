@@ -1,3 +1,4 @@
+import 'package:eventra/l10n/l10n.dart';
 import 'package:meta/meta.dart';
 
 /// Eventra's refund policy: a full refund when cancelled more than 48 hours
@@ -6,9 +7,7 @@ import 'package:meta/meta.dart';
 abstract final class RefundPolicy {
   static const window = Duration(hours: 48);
 
-  static const summary =
-      'Full refund when you cancel more than 48 hours before the event '
-      'starts. No refunds within 48 hours of the start time.';
+  static String get summary => AppLocale.l10n.refundSummary;
 
   static RefundDecision evaluate({
     required DateTime eventStart,
@@ -16,10 +15,10 @@ abstract final class RefundPolicy {
     required int paidCents,
   }) {
     if (!now.isBefore(eventStart)) {
-      return const RefundDecision._(
+      return RefundDecision._(
         allowed: false,
         refundCents: 0,
-        reason: 'This event has already started.',
+        reason: AppLocale.l10n.refundStarted,
       );
     }
     final deadline = eventStart.subtract(window);
@@ -27,7 +26,7 @@ abstract final class RefundPolicy {
       return RefundDecision._(
         allowed: true,
         refundCents: 0,
-        reason: 'Free reservation: cancel any time before the event.',
+        reason: AppLocale.l10n.refundFreeAnyTime,
         deadline: eventStart,
       );
     }
@@ -35,14 +34,14 @@ abstract final class RefundPolicy {
       return RefundDecision._(
         allowed: true,
         refundCents: paidCents,
-        reason: 'Full refund available until 48 hours before the event.',
+        reason: AppLocale.l10n.refundFullUntil,
         deadline: deadline,
       );
     }
     return RefundDecision._(
       allowed: false,
       refundCents: 0,
-      reason: 'Refunds close 48 hours before the event starts.',
+      reason: AppLocale.l10n.refundClosed,
       deadline: deadline,
     );
   }

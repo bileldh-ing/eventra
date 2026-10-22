@@ -1,0 +1,1327 @@
+{
+  "@@locale": "en",
+  "appTitle": "Eventra",
+  "appTagline": "Discover. Book. Feel the moment.",
+  "navHome": "Home",
+  "navExplore": "Explore",
+  "navFavorites": "Favorites",
+  "navTickets": "Tickets",
+  "navProfile": "Profile",
+  "priceFree": "Free",
+  "distanceKm": "{value} km",
+  "@distanceKm": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "distanceKmAway": "{value} km away",
+  "@distanceKmAway": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "errNetwork": "We could not reach Eventra. Check your connection.",
+  "errEventGone": "This event is no longer available.",
+  "errStorage": "Local storage is unavailable.",
+  "errUnknown": "Something went wrong.",
+  "errorTitle": "Something went wrong",
+  "actionRetry": "Retry",
+  "mapEventLocation": "Event location",
+  "mapAttribution": "© OpenStreetMap contributors",
+  "yourLocation": "Your location",
+  "catCinema": "Cinema",
+  "catSports": "Sports",
+  "catSocial": "Social",
+  "catMusic": "Music",
+  "catArt": "Art",
+  "catTech": "Tech",
+  "catFood": "Food",
+  "catComedy": "Comedy",
+  "intOutdoors": "Outdoors",
+  "intNightlife": "Nightlife",
+  "intCharity": "Charity",
+  "intBusiness": "Business",
+  "sortRecommended": "Recommended",
+  "sortSoonest": "Soonest",
+  "sortNearest": "Nearest",
+  "sortPriceLow": "Price: low to high",
+  "sortPopular": "Most popular",
+  "dateAny": "Any time",
+  "dateToday": "Today",
+  "dateTomorrow": "Tomorrow",
+  "dateThisWeekend": "This Weekend",
+  "dateNext7": "Next 7 days",
+  "datePick": "Pick dates",
+  "rowRecommendedForYou": "Recommended For You",
+  "rowBecauseYouLike": "Because You Like {interest}",
+  "@rowBecauseYouLike": {
+    "placeholders": {
+      "interest": {
+        "type": "String"
+      }
+    }
+  },
+  "reasonBecauseYouLike": "Because you like {interest}",
+  "@reasonBecauseYouLike": {
+    "placeholders": {
+      "interest": {
+        "type": "String"
+      }
+    }
+  },
+  "reasonNearYou": "Near you",
+  "reasonTrending": "Trending",
+  "reasonStartsSoon": "Starts soon",
+  "reasonThisWeek": "This week",
+  "reasonLikeSaves": "Like your saves",
+  "homeUpcoming": "Upcoming Events",
+  "categoryEvents": "{category} Events",
+  "@categoryEvents": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "filtersTitle": "Filters",
+  "noEventsMatch": "No events match",
+  "loosenFilters": "Loosen your filters to see more events.",
+  "resetFilters": "Reset filters",
+  "pickDateRange": "Pick a date range",
+  "actionReset": "Reset",
+  "filtersCategories": "Categories",
+  "filtersAll": "All",
+  "filtersDate": "Date",
+  "filtersPriceRange": "Price: {min} - {max}",
+  "@filtersPriceRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "filtersDistanceAny": "Distance: any",
+  "filtersDistanceWithin": "Distance: within {km} km",
+  "@filtersDistanceWithin": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "filtersAny": "Any",
+  "filtersKm": "{km} km",
+  "@filtersKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "filtersFrom": "From {origin}",
+  "@filtersFrom": {
+    "placeholders": {
+      "origin": {
+        "type": "String"
+      }
+    }
+  },
+  "filtersFreeOnly": "Free only",
+  "filtersHasTickets": "Has tickets left",
+  "filtersSortBy": "Sort by",
+  "filtersShowResults": "{count, plural, =0{No results} =1{Show 1 result} other{Show {count} results}}",
+  "@filtersShowResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "seeAll": "See All",
+  "tryAnotherCategory": "Try another category or reset your filters.",
+  "showAllEvents": "Show all events",
+  "reasonNearYouKm": "Near you · {km} km",
+  "@reasonNearYouKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "homeTrendingWeek": "Trending This Week",
+  "nGoing": "{count, plural, =0{Nobody going yet} =1{1 going} other{{count} going}}",
+  "@nGoing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeFreeEvents": "Free Events",
+  "openProfile": "Open profile",
+  "notificationsUnread": "Notifications, unread",
+  "notificationsTitle": "Notifications",
+  "homeHeroTitle": "Discover Amazing\nEvents Near You",
+  "searchEvents": "Search events",
+  "searchHint": "Search",
+  "favUpdateFailed": "Could not update favorites. Try again.",
+  "favRemove": "Remove from favorites",
+  "favSave": "Save to favorites",
+  "openEvent": "Open event",
+  "nParticipants": "{count, plural, =1{1 Participant} other{{count} Participants}}",
+  "@nParticipants": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "friendGoing": "Friend - going",
+  "going": "Going",
+  "morePeopleGoing": "{count, plural, =1{+1 more person is going} other{+{count} more people are going}}",
+  "@morePeopleGoing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inviteFriends": "Invite friends",
+  "closePreview": "Close preview",
+  "saved": "Saved",
+  "save": "Save",
+  "share": "Share",
+  "viewEvent": "View event",
+  "cardDateDistance": "{date}  ·  {km} km away",
+  "@cardDateDistance": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "shareText": "{title} - {date} at {venue}, {address}. {price}. {link}",
+  "@shareText": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "venue": {
+        "type": "String"
+      },
+      "address": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      },
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "shareFreeEntry": "Free entry",
+  "shareTicketsFrom": "Tickets from {price}",
+  "@shareTicketsFrom": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "shareInviteText": "Join me at {title} on {date}! {link}",
+  "@shareInviteText": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "shareInviteSubject": "Come with me to {title}",
+  "@shareInviteSubject": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "authWeakPassword": "Choose a stronger password.",
+  "authEmailTaken": "An account with this email already exists. Log in instead.",
+  "authCodeExpired": "This code has expired. Request a new one.",
+  "authCodeWrong": "That code is not right. Check it and try again.",
+  "authBadCredentials": "{left, plural, =1{Email or password is incorrect. 1 attempt left.} other{Email or password is incorrect. {left} attempts left.}}",
+  "@authBadCredentials": {
+    "placeholders": {
+      "left": {
+        "type": "int"
+      }
+    }
+  },
+  "authUnverified": "Confirm your email with the code we sent to finish signing up.",
+  "authCodeInvalid": "That code is not valid. Request a new one.",
+  "authUserNotFound": "We could not find an account with that email.",
+  "authLockedOut": "Too many attempts. Try again in {seconds}s.",
+  "@authLockedOut": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "valEnterEmail": "Enter your email",
+  "valValidEmail": "Enter a valid email address",
+  "valEnterName": "Enter your name",
+  "valNameShort": "Name is too short",
+  "valPhone": "Enter a valid phone number",
+  "valEnterPassword": "Enter your password",
+  "valPasswordLength": "Use at least 8 characters",
+  "valPasswordMix": "Add numbers, symbols or upper-case letters",
+  "pwWeak": "Weak",
+  "pwFair": "Fair",
+  "pwGood": "Good",
+  "pwStrong": "Strong",
+  "authEnterCode": "Enter the 6-digit code.",
+  "authPasswordUpdated": "Password updated. Log in with your new password.",
+  "authSetNewPassword": "Set a new password",
+  "authForgotPassword": "Forgot password?",
+  "authResetCodeSent": "Enter the code we sent to {email} and choose a new password.",
+  "@authResetCodeSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "authResetIntro": "Enter your account email and we will send you a reset code.",
+  "fieldEmail": "Email",
+  "fieldNewPassword": "New password",
+  "pleaseWait": "Please wait...",
+  "authUpdatePassword": "Update password",
+  "authSendResetCode": "Send reset code",
+  "authDemoNotice": "Demo mode: codes are not emailed; nothing leaves this device.",
+  "authWelcomeBack": "Welcome back",
+  "authLoginToBook": "Log in to book tickets and keep your favorites in sync.",
+  "authLoginContinue": "Log in to continue where you left off.",
+  "authNewHere": "New here?",
+  "authSignUp": "Sign Up",
+  "fieldPassword": "Password",
+  "authTryAgainIn": "Try again in {seconds}s",
+  "@authTryAgainIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "authLoggingIn": "Logging in...",
+  "authLogIn": "Log In",
+  "authOr": "or",
+  "authTryDemo": "Try demo account",
+  "authContinueGuest": "Continue as guest",
+  "authNewCodeSent": "We sent a new code to {email}",
+  "@authNewCodeSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "authCheckEmail": "Check your email",
+  "authOtpSubtitle": "Enter the 6-digit code we sent to {email}.",
+  "@authOtpSubtitle": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "authVerifying": "Verifying...",
+  "authVerify": "Verify",
+  "authDidntGetIt": "Didn't get it?",
+  "authResendIn": "Resend in 0:{seconds}",
+  "@authResendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "authResendCode": "Resend code",
+  "authCodesExpire": "Codes expire after 10 minutes.",
+  "authCreateAccountTitle": "Create account",
+  "authJoinSubtitle": "Join Eventra to book tickets and follow organizers.",
+  "authHaveAccount": "Already have an account?",
+  "fieldFullName": "Full name",
+  "fieldPhoneOptional": "Phone (optional)",
+  "fieldConfirmPassword": "Confirm password",
+  "valPasswordsMismatch": "Passwords do not match",
+  "authAgreeTerms": "I agree to the Terms of Service and Privacy Policy",
+  "authCreatingAccount": "Creating account...",
+  "authCreateAccount": "Create Account",
+  "back": "Back",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "pwStrengthLabel": "Password strength",
+  "pwStrengthValue": "Password strength {level}",
+  "@pwStrengthValue": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "authDebugCode": "Debug build: the demo code is {code}",
+  "@authDebugCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "interestsTitle": "What are you into?",
+  "interestsSubtitle": "Pick at least {min} so we can tailor your feed. You can change them later in Profile.",
+  "@interestsSubtitle": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "interestsSelected": "{count, plural, =1{1 selected} other{{count} selected}}",
+  "@interestsSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "interestsChooseMore": "{count, plural, =1{Choose 1 more} other{Choose {count} more}}",
+  "@interestsChooseMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "actionContinue": "Continue",
+  "locNearestArea": "Nearest area to you: {city}",
+  "@locNearestArea": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "locOff": "Location is off, so pick your city below.",
+  "locWhere": "Where are you?",
+  "locWhy": "We use it to show events near you and measure distances.",
+  "locUseCurrent": "Use my current location",
+  "locSkip": "Skip for now",
+  "onb1Title": "Discover events near you",
+  "onb1Body": "Concerts, games, talks and food markets around you, picked for what you love.",
+  "onb2Title": "Book in seconds",
+  "onb2Body": "Choose your tickets, apply a promo code and pay in a couple of taps.",
+  "onb3Title": "Enter with a tap",
+  "onb3Body": "Your QR ticket lives in the app, ready at the door.",
+  "onbSkip": "Skip",
+  "onbPageOf": "Page {page} of {total}",
+  "@onbPageOf": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onbGetStarted": "Get Started",
+  "onbNext": "Next",
+  "exploreDistancesUpdated": "Distances updated from your location",
+  "exploreServicesOff": "Location services are off. Showing distances from {place}.",
+  "@exploreServicesOff": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "exploreLocationUnavailable": "Location unavailable. Showing distances from {place}.",
+  "@exploreLocationUnavailable": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "exploreShowMyLocation": "Show my location",
+  "nUpcomingEvents": "{count, plural, =0{No upcoming events} =1{1 upcoming event} other{{count} upcoming events}}",
+  "@nUpcomingEvents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "openNamed": "Open {name}",
+  "@openNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exploreNearest": "Nearest Location",
+  "exploreNoPlaces": "No places match your search",
+  "exploreSearchHint": "Search Your Location...",
+  "explorePlaceSemantics": "{title}, {address}, {distance} away",
+  "@explorePlaceSemantics": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "address": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "favSortRecent": "Recently saved",
+  "favSortSoonest": "Date: soonest",
+  "favSortName": "Name: A to Z",
+  "favRemoved": "Removed {title}",
+  "@favRemoved": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "undo": "Undo",
+  "sort": "Sort",
+  "favShowGrid": "Show as grid",
+  "favShowList": "Show as list",
+  "favEmptyTitle": "No favorites yet",
+  "favEmptyBody": "Tap the bookmark on any event to save it here.",
+  "exploreEvents": "Explore events",
+  "nResults": "{count, plural, =0{No results} =1{1 result} other{{count} results}}",
+  "@nResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "clearFilters": "Clear filters",
+  "searchFullHint": "Search events, venues, places",
+  "clear": "Clear",
+  "recentSearches": "Recent searches",
+  "recentCleared": "Recent searches cleared",
+  "clearAll": "Clear all",
+  "removedTerm": "Removed \"{term}\"",
+  "@removedTerm": {
+    "placeholders": {
+      "term": {
+        "type": "String"
+      }
+    }
+  },
+  "trendingSearches": "Trending searches",
+  "noResultsFor": "No results for \"{query}\"",
+  "@noResultsFor": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "searchFiltersHiding": "Your filters may be hiding matches. Clear them or try one of these:",
+  "searchCheckSpelling": "Check the spelling or try one of these:",
+  "clearSearch": "Clear search",
+  "notifRemoved": "Notification removed",
+  "markAllRead": "Mark all as read",
+  "notifEmptyTitle": "All caught up",
+  "notifEmptyBody": "New reminders and updates will appear here.",
+  "earlier": "Earlier",
+  "seedFriendsTitle": "2 friends are going",
+  "seedFriendsBody": "Sarah and Liam saved {title}.",
+  "@seedFriendsBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "seedSoonTitle": "Coming up soon",
+  "seedSoonBody": "{title} is one of the next events near you.",
+  "@seedSoonBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "seedReviewTitle": "How was {title}?",
+  "@seedReviewTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "seedReviewBody": "Attendees are sharing reviews. Tap to read them.",
+  "seedNewTitle": "New in Music near you",
+  "seedNewBody": "{title} was just announced.",
+  "@seedNewBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "seedPriceTitle": "Early Bird price available",
+  "seedPriceBody": "Save 20% on {title} while Early Bird lasts.",
+  "@seedPriceBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "detailsTitle": "Events Details",
+  "plusParticipants": "+{count} Participants",
+  "@plusParticipants": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "detailsAbout": "About Event",
+  "detailsLocation": "Location",
+  "detailsOrganizer": "Organizer",
+  "detailsLineup": "Lineup & Schedule",
+  "detailsPolicy": "Ticket Policy",
+  "detailsSimilar": "Similar events",
+  "shareEvent": "Share event",
+  "soldOut": "Sold Out",
+  "waitlistJoined": "You're on the waitlist. We'll tell you when a spot opens.",
+  "waitlistLeft": "You left the waitlist.",
+  "onWaitlist": "On waitlist",
+  "joinWaitlist": "Join waitlist",
+  "verifiedOrganizer": "Verified organizer",
+  "organizerFollowers": "Organizer - {followers} followers",
+  "@organizerFollowers": {
+    "placeholders": {
+      "followers": {
+        "type": "String"
+      }
+    }
+  },
+  "following": "Following",
+  "follow": "Follow",
+  "openMapFor": "Open map for {venue}. Long press for directions.",
+  "@openMapFor": {
+    "placeholders": {
+      "venue": {
+        "type": "String"
+      }
+    }
+  },
+  "seeMore": "See more....",
+  "seeLess": "See less",
+  "getTicket": "Get a Ticket",
+  "editProfile": "Edit profile",
+  "profileUnavailable": "Profile unavailable.",
+  "profileLoginToEdit": "Log in to edit your profile.",
+  "profileUpdated": "Profile updated",
+  "couldNotSave": "Could not save. Please try again.",
+  "avatarColor": "Avatar color",
+  "avatarColorN": "Avatar color {n}",
+  "@avatarColorN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldName": "Name",
+  "fieldCity": "City",
+  "fieldCityHint": "Where you go out",
+  "fieldBio": "Bio",
+  "fieldBioHint": "A line about you",
+  "saving": "Saving...",
+  "guest": "Guest",
+  "profileGuestPrompt": "Log in to buy tickets and sync favorites",
+  "statTickets": "Tickets",
+  "statSaved": "Saved",
+  "statReviews": "Reviews",
+  "loginOrSignup": "Log in or sign up",
+  "myTickets": "My Tickets",
+  "settingsTitle": "Settings",
+  "inviteFriendsTitle": "Invite Friends",
+  "inviteShareText": "I find events on Eventra - Discover. Book. Feel the moment. https://eventra.app",
+  "interestsTitleShort": "Interests",
+  "logOut": "Log out",
+  "logOutQ": "Log out?",
+  "logOutBody": "Your tickets and favorites stay on this device for when you are back.",
+  "cancel": "Cancel",
+  "setReminders": "Event reminders",
+  "setRemindersSub": "24 hours and 2 hours before events you have tickets for",
+  "setOrders": "Order updates",
+  "setOrdersSub": "Booking confirmations and refunds in your inbox",
+  "setRecs": "Recommendations",
+  "setRecsSub": "New events and price drops you might like",
+  "setPersonalized": "Personalized feed",
+  "setPersonalizedSub": "Use your interests to rank events",
+  "setClearCache": "Clear cache",
+  "setClearCacheSub": "Cached images and recent searches",
+  "setCacheCleared": "Cache cleared",
+  "setAbout": "About Eventra",
+  "deleteAccount": "Delete account",
+  "deleteAccountQ": "Delete your account?",
+  "deleteAccountBody": "Your profile, tickets, reviews and notifications are removed from this device. Tickets are not refunded. This cannot be undone.",
+  "deleteConfirmWord": "DELETE",
+  "typeToConfirm": "Type {word}",
+  "@typeToConfirm": {
+    "placeholders": {
+      "word": {
+        "type": "String"
+      }
+    }
+  },
+  "delete": "Delete",
+  "setAppearance": "Appearance",
+  "setLanguage": "Language",
+  "setNotifications": "Notifications",
+  "setPrivacy": "Privacy",
+  "setStorage": "Storage",
+  "setAboutSection": "About",
+  "setAccount": "Account",
+  "sortReviews": "Sort reviews",
+  "revNewest": "Newest",
+  "revHighest": "Highest rated",
+  "revLowest": "Lowest rated",
+  "revLoadFailed": "Reviews could not load.",
+  "revNoneHere": "No reviews here",
+  "revTryAnotherStar": "Try another star filter.",
+  "nReviews": "{count, plural, =0{No reviews} =1{1 review} other{{count} reviews}}",
+  "@nReviews": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "revYou": "{name} (you)",
+  "@revYou": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "revOptions": "Review options",
+  "edit": "Edit",
+  "seeAllLower": "See all",
+  "revNoneYet": "No reviews yet.",
+  "revWrite": "Write a review",
+  "revEditYours": "Edit your review",
+  "revSignedOut": "Log in with a ticket for this event to leave a review.",
+  "revOnlyAttendees": "Only attendees with a ticket can review this event.",
+  "revAfterEnd": "You can review this event after it ends.",
+  "revDeleteQ": "Delete your review?",
+  "cannotUndo": "This cannot be undone.",
+  "revDeleted": "Review deleted",
+  "revThanks": "Thanks for your review!",
+  "revUpdated": "Review updated",
+  "revRateEvent": "Rate this event",
+  "nStars": "{count, plural, =1{1 star} other{{count} stars}}",
+  "@nStars": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "revHint": "What did you like? What could be better?",
+  "revMinChars": "At least {n} characters",
+  "@revMinChars": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "revPost": "Post review",
+  "saveChanges": "Save changes",
+  "revEdited": "edited",
+  "revLoginToWrite": "Log in to write a review.",
+  "tkBadQuantity": "Bad quantity.",
+  "tkUnknownTier": "Unknown ticket type.",
+  "tkTierMax": "You can buy up to {max} {tier} tickets.",
+  "@tkTierMax": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
+  "tkChooseFirst": "Choose a ticket first.",
+  "tkOrderMax": "You can buy up to {max} tickets per order.",
+  "@tkOrderMax": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "tkNotEnough": "Not enough {tier} tickets left. Update your selection.",
+  "@tkNotEnough": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
+  "tkSelectionLost": "Your selection was lost.",
+  "tkHoldEnded": "Your 10-minute hold ended and the tickets were released.",
+  "tkChoosePay": "Choose how to pay.",
+  "tkPaymentFailed": "The payment failed.",
+  "tkSoldOutPaying": "Those tickets sold out while you were paying. You have not been charged.",
+  "tkOrderNotFound": "Order not found.",
+  "tkTicketUsed": "A ticket in this order was already used.",
+  "tkRefundFailed": "The refund could not be processed. Try again.",
+  "cardEnterNumber": "Enter your card number.",
+  "cardIncomplete": "That {brand} number is incomplete.",
+  "@cardIncomplete": {
+    "placeholders": {
+      "brand": {
+        "type": "String"
+      }
+    }
+  },
+  "cardInvalid": "That card number is not valid.",
+  "cardUseMmYy": "Use MM/YY.",
+  "cardExpired": "This card expired.",
+  "cardCheckYear": "Check the expiry year.",
+  "cardCvcDigits": "{n} digits.",
+  "@cardCvcDigits": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "cardGeneric": "Card",
+  "payAuthCancelled": "Card authentication was cancelled. You were not charged.",
+  "payDeclined": "Your card was declined. Try another card.",
+  "payTimeout": "The payment timed out. You were not charged; try again.",
+  "promoEmpty": "Enter a promo code.",
+  "promoUnknown": "That code does not exist.",
+  "promoNotYet": "This code is not active yet.",
+  "promoExpired": "This code has expired.",
+  "promoExhausted": "This code has been fully redeemed.",
+  "promoUsed": "You have already used this code.",
+  "promoNotApplicable": "This code does not apply to the selected tickets.",
+  "promoMinSubtotal": "Add more tickets to use this code.",
+  "promoL10": "10% off",
+  "promoL5": "$5 off your first order",
+  "promoL20": "20% off VIP tickets",
+  "promoL25": "25% off summer events",
+  "promoL50": "50% flash sale",
+  "refundSummary": "Full refund when you cancel more than 48 hours before the event starts. No refunds within 48 hours of the start time.",
+  "refundStarted": "This event has already started.",
+  "refundFreeAnyTime": "Free reservation: cancel any time before the event.",
+  "refundFullUntil": "Full refund available until 48 hours before the event.",
+  "refundClosed": "Refunds close 48 hours before the event starts.",
+  "remChannel": "Event reminders",
+  "remChannelDesc": "Reminders 24 hours and 2 hours before events",
+  "remTitleTomorrow": "{title} starts tomorrow",
+  "@remTitleTomorrow": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "remTitleSoon": "{title} starts in 2 hours",
+  "@remTitleSoon": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "remBody": "{venue}. Your ticket is ready in Eventra.",
+  "@remBody": {
+    "placeholders": {
+      "venue": {
+        "type": "String"
+      }
+    }
+  },
+  "stValid": "Valid",
+  "stUsed": "Used",
+  "stExpired": "Expired",
+  "stCancelled": "Cancelled",
+  "ntBookingConfirmed": "Booking confirmed",
+  "ntBookingBody": "{count, plural, =1{1 ticket for {title}. Your QR code is ready.} other{{count} tickets for {title}. Your QR code is ready.}}",
+  "@ntBookingBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "ntRefundIssued": "Refund issued",
+  "ntRefundBody": "{amount} for {title} is on its way to your card.",
+  "@ntRefundBody": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "bsOrderNotFound": "Order not found",
+  "bsInMyTickets": "Your tickets are in My Tickets.",
+  "bsLoadFailed": "We could not load your order.",
+  "bsYoureIn": "You're in!",
+  "bsFreeReserved": "{count, plural, =1{1 free spot reserved} other{{count} free spots reserved}}",
+  "@bsFreeReserved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bsPaid": "{count, plural, =1{1 ticket · {amount} paid} other{{count} tickets · {amount} paid}}",
+  "@bsPaid": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "bsRemindBoth": "We'll remind you 24 hours and 2 hours before.",
+  "bsRemind2h": "We'll remind you 2 hours before.",
+  "bsViewTickets": "View Tickets",
+  "bsViewTicket": "View Ticket",
+  "addToCalendar": "Add to Calendar",
+  "done": "Done",
+  "coCheckout": "Checkout",
+  "coLoadFailed": "We could not load your checkout.",
+  "coNotFound": "Checkout not found",
+  "coSelectionGone": "This selection is no longer available. Pick your tickets again.",
+  "coAlreadyBooked": "Already booked",
+  "coInWallet": "These tickets are in your wallet.",
+  "coLeaveQ": "Leave checkout?",
+  "coLeaveBody": "Your tickets are held for you. Leaving releases them for other fans.",
+  "coStay": "Stay",
+  "coRelease": "Release tickets",
+  "coPriceDetails": "Price details",
+  "coAttendee": "Attendee details",
+  "coEnterHolder": "Enter the name on the tickets.",
+  "coEmailForTickets": "Email for your tickets",
+  "coValidEmail": "Enter a valid email.",
+  "coPromo": "Promo code",
+  "coPromoSaves": "{label} · saves {amount}",
+  "@coPromoSaves": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "coRemovePromo": "Remove promo code",
+  "coEnterCode": "Enter code",
+  "coApply": "Apply",
+  "coPayment": "Payment method",
+  "coDemoMode": "Demo mode",
+  "coAddCard": "Add a new card",
+  "coUseAnother": "Use another card",
+  "coConfirmFree": "Confirm free reservation",
+  "coPay": "Pay {amount}",
+  "@coPay": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "coExpires": "Expires {date}",
+  "@coExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "coNewCardExpires": "New card · expires {date}",
+  "@coNewCardExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "coCardEnding": "{brand} ending {last4}",
+  "@coCardEnding": {
+    "placeholders": {
+      "brand": {
+        "type": "String"
+      },
+      "last4": {
+        "type": "String"
+      }
+    }
+  },
+  "coHoldExpired": "Your hold expired and the tickets were released.",
+  "coHeldFor": "Tickets held for {time}",
+  "@coHeldFor": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "coChooseAgain": "Choose again",
+  "co3dsTitle": "Confirm with your bank",
+  "co3dsBody": "Approve a payment of {amount} to Eventra with {card}. This is a simulated 3-D Secure check.",
+  "@co3dsBody": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "card": {
+        "type": "String"
+      }
+    }
+  },
+  "coApprove": "Approve",
+  "coPaymentConfirmed": "Payment confirmed",
+  "coProcessing": "Processing payment…",
+  "coIssuing": "Issuing your tickets",
+  "coKeepOpen": "Please keep the app open",
+  "tabUpcoming": "Upcoming",
+  "tabPast": "Past",
+  "tabCancelled": "Cancelled",
+  "mtLoadFailed": "We could not open your tickets.",
+  "mtNoUpcoming": "No upcoming tickets",
+  "mtNoUpcomingBody": "Find something you love and your tickets will live here, ready to scan even offline.",
+  "mtNoPast": "No past events yet",
+  "mtNoPastBody": "Events you attend will be kept here.",
+  "mtNoCancelled": "Nothing cancelled",
+  "mtNoCancelledBody": "Refunded tickets show up here.",
+  "tabWithCount": "{label} ({count})",
+  "@tabWithCount": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "tdRefundQ": "Request a refund?",
+  "tdCancelResQ": "Cancel reservation?",
+  "tdRefundBody": "{count, plural, =1{The ticket in this order will be cancelled and {amount} goes back to your {card}.} other{All {count} tickets in this order will be cancelled and {amount} goes back to your {card}.}}",
+  "@tdRefundBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "card": {
+        "type": "String"
+      }
+    }
+  },
+  "tdReleaseBody": "{count, plural, =1{Your spot will be released for other fans.} other{Your spots will be released for other fans.}}",
+  "@tdReleaseBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tdKeep": "Keep tickets",
+  "tdRefund": "Refund",
+  "tdCancelRes": "Cancel reservation",
+  "tdRefunded": "Refunded {amount}. Your tickets were cancelled.",
+  "@tdRefunded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tdResCancelled": "Reservation cancelled.",
+  "tdYourTicket": "Your Ticket",
+  "tdLoadFailed": "We could not open this ticket.",
+  "tdNotFound": "Ticket not found",
+  "tdOtherAccount": "It may belong to another account.",
+  "tdAddCal": "Add to\nCalendar",
+  "tdDirections": "Directions",
+  "tdInvite": "Invite\nfriends",
+  "tdDetails": "Event\ndetails",
+  "tdOrder": "Order",
+  "tdRefundedChip": "Refunded",
+  "tdPaid": "Paid",
+  "tdBooked": "Booked",
+  "tdPromo": "Promo {code}",
+  "@tdPromo": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "feesAndTax": "Fees and tax",
+  "tdTotalPaid": "Total paid",
+  "tdPaidWith": "Paid with",
+  "tdRefundPolicy": "Refund policy",
+  "tdProcessing": "Processing…",
+  "tdRequestRefund": "Request refund · {amount}",
+  "@tdRequestRefund": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "fDate": "Date",
+  "fTime": "Time",
+  "fVenue": "Venue",
+  "fTicket": "Ticket",
+  "tdSeqOf": "{seq} of {count}",
+  "@tdSeqOf": {
+    "placeholders": {
+      "seq": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "tdWasCancelled": "This ticket was cancelled",
+  "tdEnded": "This event has ended",
+  "fHolder": "Holder",
+  "fTier": "Tier",
+  "tdShowCode": "Show this code at the entrance. It changes every 30 seconds, so screenshots will not work.",
+  "tpLoadFailed": "We could not load the tickets for this event.",
+  "tpStarted": "This event has started; tickets are no longer sold.",
+  "tpCapReached": "You reached the {max}-ticket limit for one order.",
+  "@tpCapReached": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "tpUpTo": "Up to {max} tickets per order. Seats are held for 10 minutes once you continue.",
+  "@tpUpTo": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "soldOutLower": "Sold out",
+  "tpAllGone": "All {count} tickets are gone",
+  "@tpAllGone": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "tpLeftOf": "{left} of {total} left",
+  "@tpLeftOf": {
+    "placeholders": {
+      "left": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "tpOnlyLeft": "Only {left} left",
+  "@tpOnlyLeft": {
+    "placeholders": {
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "tpMaxPer": "Max {max} per order",
+  "@tpMaxPer": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "tpChooseToSee": "Choose your tickets to see the total.",
+  "nTickets": "{count, plural, =1{1 ticket} other{{count} tickets}}",
+  "@nTickets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "total": "Total",
+  "tpHolding": "Holding your seats…",
+  "tpContinue": "Continue to checkout",
+  "cfAddCard": "Add a card",
+  "cfNumber": "Card number",
+  "cfName": "Name on card",
+  "cfEnterName": "Enter the name on the card.",
+  "cfDemo": "Demo mode, no real charge. Test cards: 4242 4242 4242 4242 approves, 4000 0000 0000 0002 is declined, 4000 0000 0000 3220 asks for 3-D Secure. We keep only the brand and last four digits.",
+  "cfUse": "Use this card",
+  "tvCalDesc": "Your Eventra ticket is in the app. {link}",
+  "@tvCalDesc": {
+    "placeholders": {
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "tvCalAdded": "Added to your calendar",
+  "tvCalFailed": "Could not open your calendar.",
+  "tvInviteText": "I'm going to {title} on {date} at {venue}. Join me! {link}",
+  "@tvInviteText": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "venue": {
+        "type": "String"
+      },
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "tvMapsFailed": "Could not open maps. {address}",
+  "@tvMapsFailed": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "tvQrLabel": "Ticket QR code. Refreshes every 30 seconds.",
+  "tvRefreshIn": "Code refreshes in {seconds}s",
+  "@tvRefreshIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "tvQrFailed": "The secure code could not be created on this device.",
+  "tvTierSeq": "{tier} · Ticket {seq} of {count}",
+  "@tvTierSeq": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      },
+      "seq": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "removeOne": "Remove one",
+  "addOne": "Add one",
+  "subtotalN": "{count, plural, =1{Subtotal (1 ticket)} other{Subtotal ({count} tickets)}}",
+  "@subtotalN": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "serviceFees": "Service fees",
+  "tax": "Tax",
+  "valProfileName": "Enter your name (2+ characters)",
+  "valUnderN": "Keep it under {n} characters",
+  "@valUnderN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "revValRating": "Pick a rating from 1 to 5 stars.",
+  "revValShort": "Write at least {n} characters.",
+  "@revValShort": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "revValLong": "Keep it under {n} characters.",
+  "@revValLong": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "revDupEdit": "You already reviewed this event. Edit your review instead.",
+  "revDup": "You already reviewed this event.",
+  "revNotFound": "Review not found."
+}

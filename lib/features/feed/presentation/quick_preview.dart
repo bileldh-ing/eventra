@@ -13,6 +13,7 @@ import 'package:eventra/features/events/presentation/widgets/share_event.dart';
 import 'package:eventra/features/feed/domain/smart_feed_scorer.dart';
 import 'package:eventra/features/feed/presentation/feed_providers.dart';
 import 'package:eventra/features/feed/presentation/reason_chips.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,7 +27,7 @@ Future<void> showQuickPreview(
   unawaited(HapticFeedback.mediumImpact());
   return showGeneralDialog<void>(
     context: context,
-    barrierLabel: 'Close preview',
+    barrierLabel: context.l10n.closePreview,
     barrierColor: Colors.black.withValues(alpha: 0.25),
     transitionDuration: const Duration(milliseconds: 220),
     pageBuilder: (dialogContext, _, _) => QuickPreview(
@@ -98,7 +99,7 @@ class QuickPreview extends ConsumerWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -110,14 +111,14 @@ class QuickPreview extends ConsumerWidget {
                               event.title,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: EventraText.cardTitle,
+                              style: context.text.cardTitle,
                             ),
                           ),
                           const SizedBox(width: 12),
                           Text(
                             formatPrice(event.price),
                             key: const ValueKey('preview-price'),
-                            style: EventraText.cardTitle.copyWith(
+                            style: context.text.cardTitle.copyWith(
                               color: t.primary,
                             ),
                           ),
@@ -125,16 +126,18 @@ class QuickPreview extends ConsumerWidget {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        '${formatCardDate(event.startAt)}  ·  '
-                        '${score.distanceKm.toStringAsFixed(1)} km away',
-                        style: EventraText.caption,
+                        context.l10n.cardDateDistance(
+                          formatCardDate(event.startAt),
+                          formatDecimal(score.distanceKm),
+                        ),
+                        style: context.text.caption,
                       ),
                       const SizedBox(height: 2),
                       Text(
                         event.venue,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: EventraText.caption,
+                        style: context.text.caption,
                       ),
                       if (score.reasons.isNotEmpty) ...[
                         const SizedBox(height: 14),
@@ -148,7 +151,9 @@ class QuickPreview extends ConsumerWidget {
                             icon: saved
                                 ? Icons.bookmark_rounded
                                 : Icons.bookmark_border_rounded,
-                            label: saved ? 'Saved' : 'Save',
+                            label: saved
+                                ? context.l10n.saved
+                                : context.l10n.save,
                             onTap: () => ref
                                 .read(favoritesProvider.notifier)
                                 .toggle(event.id),
@@ -158,7 +163,7 @@ class QuickPreview extends ConsumerWidget {
                             builder: (ctx) => _CircleAction(
                               key: const ValueKey('preview-share'),
                               icon: Icons.ios_share_rounded,
-                              label: 'Share',
+                              label: context.l10n.share,
                               onTap: () => shareEvent(ctx, event),
                             ),
                           ),
@@ -166,7 +171,7 @@ class QuickPreview extends ConsumerWidget {
                           Expanded(
                             child: GradientPillButton(
                               key: const ValueKey('preview-open'),
-                              label: 'View event',
+                              label: context.l10n.viewEvent,
                               height: 50,
                               onPressed: onOpen,
                             ),

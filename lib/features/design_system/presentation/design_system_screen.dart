@@ -31,7 +31,7 @@ class DesignSystemScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text('Colors', style: EventraText.sectionTitle),
+          Text('Colors', style: context.text.sectionTitle),
           const SizedBox(height: 12),
           Wrap(
             spacing: 12,
@@ -50,21 +50,21 @@ class DesignSystemScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(e.key, style: EventraText.caption),
+                    Text(e.key, style: context.text.caption),
                   ],
                 ),
             ],
           ),
           const SizedBox(height: 24),
-          const Text('Typography', style: EventraText.sectionTitle),
+          Text('Typography', style: context.text.sectionTitle),
           Text(
             'Hero 34',
-            style: EventraText.heroTitle.copyWith(color: t.textPrimary),
+            style: context.text.heroTitle.copyWith(color: t.textPrimary),
           ),
-          const Text(r'Price $50', style: EventraText.price),
-          const Text('Body 15/22', style: EventraText.body),
+          Text(r'Price $50', style: context.text.price),
+          Text('Body 15/22', style: context.text.body),
           const SizedBox(height: 24),
-          const Text('Glass over gradient', style: EventraText.sectionTitle),
+          Text('Glass over gradient', style: context.text.sectionTitle),
           const SizedBox(height: 12),
           SizedBox(
             height: 120,
@@ -97,7 +97,7 @@ class DesignSystemScreen extends StatelessWidget {
           Text(
             'Radii: card ${t.radii.eventCard}, sheet ${t.radii.sheet}, '
             'list ${t.radii.listCard}, header ${t.radii.header}',
-            style: EventraText.body,
+            style: context.text.body,
           ),
         ],
       ),

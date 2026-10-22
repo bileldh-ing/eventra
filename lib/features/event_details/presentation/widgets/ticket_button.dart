@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -13,11 +14,13 @@ class TicketButton extends StatefulWidget {
   const TicketButton({
     required this.onConfirmed,
     super.key,
-    this.label = 'Get a Ticket',
+    this.label,
   });
 
   final VoidCallback onConfirmed;
-  final String label;
+
+  /// Defaults to the localized 'Get a Ticket'.
+  final String? label;
 
   @override
   State<TicketButton> createState() => _TicketButtonState();
@@ -45,7 +48,10 @@ class _TicketButtonState extends State<TicketButton> {
   Widget build(BuildContext context) {
     final t = context.tokens;
     final content = switch (_phase) {
-      _Phase.idle => Text(widget.label, style: EventraText.button),
+      _Phase.idle => Text(
+        widget.label ?? context.l10n.getTicket,
+        style: context.text.button,
+      ),
       _Phase.loading => const SizedBox.square(
         key: ValueKey('ticket-loading'),
         dimension: 26,
@@ -63,7 +69,7 @@ class _TicketButtonState extends State<TicketButton> {
     };
     return Semantics(
       button: true,
-      label: widget.label,
+      label: widget.label ?? context.l10n.getTicket,
       excludeSemantics: true,
       child: GestureDetector(
         key: const ValueKey('get-ticket'),

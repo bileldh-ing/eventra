@@ -1,33 +1,52 @@
 import 'package:eventra/features/events/domain/entities/event_category.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// What the user is into. Each interest maps onto the catalogue categories
 /// that the smart feed rewards.
 enum Interest {
-  music('Music', Icons.music_note_outlined, {EventCategory.music}),
-  cinema('Cinema', Icons.movie_outlined, {EventCategory.cinema}),
-  sports('Sports', Icons.sports_basketball_outlined, {EventCategory.sports}),
-  social('Social', Icons.groups_outlined, {EventCategory.social}),
-  art('Art', Icons.palette_outlined, {EventCategory.art}),
-  tech('Tech', Icons.memory_outlined, {EventCategory.tech}),
-  food('Food', Icons.restaurant_outlined, {EventCategory.food}),
-  comedy('Comedy', Icons.theater_comedy_outlined, {EventCategory.comedy}),
-  outdoors('Outdoors', Icons.landscape_outlined, {
+  music(Icons.music_note_outlined, {EventCategory.music}),
+  cinema(Icons.movie_outlined, {EventCategory.cinema}),
+  sports(Icons.sports_basketball_outlined, {EventCategory.sports}),
+  social(Icons.groups_outlined, {EventCategory.social}),
+  art(Icons.palette_outlined, {EventCategory.art}),
+  tech(Icons.memory_outlined, {EventCategory.tech}),
+  food(Icons.restaurant_outlined, {EventCategory.food}),
+  comedy(Icons.theater_comedy_outlined, {EventCategory.comedy}),
+  outdoors(Icons.landscape_outlined, {
     EventCategory.sports,
     EventCategory.food,
   }),
-  nightlife('Nightlife', Icons.nightlife_outlined, {
+  nightlife(Icons.nightlife_outlined, {
     EventCategory.music,
     EventCategory.social,
   }),
-  charity('Charity', Icons.volunteer_activism_outlined, {
+  charity(Icons.volunteer_activism_outlined, {
     EventCategory.social,
   }),
-  business('Business', Icons.work_outline_rounded, {EventCategory.tech});
+  business(Icons.work_outline_rounded, {EventCategory.tech});
 
-  const Interest(this.label, this.icon, this.categories);
+  const Interest(this.icon, this.categories);
 
-  final String label;
+  /// Name in the active language.
+  String get label {
+    final l = AppLocale.l10n;
+    return switch (this) {
+      music => l.catMusic,
+      cinema => l.catCinema,
+      sports => l.catSports,
+      social => l.catSocial,
+      art => l.catArt,
+      tech => l.catTech,
+      food => l.catFood,
+      comedy => l.catComedy,
+      outdoors => l.intOutdoors,
+      nightlife => l.intNightlife,
+      charity => l.intCharity,
+      business => l.intBusiness,
+    };
+  }
+
   final IconData icon;
   final Set<EventCategory> categories;
 

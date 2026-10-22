@@ -8,11 +8,12 @@ import 'package:eventra/features/auth/domain/auth_models.dart';
 import 'package:eventra/features/auth/presentation/auth_navigation.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/auth/presentation/widgets/auth_widgets.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// "Welcome back": email + password, forgot password, demo account, guest
+/// 'authWelcomeBack': email + password, forgot password, demo account, guest
 /// mode, 5-strike lockout with a live countdown and a shake on errors.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key, this.from});
@@ -114,18 +115,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final t = context.tokens;
     final locked = _locked != null;
     return AuthScaffold(
-      title: 'Welcome back',
+      title: context.l10n.authWelcomeBack,
       subtitle: widget.from == null
-          ? 'Log in to book tickets and keep your favorites in sync.'
-          : 'Log in to continue where you left off.',
+          ? context.l10n.authLoginToBook
+          : context.l10n.authLoginContinue,
       onBack: context.canPop() ? context.pop : null,
       footer: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('New here?', style: EventraText.body),
+          Text(context.l10n.authNewHere, style: context.text.body),
           AuthLinkButton(
             key: const ValueKey('login-signup'),
-            label: 'Sign Up',
+            label: context.l10n.authSignUp,
             onPressed: () => context.push(
               Uri(
                 path: '/auth/signup',
@@ -146,7 +147,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 AuthField(
                   key: const ValueKey('login-email'),
                   controller: _email,
-                  label: 'Email',
+                  label: context.l10n.fieldEmail,
                   icon: Icons.mail_outline_rounded,
                   keyboardType: TextInputType.emailAddress,
                   autofillHints: const [AutofillHints.email],
@@ -156,7 +157,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 AuthField(
                   key: const ValueKey('login-password'),
                   controller: _password,
-                  label: 'Password',
+                  label: context.l10n.fieldPassword,
                   icon: Icons.lock_outline_rounded,
                   obscure: _obscure,
                   onToggleObscure: () => setState(() => _obscure = !_obscure),
@@ -166,10 +167,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   onSubmitted: (_) => _submit(),
                 ),
                 Align(
-                  alignment: Alignment.centerRight,
+                  alignment: AlignmentDirectional.centerEnd,
                   child: AuthLinkButton(
                     key: const ValueKey('login-forgot'),
-                    label: 'Forgot password?',
+                    label: context.l10n.authForgotPassword,
                     bold: false,
                     onPressed: () => context.push(
                       Uri(
@@ -184,22 +185,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 GradientPillButton(
                   key: const ValueKey('login-submit'),
                   label: locked
-                      ? 'Try again in ${_locked!.inSeconds.clamp(1, 999)}s'
+                      ? context.l10n.authTryAgainIn(
+                          _locked!.inSeconds.clamp(1, 999).toString(),
+                        )
                       : _busy
-                      ? 'Logging in...'
-                      : 'Log In',
+                      ? context.l10n.authLoggingIn
+                      : context.l10n.authLogIn,
                   icon: locked ? Icons.lock_clock_outlined : null,
                   onPressed: locked || _busy ? null : _submit,
                 ),
                 const SizedBox(height: 18),
-                const Row(
+                Row(
                   children: [
-                    Expanded(child: Divider(color: Color(0xFFEDE6F5))),
+                    Expanded(child: Divider(color: context.tokens.outline)),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Text('or', style: EventraText.caption),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        context.l10n.authOr,
+                        style: context.text.caption,
+                      ),
                     ),
-                    Expanded(child: Divider(color: Color(0xFFEDE6F5))),
+                    Expanded(child: Divider(color: context.tokens.outline)),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -207,19 +213,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   key: const ValueKey('login-demo'),
                   onPressed: _busy ? null : _demo,
                   icon: const Icon(Icons.auto_awesome_outlined),
-                  label: const Text('Try demo account'),
+                  label: Text(context.l10n.authTryDemo),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: t.primary,
                     minimumSize: const Size.fromHeight(52),
                     side: BorderSide(color: t.primary.withValues(alpha: 0.4)),
                     shape: const StadiumBorder(),
-                    textStyle: EventraText.button.copyWith(fontSize: 16),
+                    textStyle: context.text.button.copyWith(fontSize: 16),
                   ),
                 ),
                 const SizedBox(height: 6),
                 AuthLinkButton(
                   key: const ValueKey('login-guest'),
-                  label: 'Continue as guest',
+                  label: context.l10n.authContinueGuest,
                   bold: false,
                   onPressed: _busy ? null : _guest,
                 ),

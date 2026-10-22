@@ -4,7 +4,9 @@ import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/settings/presentation/settings_providers.dart';
 import 'package:eventra/features/tickets/domain/reminders.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -57,8 +59,21 @@ class _EventraAppState extends ConsumerState<EventraApp> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = ref.watch(
+      settingsProvider.select((s) => s.language.locale),
+    );
+    // Domain messages and formatters read the same locale (see AppLocale).
+    AppLocale.set(locale);
     return MaterialApp.router(
-      title: 'Eventra',
+      onGenerateTitle: (context) => context.l10n.appTitle,
+      locale: locale,
+      supportedLocales: kSupportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
       debugShowCheckedModeBanner: false,
       theme: buildEventraTheme(),
       darkTheme: buildEventraTheme(brightness: Brightness.dark),

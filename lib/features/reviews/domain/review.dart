@@ -1,4 +1,5 @@
 import 'package:eventra/core/result/result.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/foundation.dart';
 
 export 'package:eventra/core/result/result.dart'
@@ -91,22 +92,22 @@ abstract final class ReviewRules {
   /// Returns the first problem with a draft, or null when it is valid.
   static ReviewFailure? validate(int rating, String text) {
     if (rating < 1 || rating > 5) {
-      return const ReviewFailure(
+      return ReviewFailure(
         ReviewError.invalidRating,
-        'Pick a rating from 1 to 5 stars.',
+        AppLocale.l10n.revValRating,
       );
     }
     final n = text.trim().length;
     if (n < minLength) {
-      return const ReviewFailure(
+      return ReviewFailure(
         ReviewError.tooShort,
-        'Write at least $minLength characters.',
+        AppLocale.l10n.revValShort(minLength.toString()),
       );
     }
     if (n > maxLength) {
-      return const ReviewFailure(
+      return ReviewFailure(
         ReviewError.tooLong,
-        'Keep it under $maxLength characters.',
+        AppLocale.l10n.revValLong(maxLength.toString()),
       );
     }
     return null;

@@ -7,6 +7,7 @@ import 'package:eventra/core/widgets/gradient_button.dart';
 import 'package:eventra/features/auth/presentation/auth_navigation.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/auth/presentation/widgets/auth_widgets.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,7 +61,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     final code = value ?? _code.text;
     if (_busy) return;
     if (code.length < 6) {
-      setState(() => _error = 'Enter the 6-digit code.');
+      setState(() => _error = context.l10n.authEnterCode);
       _shake.currentState?.shake();
       return;
     }
@@ -92,7 +93,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     }
     setState(_startCountdown);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('We sent a new code to ${widget.email}')),
+      SnackBar(content: Text(context.l10n.authNewCodeSent(widget.email))),
     );
   }
 
@@ -100,8 +101,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   Widget build(BuildContext context) {
     final t = context.tokens;
     return AuthScaffold(
-      title: 'Check your email',
-      subtitle: 'Enter the 6-digit code we sent to ${widget.email}.',
+      title: context.l10n.authCheckEmail,
+      subtitle: context.l10n.authOtpSubtitle(widget.email),
       onBack: context.canPop() ? context.pop : () => context.go('/auth/login'),
       child: Shake(
         key: _shake,
@@ -121,27 +122,31 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             AuthErrorBanner(message: _error),
             GradientPillButton(
               key: const ValueKey('otp-submit'),
-              label: _busy ? 'Verifying...' : 'Verify',
+              label: _busy
+                  ? context.l10n.authVerifying
+                  : context.l10n.authVerify,
               onPressed: _busy ? null : _verify,
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Didn't get it?", style: EventraText.body),
+                Text(context.l10n.authDidntGetIt, style: context.text.body),
                 AuthLinkButton(
                   key: const ValueKey('otp-resend'),
                   label: _resendIn > 0
-                      ? 'Resend in 0:${_resendIn.toString().padLeft(2, '0')}'
-                      : 'Resend code',
+                      ? context.l10n.authResendIn(
+                          _resendIn.toString().padLeft(2, '0'),
+                        )
+                      : context.l10n.authResendCode,
                   onPressed: _resendIn > 0 ? null : _resend,
                 ),
               ],
             ),
             Text(
-              'Codes expire after 10 minutes.',
+              context.l10n.authCodesExpire,
               textAlign: TextAlign.center,
-              style: EventraText.caption.copyWith(color: t.textHint),
+              style: context.text.caption.copyWith(color: t.textHint),
             ),
           ],
         ),

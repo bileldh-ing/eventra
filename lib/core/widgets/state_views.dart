@@ -1,6 +1,7 @@
 import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/core/widgets/gradient_button.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Friendly empty / error state with one action.
@@ -21,9 +22,9 @@ class MessageView extends StatelessWidget {
   }) => MessageView(
     key: key ?? const ValueKey('error-view'),
     icon: Icons.wifi_off_rounded,
-    title: 'Something went wrong',
+    title: AppLocale.l10n.errorTitle,
     message: message,
-    actionLabel: 'Retry',
+    actionLabel: AppLocale.l10n.actionRetry,
     onAction: onRetry,
   );
 
@@ -53,11 +54,11 @@ class MessageView extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             title,
-            style: EventraText.cardTitle,
+            style: context.text.cardTitle,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 6),
-          Text(message, style: EventraText.body, textAlign: TextAlign.center),
+          Text(message, style: context.text.body, textAlign: TextAlign.center),
           if (actionLabel != null && onAction != null) ...[
             const SizedBox(height: 20),
             GradientPillButton(

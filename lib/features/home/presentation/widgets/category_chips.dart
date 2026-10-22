@@ -2,6 +2,7 @@ import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/core/widgets/pressable.dart';
 import 'package:eventra/features/events/domain/entities/event_category.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// 'See All' + the eight categories. The row bleeds off the right edge.
@@ -23,11 +24,11 @@ class CategoryChips extends StatelessWidget {
       child: ListView.separated(
         clipBehavior: Clip.none,
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(24, 6, 24, 18),
+        padding: const EdgeInsetsDirectional.fromSTEB(24, 6, 24, 18),
         itemCount: items.length,
         separatorBuilder: (_, _) => const SizedBox(width: 14),
         itemBuilder: (context, i) => _Chip(
-          label: items[i]?.label ?? 'See All',
+          label: items[i]?.label ?? context.l10n.seeAll,
           selected: items[i] == selected,
           onTap: () => onSelected(items[i]),
         ),
@@ -75,17 +76,17 @@ class _Chip extends StatelessWidget {
                       offset: Offset(0, 6),
                     ),
                   ]
-                : const [
+                : [
                     BoxShadow(
-                      color: Color(0x128A4FC8),
+                      color: context.tokens.shadow(0.07),
                       blurRadius: 12,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
           ),
           child: Text(
             label,
-            style: EventraText.body.copyWith(
+            style: context.text.body.copyWith(
               fontSize: 17,
               fontWeight: FontWeight.w500,
               color: selected ? Colors.white : t.textPrimary,

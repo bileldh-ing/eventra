@@ -1,6 +1,7 @@
 import 'package:eventra/core/map/map_layers.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -24,7 +25,7 @@ class MiniMapCard extends StatelessWidget {
     final point = LatLng(event.latitude, event.longitude);
     return Semantics(
       button: true,
-      label: 'Open map for ${event.venue}. Long press for directions.',
+      label: context.l10n.openMapFor(event.venue),
       child: GestureDetector(
         key: const ValueKey('mini-map'),
         onTap: onOpen,
@@ -48,7 +49,7 @@ class MiniMapCard extends StatelessWidget {
                       options: MapOptions(
                         initialCenter: point,
                         initialZoom: 15,
-                        backgroundColor: const Color(0xFFF2F2F0),
+                        backgroundColor: context.tokens.mapBackground,
                         interactionOptions: const InteractionOptions(
                           flags: InteractiveFlag.none,
                         ),
@@ -68,8 +69,8 @@ class MiniMapCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const Positioned(
-                    right: 8,
+                  const PositionedDirectional(
+                    end: 8,
                     bottom: 6,
                     child: MapAttribution(),
                   ),

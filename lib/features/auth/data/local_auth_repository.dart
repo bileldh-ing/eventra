@@ -8,6 +8,7 @@ import 'package:eventra/features/auth/domain/auth_models.dart';
 import 'package:eventra/features/auth/domain/auth_repository.dart';
 import 'package:eventra/features/auth/domain/password_hasher.dart';
 import 'package:eventra/features/events/data/db/app_database.dart';
+import 'package:eventra/l10n/l10n.dart';
 
 /// Zero-setup authentication: accounts in the local drift database (salted
 /// PBKDF2 hashes only), the session token in secure storage, a mock one-time
@@ -92,15 +93,18 @@ class LocalAuthRepository implements AuthRepository {
   }) async {
     final normalized = normalizeEmail(email);
     if (AuthValidators.newPassword(password) != null) {
-      return const Result.failure(
-        AuthFailure(AuthErrorCode.weakPassword, 'Choose a stronger password.'),
+      return Result.failure(
+        AuthFailure(
+          AuthErrorCode.weakPassword,
+          AppLocale.l10n.authWeakPassword,
+        ),
       );
     }
     if (await _userWhere('email', normalized) != null) {
-      return const Result.failure(
+      return Result.failure(
         AuthFailure(
           AuthErrorCode.emailTaken,
-          'An account with this email already exists. Log in instead.',
+          AppLocale.l10n.authEmailTaken,
         ),
       );
     }
@@ -122,7 +126,7 @@ class LocalAuthRepository implements AuthRepository {
   }) async {
     final normalized = normalizeEmail(email);
     final row = await _userWhere('email', normalized);
-    if (row == null) return const Result.failure(_userNotFound);
+    if (row == null) return Result.failure(_userNotFound);
     final issued = _otpIssuedAt[normalized];
     final expired = issued != null && _clock().difference(issued) > otpTtl;
     if (code != kDemoOtpCode || expired) {
@@ -130,8 +134,8 @@ class LocalAuthRepository implements AuthRepository {
         AuthFailure(
           AuthErrorCode.invalidCode,
           expired
-              ? 'This code has expired. Request a new one.'
-              : 'That code is not right. Check it and try again.',
+              ? AppLocale.l10n.authCodeExpired
+              : AppLocale.l10n.authCodeWrong,
         ),
       );
     }
@@ -148,7 +152,7 @@ class LocalAuthRepository implements AuthRepository {
   Future<Result<void>> resendOtp(String email) async {
     final normalized = normalizeEmail(email);
     if (await _userWhere('email', normalized) == null) {
-      return const Result.failure(_userNotFound);
+      return Result.failure(_userNotFound);
     }
     _otpIssuedAt[normalized] = _clock();
     return const Result.success(null);
@@ -200,18 +204,17 @@ class LocalAuthRepository implements AuthRepository {
       return Result.failure(
         AuthFailure(
           AuthErrorCode.invalidCredentials,
-          'Email or password is incorrect. $left '
-          '${left == 1 ? 'attempt' : 'attempts'} left.',
+          AppLocale.l10n.authBadCredentials(left),
         ),
       );
     }
     _failures.remove(normalized);
     if (row.read<int>('verified') == 0) {
       _otpIssuedAt[normalized] = _clock();
-      return const Result.failure(
+      return Result.failure(
         AuthFailure(
           AuthErrorCode.unverified,
-          'Confirm your email with the code we sent to finish signing up.',
+          AppLocale.l10n.authUnverified,
         ),
       );
     }
@@ -241,7 +244,7 @@ class LocalAuthRepository implements AuthRepository {
   Future<Result<void>> requestPasswordReset(String email) async {
     final normalized = normalizeEmail(email);
     if (await _userWhere('email', normalized) == null) {
-      return const Result.failure(_userNotFound);
+      return Result.failure(_userNotFound);
     }
     _resetIssuedAt[normalized] = _clock();
     return const Result.success(null);
@@ -258,16 +261,19 @@ class LocalAuthRepository implements AuthRepository {
     if (issued == null ||
         code != kDemoOtpCode ||
         _clock().difference(issued) > otpTtl) {
-      return const Result.failure(
+      return Result.failure(
         AuthFailure(
           AuthErrorCode.invalidCode,
-          'That code is not valid. Request a new one.',
+          AppLocale.l10n.authCodeInvalid,
         ),
       );
     }
     if (AuthValidators.newPassword(newPassword) != null) {
-      return const Result.failure(
-        AuthFailure(AuthErrorCode.weakPassword, 'Choose a stronger password.'),
+      return Result.failure(
+        AuthFailure(
+          AuthErrorCode.weakPassword,
+          AppLocale.l10n.authWeakPassword,
+        ),
       );
     }
     final h = await hasher.hash(newPassword);
@@ -289,14 +295,14 @@ class LocalAuthRepository implements AuthRepository {
 
   // -------------------------------------------------------------- storage
 
-  static const _userNotFound = AuthFailure(
+  static AuthFailure get _userNotFound => AuthFailure(
     AuthErrorCode.userNotFound,
-    'We could not find an account with that email.',
+    AppLocale.l10n.authUserNotFound,
   );
 
   AuthFailure _lockedOut(Duration left) => AuthFailure(
     AuthErrorCode.lockedOut,
-    'Too many attempts. Try again in ${left.inSeconds.clamp(1, 999)}s.',
+    AppLocale.l10n.authLockedOut(left.inSeconds.clamp(1, 999).toString()),
     retryAfter: left,
   );
 

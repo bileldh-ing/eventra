@@ -4,6 +4,7 @@ import 'package:eventra/core/widgets/gradient_button.dart';
 import 'package:eventra/features/profile/domain/user_profile.dart';
 import 'package:eventra/features/profile/presentation/profile_providers.dart';
 import 'package:eventra/features/profile/presentation/widgets/initials_avatar.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,13 +21,13 @@ class EditProfileScreen extends ConsumerWidget {
       backgroundColor: t.background,
       appBar: AppBar(
         backgroundColor: t.background,
-        title: const Text('Edit profile', style: EventraText.sectionTitle),
+        title: Text(context.l10n.editProfile, style: context.text.sectionTitle),
       ),
       body: profile.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, _) => const Center(child: Text('Profile unavailable.')),
+        error: (_, _) => Center(child: Text(context.l10n.profileUnavailable)),
         data: (p) => p == null
-            ? const Center(child: Text('Log in to edit your profile.'))
+            ? Center(child: Text(context.l10n.profileLoginToEdit))
             : _EditProfileForm(initial: p),
       ),
     );
@@ -61,6 +62,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     if (!(_form.currentState?.validate() ?? false)) return;
     setState(() => _saving = true);
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     final router = GoRouter.of(context);
     try {
       await ref
@@ -76,12 +78,12 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
       router.pop();
       messenger
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Profile updated')));
+        ..showSnackBar(SnackBar(content: Text(l10n.profileUpdated)));
     } on Object {
       if (!mounted) return;
       setState(() => _saving = false);
       messenger.showSnackBar(
-        const SnackBar(content: Text('Could not save. Please try again.')),
+        SnackBar(content: Text(l10n.couldNotSave)),
       );
     }
   }
@@ -102,7 +104,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     return Form(
       key: _form,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 40),
         children: [
           Center(
             child: ValueListenableBuilder(
@@ -116,14 +118,14 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
             ),
           ),
           const SizedBox(height: 16),
-          const Text('Avatar color', style: EventraText.caption),
+          Text(context.l10n.avatarColor, style: context.text.caption),
           const SizedBox(height: 8),
           Wrap(
             spacing: 12,
             children: [
               for (var i = 0; i < kAvatarColors.length; i++)
                 Semantics(
-                  label: 'Avatar color ${i + 1}',
+                  label: context.l10n.avatarColorN((i + 1).toString()),
                   selected: i == _color,
                   button: true,
                   child: GestureDetector(
@@ -154,7 +156,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
             key: const ValueKey('edit-name'),
             controller: _name,
             textCapitalization: TextCapitalization.words,
-            decoration: deco('Name'),
+            decoration: deco(context.l10n.fieldName),
             validator: ProfileValidators.name,
           ),
           const SizedBox(height: 14),
@@ -162,7 +164,10 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
             key: const ValueKey('edit-city'),
             controller: _city,
             textCapitalization: TextCapitalization.words,
-            decoration: deco('City', hint: 'Where you go out'),
+            decoration: deco(
+              context.l10n.fieldCity,
+              hint: context.l10n.fieldCityHint,
+            ),
             validator: ProfileValidators.city,
           ),
           const SizedBox(height: 14),
@@ -172,13 +177,16 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
             minLines: 2,
             maxLines: 4,
             maxLength: ProfileValidators.maxBio,
-            decoration: deco('Bio', hint: 'A line about you'),
+            decoration: deco(
+              context.l10n.fieldBio,
+              hint: context.l10n.fieldBioHint,
+            ),
             validator: ProfileValidators.bio,
           ),
           const SizedBox(height: 20),
           GradientPillButton(
             key: const ValueKey('edit-save'),
-            label: _saving ? 'Saving...' : 'Save',
+            label: _saving ? context.l10n.saving : context.l10n.save,
             onPressed: _saving ? null : _save,
           ),
         ],

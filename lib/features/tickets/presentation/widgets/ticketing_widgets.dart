@@ -6,6 +6,7 @@ import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/core/widgets/pressable.dart';
 import 'package:eventra/features/tickets/domain/money.dart';
 import 'package:eventra/features/tickets/domain/pricing.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -44,7 +45,7 @@ class SectionCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title!,
-                    style: EventraText.cardTitle.copyWith(fontSize: 18),
+                    style: context.text.cardTitle.copyWith(fontSize: 18),
                   ),
                 ),
                 ?trailing,
@@ -76,7 +77,7 @@ class TicketingHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.tokens;
     return Padding(
-      padding: EdgeInsets.fromLTRB(
+      padding: EdgeInsetsDirectional.fromSTEB(
         16,
         MediaQuery.paddingOf(context).top + 8,
         16,
@@ -87,7 +88,7 @@ class TicketingHeader extends StatelessWidget {
           if (onBack != null)
             Semantics(
               button: true,
-              label: 'Back',
+              label: context.l10n.back,
               child: Pressable(
                 key: const ValueKey('ticketing-back'),
                 onTap: onBack,
@@ -111,7 +112,7 @@ class TicketingHeader extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: EventraText.sectionTitle.copyWith(
+              style: context.text.sectionTitle.copyWith(
                 fontWeight: FontWeight.w700,
               ),
               maxLines: 1,
@@ -171,7 +172,7 @@ class QuantityStepper extends StatelessWidget {
             gradient: on && icon == Icons.add ? t.primaryGradient : null,
             color: on
                 ? (icon == Icons.add ? null : t.primary.withValues(alpha: 0.1))
-                : const Color(0xFFEDEAF2),
+                : t.surfaceMuted,
           ),
           child: Icon(
             icon,
@@ -188,7 +189,7 @@ class QuantityStepper extends StatelessWidget {
       children: [
         button(
           Icons.remove,
-          'Remove one',
+          context.l10n.removeOne,
           on: enabled && value > 0,
           tap: () => onChanged(value - 1),
         ),
@@ -201,13 +202,13 @@ class QuantityStepper extends StatelessWidget {
               '$value',
               key: ValueKey('$keyPrefix-qty-$value'),
               textAlign: TextAlign.center,
-              style: EventraText.cardTitle.copyWith(fontSize: 18),
+              style: context.text.cardTitle.copyWith(fontSize: 18),
             ),
           ),
         ),
         button(
           Icons.add,
-          'Add one',
+          context.l10n.addOne,
           on: enabled && value < max,
           tap: () => onChanged(value + 1),
         ),
@@ -237,8 +238,8 @@ class AmountRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.tokens;
     final style = emphasize
-        ? EventraText.cardTitle.copyWith(fontSize: 18)
-        : EventraText.body;
+        ? context.text.cardTitle.copyWith(fontSize: 18)
+        : context.text.body;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -272,32 +273,30 @@ class PriceBreakdown extends StatelessWidget {
     return Column(
       children: [
         AmountRow(
-          label:
-              'Subtotal (${quote.ticketCount} '
-              '${quote.ticketCount == 1 ? 'ticket' : 'tickets'})',
+          label: context.l10n.subtotalN(quote.ticketCount),
           cents: quote.subtotalCents,
           valueKey: const ValueKey('amount-subtotal'),
         ),
         if (quote.discountCents > 0)
           AmountRow(
-            label: 'Promo ${quote.promo?.code ?? ''}'.trim(),
+            label: context.l10n.tdPromo(quote.promo?.code ?? '').trim(),
             cents: quote.discountCents,
             negative: true,
             valueKey: const ValueKey('amount-discount'),
           ),
         AmountRow(
-          label: 'Service fees',
+          label: context.l10n.serviceFees,
           cents: quote.feesCents,
           valueKey: const ValueKey('amount-fees'),
         ),
         AmountRow(
-          label: 'Tax',
+          label: context.l10n.tax,
           cents: quote.taxCents,
           valueKey: const ValueKey('amount-tax'),
         ),
         const Divider(height: 20),
         AmountRow(
-          label: 'Total',
+          label: context.l10n.total,
           cents: quote.totalCents,
           emphasize: true,
           valueKey: const ValueKey('amount-total'),
@@ -337,7 +336,7 @@ class StatusChip extends StatelessWidget {
           ],
           Text(
             label,
-            style: EventraText.caption.copyWith(
+            style: context.text.caption.copyWith(
               color: color,
               fontWeight: FontWeight.w700,
             ),
@@ -420,7 +419,7 @@ class CountdownRing extends StatelessWidget {
           child: Center(
             child: Text(
               label,
-              style: EventraText.caption.copyWith(
+              style: context.text.caption.copyWith(
                 color: c,
                 fontWeight: FontWeight.w700,
                 fontSize: size < 50 ? 12 : 14,
@@ -597,7 +596,7 @@ class InlineBanner extends StatelessWidget {
               liveRegion: true,
               child: Text(
                 message,
-                style: EventraText.caption.copyWith(color: c),
+                style: context.text.caption.copyWith(color: c),
               ),
             ),
           ),

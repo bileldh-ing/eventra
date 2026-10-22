@@ -6,6 +6,7 @@ import 'package:eventra/core/widgets/event_image.dart';
 import 'package:eventra/core/widgets/pressable.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/explore/domain/nearest.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Floating white card with the selected event (reference: thumbnail 88x88
@@ -19,14 +20,14 @@ class PreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    final meta = EventraText.body.copyWith(
+    final meta = context.text.body.copyWith(
       color: t.textPrimary.withValues(alpha: 0.8),
       fontSize: 14,
       fontWeight: FontWeight.w500,
     );
     return Semantics(
       button: true,
-      label: 'Open ${event.title}',
+      label: context.l10n.openNamed(event.title),
       child: Pressable(
         key: const ValueKey('preview-card'),
         onTap: onTap,
@@ -34,13 +35,13 @@ class PreviewCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.96),
+            color: t.surface.withValues(alpha: 0.96),
             borderRadius: BorderRadius.circular(t.radii.previewCard),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                color: Color(0x1F6B3FA0),
+                color: t.shadow(0.12),
                 blurRadius: 30,
-                offset: Offset(0, 10),
+                offset: const Offset(0, 10),
               ),
             ],
           ),
@@ -66,7 +67,7 @@ class PreviewCard extends StatelessWidget {
                       event.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: EventraText.cardTitle.copyWith(fontSize: 18),
+                      style: context.text.cardTitle.copyWith(fontSize: 18),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -147,7 +148,7 @@ class MiniPin extends StatelessWidget {
   }
 }
 
-/// The lavender "Nearest Location" sheet body: handle, search, list.
+/// The lavender 'exploreNearest' sheet body: handle, search, list.
 class NearestSheet extends StatelessWidget {
   const NearestSheet({
     required this.scroll,
@@ -192,7 +193,7 @@ class NearestSheet extends StatelessWidget {
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 14, 24, 0),
+              padding: const EdgeInsetsDirectional.fromSTEB(24, 14, 24, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -202,7 +203,7 @@ class NearestSheet extends StatelessWidget {
                       width: 48,
                       height: 7,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFD9D3E3),
+                        color: t.disabled,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -215,8 +216,8 @@ class NearestSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 22),
                   Text(
-                    'Nearest Location',
-                    style: EventraText.sectionTitle.copyWith(fontSize: 21),
+                    context.l10n.exploreNearest,
+                    style: context.text.sectionTitle.copyWith(fontSize: 21),
                   ),
                   const SizedBox(height: 14),
                 ],
@@ -240,8 +241,8 @@ class NearestSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'No places match your search',
-                      style: EventraText.body.copyWith(color: t.textPrimary),
+                      context.l10n.exploreNoPlaces,
+                      style: context.text.body.copyWith(color: t.textPrimary),
                     ),
                   ],
                 ),
@@ -249,7 +250,7 @@ class NearestSheet extends StatelessWidget {
             )
           else
             SliverPadding(
-              padding: EdgeInsets.fromLTRB(24, 0, 24, bottomPadding),
+              padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, bottomPadding),
               sliver: SliverList.separated(
                 itemCount: items.length,
                 separatorBuilder: (_, _) => const SizedBox(height: 12),
@@ -285,17 +286,17 @@ class _SearchField extends StatelessWidget {
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: t.surface,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x0F6B3FA0),
+            color: t.shadow(0.06),
             blurRadius: 16,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      padding: const EdgeInsets.only(left: 18, right: 6),
+      padding: const EdgeInsetsDirectional.only(start: 18, end: 6),
       child: Row(
         children: [
           Icon(Icons.search_rounded, color: t.textSecondary, size: 24),
@@ -306,7 +307,7 @@ class _SearchField extends StatelessWidget {
               controller: controller,
               onChanged: onChanged,
               textInputAction: TextInputAction.search,
-              style: EventraText.body.copyWith(
+              style: context.text.body.copyWith(
                 color: t.textPrimary,
                 fontSize: 16,
               ),
@@ -316,8 +317,8 @@ class _SearchField extends StatelessWidget {
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 filled: false,
-                hintText: 'Search Your Location...',
-                hintStyle: EventraText.body.copyWith(
+                hintText: context.l10n.exploreSearchHint,
+                hintStyle: context.text.body.copyWith(
                   color: t.textSecondary,
                   fontSize: 16,
                 ),
@@ -326,7 +327,7 @@ class _SearchField extends StatelessWidget {
           ),
           IconButton(
             key: const ValueKey('explore-filters'),
-            tooltip: 'Filters',
+            tooltip: context.l10n.filtersTitle,
             onPressed: onFilters,
             icon: Icon(Icons.tune_rounded, color: t.textSecondary),
           ),
@@ -336,7 +337,7 @@ class _SearchField extends StatelessWidget {
   }
 }
 
-/// One 'Nearest Location' row: tinted pin circle, name, address, distance.
+/// One 'exploreNearest' row: tinted pin circle, name, address, distance.
 /// Selected rows get a purple border.
 class NearestLocationCard extends StatelessWidget {
   const NearestLocationCard({
@@ -359,9 +360,11 @@ class NearestLocationCard extends StatelessWidget {
     return Semantics(
       button: true,
       selected: selected,
-      label:
-          '${item.event.title}, ${mapAddress(item.event)}, '
-          '${formatKm(item.km)} away',
+      label: context.l10n.explorePlaceSemantics(
+        item.event.title,
+        mapAddress(item.event),
+        formatKm(item.km),
+      ),
       excludeSemantics: true,
       child: Pressable(
         onTap: onTap,
@@ -369,19 +372,19 @@ class NearestLocationCard extends StatelessWidget {
         child: AnimatedContainer(
           duration: t.motion.medium,
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.fromLTRB(16, 13, 20, 13),
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 13, 20, 13),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: t.surface,
             borderRadius: BorderRadius.circular(t.radii.listCard),
             border: Border.all(
-              color: selected ? t.primary : Colors.white,
+              color: selected ? t.primary : t.surface,
               width: 1.6,
             ),
             boxShadow: [
               BoxShadow(
                 color: selected
                     ? t.primary.withValues(alpha: 0.18)
-                    : const Color(0x0D6B3FA0),
+                    : t.shadow(0.05),
                 blurRadius: selected ? 22 : 14,
                 offset: const Offset(0, 6),
               ),
@@ -407,14 +410,14 @@ class NearestLocationCard extends StatelessWidget {
                       item.event.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: EventraText.cardTitle.copyWith(fontSize: 17),
+                      style: context.text.cardTitle.copyWith(fontSize: 17),
                     ),
                     const SizedBox(height: 5),
                     Text(
                       mapAddress(item.event),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: EventraText.body.copyWith(
+                      style: context.text.body.copyWith(
                         fontSize: 14,
                         color: t.textPrimary.withValues(alpha: 0.75),
                       ),
@@ -426,7 +429,7 @@ class NearestLocationCard extends StatelessWidget {
               Text(
                 formatKm(item.km),
                 key: ValueKey('km-${item.event.id}'),
-                style: EventraText.body.copyWith(
+                style: context.text.body.copyWith(
                   fontSize: 14,
                   color: t.textPrimary.withValues(alpha: 0.8),
                   fontWeight: FontWeight.w500,
@@ -466,11 +469,11 @@ class VenueEventTile extends StatelessWidget {
       ),
       title: Text(
         event.title,
-        style: EventraText.cardTitle.copyWith(fontSize: 16),
+        style: context.text.cardTitle.copyWith(fontSize: 16),
       ),
       subtitle: Text(
         formatPreviewRange(event.startAt, event.endAt),
-        style: EventraText.caption,
+        style: context.text.caption,
       ),
       trailing: Text(formatPrice(event.price)),
     );

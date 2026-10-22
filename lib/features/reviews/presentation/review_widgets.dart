@@ -1,16 +1,17 @@
 import 'package:eventra/core/result/result.dart';
 import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
+import 'package:eventra/core/utils/formatters.dart';
 import 'package:eventra/core/widgets/event_image.dart';
 import 'package:eventra/core/widgets/gradient_button.dart';
 import 'package:eventra/features/event_details/presentation/widgets/details_sections.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/reviews/domain/review.dart';
 import 'package:eventra/features/reviews/presentation/reviews_providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 BoxDecoration _card(EventraTokens t) => BoxDecoration(
   color: t.surface,
@@ -37,15 +38,15 @@ class RatingSummaryCard extends StatelessWidget {
               Text(
                 summary.count == 0 ? '-' : summary.average.toStringAsFixed(1),
                 key: const ValueKey('rating-average'),
-                style: EventraText.price.copyWith(color: t.textPrimary),
+                style: context.text.price.copyWith(color: t.textPrimary),
               ),
               const SizedBox(height: 4),
               StarRow(rating: summary.average),
               const SizedBox(height: 4),
               Text(
-                summary.count == 1 ? '1 review' : '${summary.count} reviews',
+                context.l10n.nReviews(summary.count),
                 key: const ValueKey('rating-count'),
-                style: EventraText.caption,
+                style: context.text.caption,
               ),
             ],
           ),
@@ -61,7 +62,7 @@ class RatingSummaryCard extends StatelessWidget {
                       children: [
                         SizedBox(
                           width: 12,
-                          child: Text('$stars', style: EventraText.caption),
+                          child: Text('$stars', style: context.text.caption),
                         ),
                         const SizedBox(width: 6),
                         Expanded(
@@ -85,7 +86,7 @@ class RatingSummaryCard extends StatelessWidget {
                           child: Text(
                             '${summary.histogram[stars - 1]}',
                             textAlign: TextAlign.end,
-                            style: EventraText.caption,
+                            style: context.text.caption,
                           ),
                         ),
                       ],
@@ -142,16 +143,18 @@ class ReviewTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      mine ? '${review.authorName} (you)' : review.authorName,
-                      style: EventraText.body.copyWith(
+                      mine
+                          ? context.l10n.revYou(review.authorName)
+                          : review.authorName,
+                      style: context.text.body.copyWith(
                         color: t.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      '${DateFormat('MMM d, yyyy').format(review.createdAt)}'
-                      '${review.edited ? ' · edited' : ''}',
-                      style: EventraText.caption,
+                      '${formatFullDate(review.createdAt)}'
+                      '${review.edited ? ' · ${context.l10n.revEdited}' : ''}',
+                      style: context.text.caption,
                     ),
                   ],
                 ),
@@ -160,26 +163,26 @@ class ReviewTile extends StatelessWidget {
               if (mine)
                 PopupMenuButton<String>(
                   key: const ValueKey('my-review-menu'),
-                  tooltip: 'Review options',
+                  tooltip: context.l10n.revOptions,
                   onSelected: (v) =>
                       v == 'edit' ? onEdit?.call() : onDelete?.call(),
-                  itemBuilder: (_) => const [
+                  itemBuilder: (_) => [
                     PopupMenuItem(
-                      key: ValueKey('my-review-edit'),
+                      key: const ValueKey('my-review-edit'),
                       value: 'edit',
-                      child: Text('Edit'),
+                      child: Text(context.l10n.edit),
                     ),
                     PopupMenuItem(
-                      key: ValueKey('my-review-delete'),
+                      key: const ValueKey('my-review-delete'),
                       value: 'delete',
-                      child: Text('Delete'),
+                      child: Text(context.l10n.delete),
                     ),
                   ],
                 ),
             ],
           ),
           const SizedBox(height: 10),
-          Text(review.body, style: EventraText.body),
+          Text(review.body, style: context.text.body),
         ],
       ),
     );
@@ -203,23 +206,26 @@ class EventReviewsSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DetailsSectionTitle(
-          'Reviews',
+          context.l10n.statReviews,
           trailing: TextButton(
             key: const ValueKey('reviews-see-all'),
             onPressed: () => openAllReviews(context, event.id),
-            child: Text('See all', style: TextStyle(color: t.primary)),
+            child: Text(
+              context.l10n.seeAllLower,
+              style: TextStyle(color: t.primary),
+            ),
           ),
         ),
         RatingSummaryCard(summary: summary),
         const SizedBox(height: 12),
         ReviewCallToAction(event: event),
         if (latest.isEmpty)
-          const Padding(
-            padding: EdgeInsets.only(top: 12),
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
             child: Text(
-              'No reviews yet.',
-              key: ValueKey('reviews-empty'),
-              style: EventraText.caption,
+              context.l10n.revNoneYet,
+              key: const ValueKey('reviews-empty'),
+              style: context.text.caption,
             ),
           ),
         for (final r in latest) ...[
@@ -260,14 +266,14 @@ class ReviewCallToAction extends ConsumerWidget {
       children: [
         Icon(Icons.info_outline_rounded, size: 18, color: t.textHint),
         const SizedBox(width: 8),
-        Expanded(child: Text(text, style: EventraText.caption)),
+        Expanded(child: Text(text, style: context.text.caption)),
       ],
     );
     return switch (eligibility) {
       null => const SizedBox.shrink(),
       ReviewEligibility.eligible => GradientPillButton(
         key: const ValueKey('write-review'),
-        label: 'Write a review',
+        label: context.l10n.revWrite,
         icon: Icons.rate_review_outlined,
         onPressed: () => showReviewEditor(context, event),
       ),
@@ -277,16 +283,16 @@ class ReviewCallToAction extends ConsumerWidget {
             ? null
             : () => showReviewEditor(context, event, existing: mine),
         icon: const Icon(Icons.edit_outlined),
-        label: const Text('Edit your review'),
+        label: Text(context.l10n.revEditYours),
       ),
       ReviewEligibility.signedOut => note(
-        'Log in with a ticket for this event to leave a review.',
+        context.l10n.revSignedOut,
       ),
       ReviewEligibility.noTicket => note(
-        'Only attendees with a ticket can review this event.',
+        context.l10n.revOnlyAttendees,
       ),
       ReviewEligibility.notEnded => note(
-        'You can review this event after it ends.',
+        context.l10n.revAfterEnd,
       ),
     };
   }
@@ -300,17 +306,17 @@ Future<void> confirmDeleteReview(
   final ok = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('Delete your review?'),
-      content: const Text('This cannot be undone.'),
+      title: Text(context.l10n.revDeleteQ),
+      content: Text(context.l10n.cannotUndo),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('Cancel'),
+          child: Text(context.l10n.cancel),
         ),
         TextButton(
           key: const ValueKey('delete-review-confirm'),
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('Delete'),
+          child: Text(context.l10n.delete),
         ),
       ],
     ),
@@ -323,7 +329,9 @@ Future<void> confirmDeleteReview(
     ..showSnackBar(
       SnackBar(
         content: Text(
-          r.isSuccess ? 'Review deleted' : r.fold((_) => '', (f) => f.message),
+          r.isSuccess
+              ? context.l10n.revDeleted
+              : r.fold((_) => '', (f) => f.message),
         ),
       ),
     );
@@ -386,7 +394,9 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
           ..showSnackBar(
             SnackBar(
               content: Text(
-                existing == null ? 'Thanks for your review!' : 'Review updated',
+                existing == null
+                    ? context.l10n.revThanks
+                    : context.l10n.revUpdated,
               ),
             ),
           );
@@ -403,7 +413,7 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
     final t = context.tokens;
     final length = _text.text.trim().length;
     return Padding(
-      padding: EdgeInsets.fromLTRB(
+      padding: EdgeInsetsDirectional.fromSTEB(
         20,
         0,
         20,
@@ -414,11 +424,13 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.existing == null ? 'Rate this event' : 'Edit your review',
-            style: EventraText.sectionTitle,
+            widget.existing == null
+                ? context.l10n.revRateEvent
+                : context.l10n.revEditYours,
+            style: context.text.sectionTitle,
           ),
           const SizedBox(height: 4),
-          Text(widget.event.title, style: EventraText.caption),
+          Text(widget.event.title, style: context.text.caption),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -426,7 +438,7 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
               for (var i = 1; i <= 5; i++)
                 IconButton(
                   key: ValueKey('star-$i'),
-                  tooltip: '$i star${i == 1 ? '' : 's'}',
+                  tooltip: context.l10n.nStars(i),
                   iconSize: 40,
                   onPressed: _busy ? null : () => setState(() => _rating = i),
                   icon: AnimatedScale(
@@ -452,9 +464,9 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
             maxLength: ReviewRules.maxLength,
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
-              hintText: 'What did you like? What could be better?',
+              hintText: context.l10n.revHint,
               helperText: length < ReviewRules.minLength
-                  ? 'At least ${ReviewRules.minLength} characters'
+                  ? context.l10n.revMinChars(ReviewRules.minLength.toString())
                   : null,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -466,17 +478,17 @@ class _ReviewEditorSheetState extends ConsumerState<ReviewEditorSheet> {
             Text(
               e,
               key: const ValueKey('review-error'),
-              style: EventraText.caption.copyWith(color: t.error),
+              style: context.text.caption.copyWith(color: t.error),
             ),
           ],
           const SizedBox(height: 12),
           GradientPillButton(
             key: const ValueKey('review-submit'),
             label: _busy
-                ? 'Saving...'
+                ? context.l10n.saving
                 : widget.existing == null
-                ? 'Post review'
-                : 'Save changes',
+                ? context.l10n.revPost
+                : context.l10n.saveChanges,
             onPressed: _busy ? null : _submit,
           ),
         ],

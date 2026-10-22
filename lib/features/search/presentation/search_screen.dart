@@ -11,6 +11,7 @@ import 'package:eventra/features/home/presentation/filters_sheet.dart';
 import 'package:eventra/features/home/presentation/home_providers.dart';
 import 'package:eventra/features/search/domain/search_logic.dart';
 import 'package:eventra/features/search/presentation/search_providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -75,7 +76,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         SnackBar(
           content: Text(text),
           behavior: SnackBarBehavior.floating,
-          action: SnackBarAction(label: 'Undo', onPressed: onUndo),
+          action: SnackBarAction(label: context.l10n.undo, onPressed: onUndo),
         ),
       );
   }
@@ -120,16 +121,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 4, 16, 4),
+            padding: const EdgeInsetsDirectional.fromSTEB(24, 4, 16, 4),
             child: Row(
               children: [
                 Expanded(
                   child: Text(
-                    results.length == 1
-                        ? '1 result'
-                        : '${results.length} results',
+                    context.l10n.nResults(results.length),
                     key: const ValueKey('search-count'),
-                    style: EventraText.caption,
+                    style: context.text.caption,
                   ),
                 ),
                 if (!filter.isDefault)
@@ -138,7 +137,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     onPressed: () =>
                         ref.read(homeFilterProvider.notifier).reset(),
                     icon: const Icon(Icons.close_rounded, size: 16),
-                    label: const Text('Clear filters'),
+                    label: Text(context.l10n.clearFilters),
                     style: TextButton.styleFrom(foregroundColor: t.primary),
                   ),
               ],
@@ -147,7 +146,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           Expanded(
             child: ListView.separated(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 32),
               itemCount: results.length,
               separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, i) => EventListTile(
@@ -168,11 +167,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
+              padding: const EdgeInsetsDirectional.fromSTEB(8, 8, 12, 8),
               child: Row(
                 children: [
                   IconButton(
-                    tooltip: 'Back',
+                    tooltip: context.l10n.back,
                     icon: const Icon(Icons.arrow_back_rounded),
                     onPressed: () => Navigator.of(context).maybePop(),
                   ),
@@ -193,13 +192,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             if (v.trim().isNotEmpty) _searchNow(v.trim());
                           },
                           decoration: InputDecoration(
-                            hintText: 'Search events, venues, places',
+                            hintText: context.l10n.searchFullHint,
                             prefixIcon: const Icon(Icons.search_rounded),
                             suffixIcon: _controller.text.isEmpty
                                 ? null
                                 : IconButton(
                                     key: const ValueKey('search-clear'),
-                                    tooltip: 'Clear',
+                                    tooltip: context.l10n.clear,
                                     icon: const Icon(Icons.close_rounded),
                                     onPressed: _clear,
                                   ),
@@ -218,7 +217,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     shape: const CircleBorder(),
                     child: IconButton(
                       key: const ValueKey('search-filter'),
-                      tooltip: 'Filters',
+                      tooltip: context.l10n.filtersTitle,
                       onPressed: () => showFiltersSheet(context),
                       icon: Badge(
                         isLabelVisible: !filter.isDefault,
@@ -262,30 +261,32 @@ class _Idle extends ConsumerWidget {
     final t = context.tokens;
     final recent = ref.watch(recentSearchesProvider);
     final notifier = ref.read(recentSearchesProvider.notifier);
-    final heading = EventraText.cardTitle.copyWith(fontSize: 17);
+    final heading = context.text.cardTitle.copyWith(fontSize: 17);
     return ListView(
-      padding: const EdgeInsets.fromLTRB(0, 8, 0, 32),
+      padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 32),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       children: [
         if (recent.isNotEmpty) ...[
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 12, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 12, 0),
             child: Row(
               children: [
-                Expanded(child: Text('Recent searches', style: heading)),
+                Expanded(
+                  child: Text(context.l10n.recentSearches, style: heading),
+                ),
                 TextButton(
                   key: const ValueKey('recent-clear-all'),
                   onPressed: () {
                     final before = [...recent];
                     notifier.clear();
-                    onSnack('Recent searches cleared', () async {
+                    onSnack(context.l10n.recentCleared, () async {
                       for (var i = 0; i < before.length; i++) {
                         await notifier.restore(before[i], i);
                       }
                     });
                   },
                   style: TextButton.styleFrom(foregroundColor: t.primary),
-                  child: const Text('Clear all'),
+                  child: Text(context.l10n.clearAll),
                 ),
               ],
             ),
@@ -295,14 +296,17 @@ class _Idle extends ConsumerWidget {
               key: ValueKey('recent-$term'),
               direction: DismissDirection.endToStart,
               background: Container(
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(right: 28),
+                alignment: AlignmentDirectional.centerEnd,
+                padding: const EdgeInsetsDirectional.only(end: 28),
                 color: t.error.withValues(alpha: 0.12),
                 child: Icon(Icons.delete_outline_rounded, color: t.error),
               ),
               onDismissed: (_) {
                 notifier.remove(term);
-                onSnack('Removed "$term"', () => notifier.restore(term, i));
+                onSnack(
+                  context.l10n.removedTerm(term),
+                  () => notifier.restore(term, i),
+                );
               },
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24),
@@ -319,8 +323,8 @@ class _Idle extends ConsumerWidget {
           const SizedBox(height: 12),
         ],
         Padding(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
-          child: Text('Trending searches', style: heading),
+          padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 12),
+          child: Text(context.l10n.trendingSearches, style: heading),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -374,12 +378,13 @@ class _NoResults extends StatelessWidget {
         children: [
           MessageView(
             icon: Icons.search_off_rounded,
-            title: 'No results for "$query"',
+            title: context.l10n.noResultsFor(query),
             message: filtersOn
-                ? 'Your filters may be hiding matches. Clear them or try '
-                      'one of these:'
-                : 'Check the spelling or try one of these:',
-            actionLabel: filtersOn ? 'Clear filters' : 'Clear search',
+                ? context.l10n.searchFiltersHiding
+                : context.l10n.searchCheckSpelling,
+            actionLabel: filtersOn
+                ? context.l10n.clearFilters
+                : context.l10n.clearSearch,
             onAction: filtersOn ? onClearFilters : onClearSearch,
           ),
           Padding(

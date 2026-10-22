@@ -6,18 +6,27 @@ import 'package:eventra/core/widgets/state_views.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/events/presentation/widgets/event_cards.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 enum FavoritesSort {
-  recent('Recently saved'),
-  soonest('Date: soonest'),
-  priceLow('Price: low to high'),
-  name('Name: A to Z');
+  recent,
+  soonest,
+  priceLow,
+  name;
 
-  const FavoritesSort(this.label);
-  final String label;
+  /// Name in the active language.
+  String get label {
+    final l = AppLocale.l10n;
+    return switch (this) {
+      recent => l.favSortRecent,
+      soonest => l.favSortSoonest,
+      priceLow => l.sortPriceLow,
+      name => l.favSortName,
+    };
+  }
 }
 
 enum FavoritesView { list, grid }
@@ -117,10 +126,10 @@ class FavoritesScreen extends ConsumerWidget {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: Text('Removed ${e.title}'),
+            content: Text(context.l10n.favRemoved(e.title)),
             action: SnackBarAction(
               key: const ValueKey('favorites-undo'),
-              label: 'Undo',
+              label: context.l10n.undo,
               onPressed: () {
                 if (!notifier.isFavorite(e.id)) notifier.toggle(e.id);
               },
@@ -133,8 +142,8 @@ class FavoritesScreen extends ConsumerWidget {
       key: ValueKey('fav-${e.id}'),
       direction: DismissDirection.endToStart,
       background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 28),
+        alignment: AlignmentDirectional.centerEnd,
+        padding: const EdgeInsetsDirectional.only(end: 28),
         decoration: BoxDecoration(
           color: t.error.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(t.radii.listCard),
@@ -150,12 +159,15 @@ class FavoritesScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: t.background,
         automaticallyImplyLeading: false,
-        title: const Text('Favorites', style: EventraText.sectionTitle),
+        title: Text(
+          context.l10n.navFavorites,
+          style: context.text.sectionTitle,
+        ),
         actions: [
           if (saved.isNotEmpty) ...[
             PopupMenuButton<FavoritesSort>(
               key: const ValueKey('favorites-sort'),
-              tooltip: 'Sort',
+              tooltip: context.l10n.sort,
               icon: const Icon(Icons.sort_rounded),
               initialValue: prefs.sort,
               onSelected: prefsNotifier.setSort,
@@ -172,8 +184,8 @@ class FavoritesScreen extends ConsumerWidget {
             IconButton(
               key: const ValueKey('favorites-view-toggle'),
               tooltip: prefs.view == FavoritesView.list
-                  ? 'Show as grid'
-                  : 'Show as list',
+                  ? context.l10n.favShowGrid
+                  : context.l10n.favShowList,
               onPressed: () => prefsNotifier.setView(
                 prefs.view == FavoritesView.list
                     ? FavoritesView.grid
@@ -194,16 +206,16 @@ class FavoritesScreen extends ConsumerWidget {
               child: MessageView(
                 key: const ValueKey('favorites-empty'),
                 icon: Icons.favorite_border_rounded,
-                title: 'No favorites yet',
-                message: 'Tap the bookmark on any event to save it here.',
-                actionLabel: 'Explore events',
+                title: context.l10n.favEmptyTitle,
+                message: context.l10n.favEmptyBody,
+                actionLabel: context.l10n.exploreEvents,
                 onAction: () => context.go('/home'),
               ),
             )
           : prefs.view == FavoritesView.list
           ? ListView.separated(
               key: const ValueKey('favorites-list'),
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 130),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 130),
               itemCount: saved.length,
               separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, i) {
@@ -220,7 +232,7 @@ class FavoritesScreen extends ConsumerWidget {
             )
           : GridView.builder(
               key: const ValueKey('favorites-grid'),
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 130),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 130),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 12,

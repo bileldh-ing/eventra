@@ -1,6 +1,7 @@
 import 'package:eventra/core/result/result.dart';
 import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
+import 'package:eventra/core/utils/formatters.dart';
 import 'package:eventra/core/widgets/event_image.dart';
 import 'package:eventra/core/widgets/state_views.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
@@ -12,10 +13,10 @@ import 'package:eventra/features/tickets/domain/ticketing_models.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:eventra/features/tickets/presentation/widgets/ticket_visuals.dart';
 import 'package:eventra/features/tickets/presentation/widgets/ticketing_widgets.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 /// Full ticket: signed rotating QR, brightness at max while open, calendar,
 /// directions, invite, order details and refund per policy. Reads only the
@@ -52,24 +53,27 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(paid ? 'Request a refund?' : 'Cancel reservation?'),
+        title: Text(paid ? context.l10n.tdRefundQ : context.l10n.tdCancelResQ),
         content: Text(
           paid
-              ? 'All ${order.ticketCount} tickets in this order will be '
-                    'cancelled and ${formatCents(decision.refundCents)} goes '
-                    'back to your ${order.cardBrand ?? 'card'}$card.'
-              : 'Your ${order.ticketCount == 1 ? 'spot' : 'spots'} will be '
-                    'released for other fans.',
+              ? context.l10n.tdRefundBody(
+                  order.ticketCount,
+                  formatCents(decision.refundCents),
+                  '${order.cardBrand ?? context.l10n.cardGeneric}$card',
+                )
+              : context.l10n.tdReleaseBody(order.ticketCount),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Keep tickets'),
+            child: Text(context.l10n.tdKeep),
           ),
           TextButton(
             key: const ValueKey('confirm-refund'),
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(paid ? 'Refund' : 'Cancel reservation'),
+            child: Text(
+              paid ? context.l10n.tdRefund : context.l10n.tdCancelRes,
+            ),
           ),
         ],
       ),
@@ -86,9 +90,8 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     final message = switch (r) {
       Success(value: final o) =>
         o.refundCents > 0
-            ? 'Refunded ${formatCents(o.refundCents)}. Your tickets were '
-                  'cancelled.'
-            : 'Reservation cancelled.',
+            ? context.l10n.tdRefunded(formatCents(o.refundCents))
+            : context.l10n.tdResCancelled,
       Failure(:final failure) => failure.message,
     };
     ScaffoldMessenger.of(context)
@@ -106,21 +109,21 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
       body: Column(
         children: [
           TicketingHeader(
-            title: 'Your Ticket',
+            title: context.l10n.tdYourTicket,
             onBack: () => Navigator.of(context).maybePop(),
           ),
           Expanded(
             child: switch (entry) {
               AsyncError() => MessageView.error(
-                message: 'We could not open this ticket.',
+                message: context.l10n.tdLoadFailed,
                 onRetry: () =>
                     ref.invalidate(ticketEntryProvider(widget.ticketId)),
               ),
               AsyncData(value: null) => MessageView(
                 icon: Icons.confirmation_number_outlined,
-                title: 'Ticket not found',
-                message: 'It may belong to another account.',
-                actionLabel: 'My Tickets',
+                title: context.l10n.tdNotFound,
+                message: context.l10n.tdOtherAccount,
+                actionLabel: context.l10n.myTickets,
                 onAction: () => context.go('/tickets'),
               ),
               AsyncData(value: final TicketEntry e) => _content(t, e, now),
@@ -135,8 +138,8 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
   Widget _content(EventraTokens t, TicketEntry entry, DateTime now) {
     final e = entry.event;
     final order = entry.order;
-    final status = ticketStatusLabel(entry, now);
-    final valid = status == 'Valid';
+    final display = ticketDisplayStatus(entry, now);
+    final valid = display == TicketDisplayStatus.valid;
     final decision = RefundPolicy.evaluate(
       eventStart: e.startAt,
       now: now,
@@ -144,79 +147,86 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     );
     return ListView(
       key: const ValueKey('ticket-detail-scroll'),
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 32),
       children: [
-        _TicketBody(entry: entry, status: status, valid: valid),
+        _TicketBody(entry: entry, status: display, valid: valid),
         const SizedBox(height: 22),
         Row(
           children: [
             TicketAction(
               key: const ValueKey('ticket-calendar'),
               icon: Icons.event_available_rounded,
-              label: 'Add to\nCalendar',
+              label: context.l10n.tdAddCal,
               onTap: () => addEventToCalendar(context, ref, e),
             ),
             TicketAction(
               key: const ValueKey('ticket-directions'),
               icon: Icons.directions_rounded,
-              label: 'Directions',
+              label: context.l10n.tdDirections,
               onTap: () => openDirections(context, e),
             ),
             TicketAction(
               key: const ValueKey('ticket-share'),
               icon: Icons.ios_share_rounded,
-              label: 'Invite\nfriends',
+              label: context.l10n.tdInvite,
               onTap: () => shareTicketInvite(ref, e),
             ),
             TicketAction(
               key: const ValueKey('ticket-event'),
               icon: Icons.info_outline_rounded,
-              label: 'Event\ndetails',
+              label: context.l10n.tdDetails,
               onTap: () => context.push('/tickets/event/${e.id}'),
             ),
           ],
         ),
         const SizedBox(height: 22),
         SectionCard(
-          title: 'Order',
+          title: context.l10n.tdOrder,
           trailing: StatusChip(
-            label: order.status == OrderStatus.refunded ? 'Refunded' : 'Paid',
+            label: order.status == OrderStatus.refunded
+                ? context.l10n.tdRefundedChip
+                : context.l10n.tdPaid,
             color: order.status == OrderStatus.refunded ? t.error : t.success,
           ),
           child: Column(
             children: [
-              _InfoRow('Order', _orderNumber(order.id)),
+              _InfoRow(context.l10n.tdOrder, _orderNumber(order.id)),
               _InfoRow(
-                'Booked',
-                DateFormat('MMM d, y · h:mm a').format(order.createdAt),
+                context.l10n.tdBooked,
+                formatDateTime(order.createdAt),
               ),
               for (final l in order.lines)
                 _InfoRow(
                   '${l.quantity}× ${l.tierName}',
-                  l.unitCents == 0 ? 'Free' : formatCents(l.subtotalCents),
+                  l.unitCents == 0
+                      ? context.l10n.priceFree
+                      : formatCents(l.subtotalCents),
                 ),
               if (order.discountCents > 0)
                 _InfoRow(
-                  'Promo ${order.promoCode ?? ''}',
+                  context.l10n.tdPromo(order.promoCode ?? ''),
                   formatCents(-order.discountCents),
                 ),
               _InfoRow(
-                'Fees and tax',
+                context.l10n.feesAndTax,
                 formatCents(order.feesCents + order.taxCents),
               ),
-              _InfoRow('Total paid', formatCents(order.totalCents), bold: true),
+              _InfoRow(
+                context.l10n.tdTotalPaid,
+                formatCents(order.totalCents),
+                bold: true,
+              ),
               if (order.cardLast4 != null)
                 _InfoRow(
-                  'Paid with',
+                  context.l10n.tdPaidWith,
                   '${order.cardBrand} •••• ${order.cardLast4}',
                 ),
               if (order.status == OrderStatus.refunded)
                 _InfoRow(
-                  'Refunded',
+                  context.l10n.tdRefundedChip,
                   [
                     formatCents(order.refundCents),
-                    if (order.refundedAt case final at?)
-                      DateFormat('MMM d').format(at),
+                    if (order.refundedAt case final at?) formatMonthDay(at),
                   ].join(' · '),
                 ),
             ],
@@ -225,19 +235,19 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
         const SizedBox(height: 16),
         if (order.status == OrderStatus.paid) ...[
           SectionCard(
-            title: 'Refund policy',
+            title: context.l10n.tdRefundPolicy,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(RefundPolicy.summary, style: EventraText.body),
+                Text(RefundPolicy.summary, style: context.text.body),
                 const SizedBox(height: 10),
                 Text(
                   decision.allowed && decision.deadline != null
                       ? '${decision.reason} '
-                            '(${_deadline.format(decision.deadline!)})'
+                            '(${formatMonthDayTime(decision.deadline!)})'
                       : decision.reason,
                   key: const ValueKey('refund-reason'),
-                  style: EventraText.caption.copyWith(
+                  style: context.text.caption.copyWith(
                     color: decision.allowed ? t.success : t.textSecondary,
                   ),
                 ),
@@ -257,11 +267,12 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                     icon: const Icon(Icons.undo_rounded),
                     label: Text(
                       _refunding
-                          ? 'Processing…'
+                          ? context.l10n.tdProcessing
                           : order.totalCents > 0
-                          ? 'Request refund · '
-                                '${formatCents(decision.refundCents)}'
-                          : 'Cancel reservation',
+                          ? context.l10n.tdRequestRefund(
+                              formatCents(decision.refundCents),
+                            )
+                          : context.l10n.tdCancelRes,
                     ),
                   ),
                 ],
@@ -273,8 +284,6 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     );
   }
 }
-
-final _deadline = DateFormat('MMM d, h:mm a');
 
 /// Short, readable order number ('ord_Ab3x…' -> 'AB3X9K2Q').
 String _orderNumber(String id) {
@@ -290,7 +299,7 @@ class _TicketBody extends StatelessWidget {
   });
 
   final TicketEntry entry;
-  final String status;
+  final TicketDisplayStatus status;
   final bool valid;
 
   @override
@@ -325,9 +334,9 @@ class _TicketBody extends StatelessWidget {
                     ),
                   ),
                 ),
-                Positioned(
+                PositionedDirectional(
                   top: 14,
-                  right: 14,
+                  end: 14,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -347,9 +356,9 @@ class _TicketBody extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          status,
+                          status.label,
                           key: const ValueKey('ticket-status'),
-                          style: EventraText.caption.copyWith(
+                          style: context.text.caption.copyWith(
                             color: statusColor(t, status),
                             fontWeight: FontWeight.w700,
                           ),
@@ -358,15 +367,15 @@ class _TicketBody extends StatelessWidget {
                     ),
                   ),
                 ),
-                Positioned(
-                  left: 20,
-                  right: 20,
+                PositionedDirectional(
+                  start: 20,
+                  end: 20,
                   bottom: 14,
                   child: Text(
                     e.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: EventraText.cardTitleOnPhoto.copyWith(
+                    style: context.text.cardTitleOnPhoto.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -377,25 +386,28 @@ class _TicketBody extends StatelessWidget {
           SizedBox(
             height: infoH,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 12),
               child: Column(
                 children: [
                   Row(
                     children: [
                       _Field(
-                        'Date',
-                        DateFormat('EEE, MMM d').format(e.startAt),
+                        context.l10n.fDate,
+                        formatWeekdayMonthDay(e.startAt),
                       ),
-                      _Field('Time', DateFormat('h:mm a').format(e.startAt)),
+                      _Field(context.l10n.fTime, formatTime(e.startAt)),
                     ],
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      _Field('Venue', e.venue),
+                      _Field(context.l10n.fVenue, e.venue),
                       _Field(
-                        'Ticket',
-                        '${entry.ticket.seq} of ${entry.order.ticketCount}',
+                        context.l10n.fTicket,
+                        context.l10n.tdSeqOf(
+                          entry.ticket.seq.toString(),
+                          entry.order.ticketCount.toString(),
+                        ),
                       ),
                     ],
                   ),
@@ -405,7 +417,7 @@ class _TicketBody extends StatelessWidget {
           ),
           const PerforationLine(),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
             child: Column(
               children: [
                 if (valid)
@@ -429,10 +441,10 @@ class _TicketBody extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          status == 'Cancelled'
-                              ? 'This ticket was cancelled'
-                              : 'This event has ended',
-                          style: EventraText.body,
+                          status == TicketDisplayStatus.cancelled
+                              ? context.l10n.tdWasCancelled
+                              : context.l10n.tdEnded,
+                          style: context.text.body,
                         ),
                       ],
                     ),
@@ -440,17 +452,16 @@ class _TicketBody extends StatelessWidget {
                 const SizedBox(height: 18),
                 Row(
                   children: [
-                    _Field('Holder', entry.ticket.holderName),
-                    _Field('Tier', entry.ticket.tierName),
+                    _Field(context.l10n.fHolder, entry.ticket.holderName),
+                    _Field(context.l10n.fTier, entry.ticket.tierName),
                   ],
                 ),
                 if (valid) ...[
                   const SizedBox(height: 14),
                   Text(
-                    'Show this code at the entrance. It changes every 30 '
-                    'seconds, so screenshots will not work.',
+                    context.l10n.tdShowCode,
                     textAlign: TextAlign.center,
-                    style: EventraText.caption.copyWith(color: t.textHint),
+                    style: context.text.caption.copyWith(color: t.textHint),
                   ),
                 ],
               ],
@@ -474,13 +485,13 @@ class _Field extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: EventraText.caption.copyWith(color: t.textHint)),
+          Text(label, style: context.text.caption.copyWith(color: t.textHint)),
           const SizedBox(height: 2),
           Text(
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: EventraText.body.copyWith(
+            style: context.text.body.copyWith(
               color: t.textPrimary,
               fontWeight: FontWeight.w700,
             ),
@@ -504,10 +515,10 @@ class _InfoRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Expanded(child: Text(label, style: EventraText.body)),
+          Expanded(child: Text(label, style: context.text.body)),
           Text(
             value,
-            style: EventraText.body.copyWith(
+            style: context.text.body.copyWith(
               color: bold ? t.primary : t.textPrimary,
               fontWeight: bold ? FontWeight.w700 : FontWeight.w600,
             ),

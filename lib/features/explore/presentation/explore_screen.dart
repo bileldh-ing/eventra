@@ -15,6 +15,7 @@ import 'package:eventra/features/explore/domain/nearest.dart';
 import 'package:eventra/features/explore/presentation/explore_providers.dart';
 import 'package:eventra/features/explore/presentation/widgets/explore_widgets.dart';
 import 'package:eventra/features/home/presentation/filters_sheet.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -196,8 +197,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
         messenger
           ..hideCurrentSnackBar()
           ..showSnackBar(
-            const SnackBar(
-              content: Text('Distances updated from your location'),
+            SnackBar(
+              content: Text(context.l10n.exploreDistancesUpdated),
             ),
           );
       case LocationOutcome.denied:
@@ -212,9 +213,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
               key: const ValueKey('locate-denied'),
               content: Text(
                 outcome == LocationOutcome.serviceDisabled
-                    ? 'Location services are off. Showing distances from '
-                          '$label.'
-                    : 'Location unavailable. Showing distances from $label.',
+                    ? context.l10n.exploreServicesOff(label)
+                    : context.l10n.exploreLocationUnavailable(label),
               ),
             ),
           );
@@ -268,7 +268,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF2F2F0),
+        backgroundColor: context.tokens.mapBackground,
         resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
@@ -281,7 +281,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
                   initialZoom: _zoom,
                   minZoom: 3,
                   maxZoom: 19,
-                  backgroundColor: const Color(0xFFF2F2F0),
+                  backgroundColor: context.tokens.mapBackground,
                   onMapReady: () {
                     _mapReady = true;
                     _centerInitially();
@@ -327,23 +327,23 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
               ),
             ),
             // Top controls.
-            Positioned(
+            PositionedDirectional(
               top: top + 12,
-              left: 20,
-              right: 20,
+              start: 20,
+              end: 20,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   MapCircleButton(
                     key: const ValueKey('explore-back'),
                     icon: Icons.arrow_back_rounded,
-                    semanticLabel: 'Back',
+                    semanticLabel: context.l10n.back,
                     onTap: _back,
                   ),
                   MapCircleButton(
                     key: const ValueKey('locate-me'),
                     icon: Icons.my_location_rounded,
-                    semanticLabel: 'Show my location',
+                    semanticLabel: context.l10n.exploreShowMyLocation,
                     busy: _locating,
                     onTap: _locateMe,
                   ),
@@ -351,10 +351,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
               ),
             ),
             // Preview card for the selected event.
-            Positioned(
+            PositionedDirectional(
               top: top + 82,
-              left: 20,
-              right: 20,
+              start: 20,
+              end: 20,
               child: AnimatedSwitcher(
                 duration: t.motion.medium,
                 switchInCurve: Curves.easeOutCubic,
@@ -381,7 +381,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
                       ),
               ),
             ),
-            const Positioned(left: 8, bottom: 4, child: MapAttribution()),
+            const PositionedDirectional(
+              start: 8,
+              bottom: 4,
+              child: MapAttribution(),
+            ),
             // Nearest Location sheet.
             NotificationListener<DraggableScrollableNotification>(
               onNotification: (n) {
@@ -410,12 +414,17 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
               ),
             ),
             // Continue stays pinned to the bottom of the sheet.
-            Positioned(
-              left: 0,
-              right: 0,
+            PositionedDirectional(
+              start: 0,
+              end: 0,
               bottom: 0,
               child: Container(
-                padding: EdgeInsets.fromLTRB(24, 14, 24, 16 + bottom),
+                padding: EdgeInsetsDirectional.fromSTEB(
+                  24,
+                  14,
+                  24,
+                  16 + bottom,
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -426,7 +435,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
                 ),
                 child: GradientPillButton(
                   key: const ValueKey('explore-continue'),
-                  label: 'Continue',
+                  label: context.l10n.actionContinue,
                   onPressed: selected == null
                       ? null
                       : () => _continue(selected),
@@ -468,14 +477,14 @@ class MapCircleButton extends StatelessWidget {
         child: Container(
           width: 52,
           height: 52,
-          decoration: const BoxDecoration(
-            color: Colors.white,
+          decoration: BoxDecoration(
+            color: context.tokens.surface,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Color(0x1A3A2A5A),
+                color: context.tokens.shadow(0.1),
                 blurRadius: 18,
-                offset: Offset(0, 6),
+                offset: const Offset(0, 6),
               ),
             ],
           ),
@@ -510,17 +519,17 @@ Future<void> showVenueEventsSheet(
     builder: (sheetContext) => SafeArea(
       top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
         child: Column(
           key: const ValueKey('venue-events-sheet'),
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(venue, style: EventraText.sectionTitle),
+            Text(venue, style: context.text.sectionTitle),
             const SizedBox(height: 4),
             Text(
-              '${events.length} upcoming events',
-              style: EventraText.caption,
+              context.l10n.nUpcomingEvents(events.length),
+              style: context.text.caption,
             ),
             const SizedBox(height: 12),
             for (final e in events)

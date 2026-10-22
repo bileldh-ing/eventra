@@ -5,9 +5,9 @@ import 'package:eventra/core/widgets/event_image.dart';
 import 'package:eventra/core/widgets/gradient_button.dart';
 import 'package:eventra/features/event_details/presentation/details_providers.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 BoxDecoration _card(EventraTokens t) => BoxDecoration(
   color: t.surface,
@@ -25,7 +25,7 @@ class DetailsSectionTitle extends StatelessWidget {
     padding: const EdgeInsets.only(top: 26, bottom: 12),
     child: Row(
       children: [
-        Expanded(child: Text(text, style: EventraText.sectionTitle)),
+        Expanded(child: Text(text, style: context.text.sectionTitle)),
         ?trailing,
       ],
     ),
@@ -67,7 +67,7 @@ class OrganizerCard extends ConsumerWidget {
                         organizer.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: EventraText.cardTitle.copyWith(fontSize: 17),
+                        style: context.text.cardTitle.copyWith(fontSize: 17),
                       ),
                     ),
                     if (organizer.verified) ...[
@@ -76,15 +76,15 @@ class OrganizerCard extends ConsumerWidget {
                         Icons.verified_rounded,
                         size: 18,
                         color: t.primary,
-                        semanticLabel: 'Verified organizer',
+                        semanticLabel: context.l10n.verifiedOrganizer,
                       ),
                     ],
                   ],
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Organizer - ${formatCompact(followers)} followers',
-                  style: EventraText.caption,
+                  context.l10n.organizerFollowers(formatCompact(followers)),
+                  style: context.text.caption,
                 ),
               ],
             ),
@@ -104,11 +104,11 @@ class OrganizerCard extends ConsumerWidget {
                     onPressed: () => ref
                         .read(followedOrganizersProvider.notifier)
                         .toggle(organizer.id),
-                    child: const Text('Following'),
+                    child: Text(context.l10n.following),
                   )
                 : GradientPillButton(
                     key: const ValueKey('follow-button'),
-                    label: 'Follow',
+                    label: context.l10n.follow,
                     height: 40,
                     onPressed: () => ref
                         .read(followedOrganizersProvider.notifier)
@@ -130,7 +130,7 @@ class LineupTimeline extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.tokens;
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 4),
       decoration: _card(t),
       child: Column(
         children: [
@@ -142,8 +142,8 @@ class LineupTimeline extends StatelessWidget {
                   SizedBox(
                     width: 72,
                     child: Text(
-                      DateFormat('h:mm a').format(items[i].time),
-                      style: EventraText.caption.copyWith(
+                      formatTime(items[i].time),
+                      style: context.text.caption.copyWith(
                         color: t.textPrimary,
                       ),
                     ),
@@ -177,7 +177,7 @@ class LineupTimeline extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 16),
                       child: Text(
                         items[i].title,
-                        style: EventraText.body.copyWith(
+                        style: context.text.body.copyWith(
                           color: t.textPrimary,
                           fontWeight: FontWeight.w500,
                         ),
@@ -208,7 +208,7 @@ class PolicyCard extends StatelessWidget {
         children: [
           Icon(Icons.shield_outlined, color: t.primary),
           const SizedBox(width: 12),
-          Expanded(child: Text(policy, style: EventraText.body)),
+          Expanded(child: Text(policy, style: context.text.body)),
         ],
       ),
     );

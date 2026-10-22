@@ -5,6 +5,7 @@ import 'package:eventra/core/widgets/event_image.dart';
 import 'package:eventra/core/widgets/faceted_painter.dart';
 import 'package:eventra/core/widgets/glass.dart';
 import 'package:eventra/core/widgets/pressable.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 const kDemoUserAvatar = 'https://randomuser.me/api/portraits/men/32.jpg';
@@ -51,7 +52,7 @@ class HomeHeader extends StatelessWidget {
         bottom: Radius.circular(t.radii.header),
       ),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(24, top + 12, 24, 30),
+        padding: EdgeInsetsDirectional.fromSTEB(24, top + 12, 24, 30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -59,7 +60,7 @@ class HomeHeader extends StatelessWidget {
               children: [
                 Semantics(
                   button: true,
-                  label: 'Open profile',
+                  label: context.l10n.openProfile,
                   child: Pressable(
                     onTap: onAvatar,
                     child: NetAvatar(
@@ -75,8 +76,8 @@ class HomeHeader extends StatelessWidget {
                   key: const ValueKey('home-bell'),
                   icon: Icons.notifications_none_rounded,
                   semanticLabel: hasUnread
-                      ? 'Notifications, unread'
-                      : 'Notifications',
+                      ? context.l10n.notificationsUnread
+                      : context.l10n.notificationsTitle,
                   size: 56,
                   iconSize: 26,
                   iconColor: t.textPrimary.withValues(alpha: 0.75),
@@ -87,10 +88,10 @@ class HomeHeader extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 26),
-            const Entrance(
+            Entrance(
               child: Text(
-                'Discover Amazing\nEvents Near You',
-                style: EventraText.heroTitle,
+                context.l10n.homeHeroTitle,
+                style: context.text.heroTitle,
               ),
             ),
             const SizedBox(height: 26),
@@ -108,7 +109,7 @@ class HomeHeader extends StatelessWidget {
                       GlassCircleButton(
                         key: const ValueKey('home-filter'),
                         icon: Icons.tune_rounded,
-                        semanticLabel: 'Filters',
+                        semanticLabel: context.l10n.filtersTitle,
                         size: 54,
                         iconSize: 24,
                         iconColor: t.textPrimary.withValues(alpha: 0.7),
@@ -116,8 +117,8 @@ class HomeHeader extends StatelessWidget {
                         onPressed: onFilter,
                       ),
                       if (activeFilters > 0)
-                        Positioned(
-                          right: -2,
+                        PositionedDirectional(
+                          end: -2,
                           top: -2,
                           child: Container(
                             width: 20,
@@ -157,9 +158,10 @@ class SearchPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.tokens;
     return Semantics(
       button: true,
-      label: 'Search events',
+      label: context.l10n.searchEvents,
       excludeSemantics: true,
       child: Pressable(
         key: const ValueKey('home-search'),
@@ -172,28 +174,36 @@ class SearchPill extends StatelessWidget {
             child: Glass(
               borderRadius: BorderRadius.circular(999),
               gradient: LinearGradient(
-                colors: [
-                  Colors.white.withValues(alpha: 0.72),
-                  Colors.white.withValues(alpha: 0.38),
-                ],
+                colors: t.isDark
+                    ? [
+                        t.surface.withValues(alpha: 0.78),
+                        t.surface.withValues(alpha: 0.5),
+                      ]
+                    : [
+                        Colors.white.withValues(alpha: 0.72),
+                        Colors.white.withValues(alpha: 0.38),
+                      ],
               ),
-              child: const SizedBox(
+              child: SizedBox(
                 height: 54,
                 child: Row(
                   children: [
-                    SizedBox(width: 18),
+                    const SizedBox(width: 18),
                     Icon(
                       Icons.search_rounded,
-                      color: Color(0xFF7D7392),
+                      color: t.isDark
+                          ? t.textSecondary
+                          : const Color(0xFF7D7392),
                       size: 24,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text(
-                      'Search',
+                      context.l10n.searchHint,
                       style: TextStyle(
                         fontFamily: kFontFamily,
+                        fontFamilyFallback: kFontFallback,
                         fontSize: 17,
-                        color: Color(0xFF8A809C),
+                        color: t.isDark ? t.textHint : const Color(0xFF8A809C),
                       ),
                     ),
                   ],

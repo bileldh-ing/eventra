@@ -11,6 +11,7 @@ import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/presentation/widgets/bookmark_button.dart';
 import 'package:eventra/features/events/presentation/widgets/participants_sheet.dart';
 import 'package:eventra/features/feed/presentation/quick_preview.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Large photo card used by the Upcoming Events carousel.
@@ -74,12 +75,12 @@ class EventCarouselCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(
+              PositionedDirectional(
                 top: 20,
-                left: 20,
-                right: 76,
+                start: 20,
+                end: 76,
                 child: Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: Glass(
                     borderRadius: BorderRadius.circular(999),
                     padding: const EdgeInsets.symmetric(
@@ -100,7 +101,7 @@ class EventCarouselCard extends StatelessWidget {
                             event.address,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: EventraText.caption.copyWith(
+                            style: context.text.caption.copyWith(
                               color: Colors.white,
                               fontSize: 14,
                             ),
@@ -111,14 +112,14 @@ class EventCarouselCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(
+              PositionedDirectional(
                 top: 18,
-                right: 18,
+                end: 18,
                 child: BookmarkButton(eventId: event.id, size: 44),
               ),
-              Positioned(
-                left: 18,
-                right: 16,
+              PositionedDirectional(
+                start: 18,
+                end: 16,
                 bottom: 20,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -130,7 +131,7 @@ class EventCarouselCard extends StatelessWidget {
                         children: [
                           FitTitle(
                             event.title,
-                            style: EventraText.cardTitleOnPhoto.copyWith(
+                            style: context.text.cardTitleOnPhoto.copyWith(
                               fontSize: 20,
                               height: 1.2,
                             ),
@@ -157,7 +158,7 @@ class EventCarouselCard extends StatelessWidget {
                                   formatCardDate(event.startAt),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: EventraText.body.copyWith(
+                                  style: context.text.body.copyWith(
                                     color: Colors.white,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
@@ -208,7 +209,7 @@ class _ArrowButtonState extends State<ArrowButton> {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: 'Open event',
+      label: context.l10n.openEvent,
       child: GestureDetector(
         onTapDown: (_) => setState(() => _down = true),
         onTapCancel: () => setState(() => _down = false),
@@ -285,9 +286,9 @@ class CompactEventCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Positioned(
+                  PositionedDirectional(
                     top: 8,
-                    right: 8,
+                    end: 8,
                     child: BookmarkButton(
                       eventId: event.id,
                       size: 34,
@@ -298,7 +299,7 @@ class CompactEventCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
+              padding: const EdgeInsetsDirectional.fromSTEB(8, 10, 8, 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -306,7 +307,7 @@ class CompactEventCard extends StatelessWidget {
                     event.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: EventraText.cardTitle.copyWith(fontSize: 16),
+                    style: context.text.cardTitle.copyWith(fontSize: 16),
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -316,12 +317,12 @@ class CompactEventCard extends StatelessWidget {
                           reason ?? formatCardDate(event.startAt),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: EventraText.caption,
+                          style: context.text.caption,
                         ),
                       ),
                       Text(
                         formatPrice(event.price),
-                        style: EventraText.caption.copyWith(
+                        style: context.text.caption.copyWith(
                           color: t.primary,
                           fontWeight: FontWeight.w700,
                         ),
@@ -401,7 +402,7 @@ class EventListTile extends StatelessWidget {
                   HighlightedText(
                     event.title,
                     query: highlight,
-                    style: EventraText.cardTitle.copyWith(fontSize: 17),
+                    style: context.text.cardTitle.copyWith(fontSize: 17),
                     highlightStyle: TextStyle(
                       color: t.primary,
                       fontWeight: FontWeight.w800,
@@ -410,7 +411,7 @@ class EventListTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     formatCardDate(event.startAt),
-                    style: EventraText.caption,
+                    style: context.text.caption,
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -427,7 +428,7 @@ class EventListTile extends StatelessWidget {
                               ? event.address
                               : '${event.venue}, ${event.address}',
                           query: highlight,
-                          style: EventraText.caption,
+                          style: context.text.caption,
                           highlightStyle: TextStyle(
                             color: t.primary,
                             fontWeight: FontWeight.w700,
@@ -443,7 +444,7 @@ class EventListTile extends StatelessWidget {
             trailing ??
                 Text(
                   formatPrice(event.price),
-                  style: EventraText.cardTitle.copyWith(
+                  style: context.text.cardTitle.copyWith(
                     color: t.primary,
                     fontSize: 17,
                   ),

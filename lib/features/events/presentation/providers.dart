@@ -10,6 +10,7 @@ import 'package:eventra/features/events/data/repositories/local_events_repositor
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/domain/repositories/events_repository.dart';
 import 'package:eventra/features/onboarding/presentation/onboarding_providers.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart'
@@ -172,7 +173,7 @@ class UserLocationNotifier extends Notifier<UserLocation> {
       state = UserLocation(
         position: r.position!,
         fromDevice: true,
-        label: 'Your location',
+        label: AppLocale.l10n.yourLocation,
       );
     }
     return r.outcome;

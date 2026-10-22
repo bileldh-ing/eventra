@@ -5,6 +5,7 @@ import 'package:eventra/core/widgets/gradient_button.dart';
 import 'package:eventra/features/auth/domain/auth_models.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/auth/presentation/widgets/auth_widgets.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -81,15 +82,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   Widget build(BuildContext context) {
     final t = context.tokens;
     return AuthScaffold(
-      title: 'Create account',
-      subtitle: 'Join Eventra to book tickets and follow organizers.',
+      title: context.l10n.authCreateAccountTitle,
+      subtitle: context.l10n.authJoinSubtitle,
       onBack: context.canPop() ? context.pop : null,
       footer: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Already have an account?', style: EventraText.body),
+          Text(context.l10n.authHaveAccount, style: context.text.body),
           AuthLinkButton(
-            label: 'Log In',
+            label: context.l10n.authLogIn,
             onPressed: () =>
                 context.canPop() ? context.pop() : context.go('/auth/login'),
           ),
@@ -106,7 +107,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 AuthField(
                   key: const ValueKey('signup-name'),
                   controller: _name,
-                  label: 'Full name',
+                  label: context.l10n.fieldFullName,
                   icon: Icons.person_outline_rounded,
                   autofillHints: const [AutofillHints.name],
                   validator: AuthValidators.name,
@@ -115,7 +116,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 AuthField(
                   key: const ValueKey('signup-email'),
                   controller: _email,
-                  label: 'Email',
+                  label: context.l10n.fieldEmail,
                   icon: Icons.mail_outline_rounded,
                   keyboardType: TextInputType.emailAddress,
                   autofillHints: const [AutofillHints.email],
@@ -125,7 +126,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 AuthField(
                   key: const ValueKey('signup-phone'),
                   controller: _phone,
-                  label: 'Phone (optional)',
+                  label: context.l10n.fieldPhoneOptional,
                   icon: Icons.phone_outlined,
                   keyboardType: TextInputType.phone,
                   autofillHints: const [AutofillHints.telephoneNumber],
@@ -135,7 +136,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 AuthField(
                   key: const ValueKey('signup-password'),
                   controller: _password,
-                  label: 'Password',
+                  label: context.l10n.fieldPassword,
                   icon: Icons.lock_outline_rounded,
                   obscure: _obscure,
                   onToggleObscure: () => setState(() => _obscure = !_obscure),
@@ -148,12 +149,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 AuthField(
                   key: const ValueKey('signup-confirm'),
                   controller: _confirm,
-                  label: 'Confirm password',
+                  label: context.l10n.fieldConfirmPassword,
                   icon: Icons.lock_reset_rounded,
                   obscure: _obscure,
                   textInputAction: TextInputAction.done,
-                  validator: (v) =>
-                      v != _password.text ? 'Passwords do not match' : null,
+                  validator: (v) => v != _password.text
+                      ? context.l10n.valPasswordsMismatch
+                      : null,
                 ),
                 const SizedBox(height: 6),
                 Row(
@@ -176,8 +178,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        'I agree to the Terms of Service and Privacy Policy',
-                        style: EventraText.caption.copyWith(
+                        context.l10n.authAgreeTerms,
+                        style: context.text.caption.copyWith(
                           color: _termsError ? t.error : t.textSecondary,
                         ),
                       ),
@@ -188,7 +190,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 AuthErrorBanner(message: _error),
                 GradientPillButton(
                   key: const ValueKey('signup-submit'),
-                  label: _busy ? 'Creating account...' : 'Create Account',
+                  label: _busy
+                      ? context.l10n.authCreatingAccount
+                      : context.l10n.authCreateAccount,
                   onPressed: _busy ? null : _submit,
                 ),
               ],

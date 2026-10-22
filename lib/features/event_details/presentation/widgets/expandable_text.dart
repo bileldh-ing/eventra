@@ -1,3 +1,5 @@
+import 'package:eventra/core/theme/eventra_tokens.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Text clamped to [maxLines] that ends with a bold inline "See more....".
@@ -8,15 +10,17 @@ class ExpandableText extends StatefulWidget {
     required this.style,
     super.key,
     this.maxLines = 3,
-    this.moreLabel = 'See more....',
-    this.lessLabel = 'See less',
+    this.moreLabel,
+    this.lessLabel,
   });
 
   final String text;
   final TextStyle style;
   final int maxLines;
-  final String moreLabel;
-  final String lessLabel;
+
+  /// Defaults to the localized 'See more....' / 'See less'.
+  final String? moreLabel;
+  final String? lessLabel;
 
   @override
   State<ExpandableText> createState() => _ExpandableTextState();
@@ -34,7 +38,10 @@ class _ExpandableTextState extends State<ExpandableText> {
           style: widget.style,
           children: [
             TextSpan(text: prefix),
-            TextSpan(text: ' ${widget.moreLabel}', style: linkStyle),
+            TextSpan(
+              text: ' ${widget.moreLabel ?? context.l10n.seeMore}',
+              style: linkStyle,
+            ),
           ],
         ),
         textDirection: dir,
@@ -66,7 +73,7 @@ class _ExpandableTextState extends State<ExpandableText> {
   Widget build(BuildContext context) {
     final linkStyle = widget.style.copyWith(
       fontWeight: FontWeight.w700,
-      color: const Color(0xFF1A1530),
+      color: context.tokens.textPrimary,
     );
     final scaler = MediaQuery.textScalerOf(context);
     return LayoutBuilder(
@@ -90,8 +97,8 @@ class _ExpandableTextState extends State<ExpandableText> {
                   if (truncated)
                     TextSpan(
                       text: _expanded
-                          ? ' ${widget.lessLabel}'
-                          : ' ${widget.moreLabel}',
+                          ? ' ${widget.lessLabel ?? context.l10n.seeLess}'
+                          : ' ${widget.moreLabel ?? context.l10n.seeMore}',
                       style: linkStyle,
                     ),
                 ],

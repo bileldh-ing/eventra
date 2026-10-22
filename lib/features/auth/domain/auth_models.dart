@@ -1,3 +1,4 @@
+import 'package:eventra/l10n/l10n.dart';
 import 'package:meta/meta.dart';
 
 /// A signed-in Eventra account (never carries the password hash).
@@ -128,15 +129,15 @@ final _emailPattern = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]{2,}$');
 abstract final class AuthValidators {
   static String? email(String? v) {
     final s = v?.trim() ?? '';
-    if (s.isEmpty) return 'Enter your email';
-    if (!_emailPattern.hasMatch(s)) return 'Enter a valid email address';
+    if (s.isEmpty) return AppLocale.l10n.valEnterEmail;
+    if (!_emailPattern.hasMatch(s)) return AppLocale.l10n.valValidEmail;
     return null;
   }
 
   static String? name(String? v) {
     final s = v?.trim() ?? '';
-    if (s.isEmpty) return 'Enter your name';
-    if (s.length < 2) return 'Name is too short';
+    if (s.isEmpty) return AppLocale.l10n.valEnterName;
+    if (s.length < 2) return AppLocale.l10n.valNameShort;
     return null;
   }
 
@@ -144,34 +145,45 @@ abstract final class AuthValidators {
     final s = (v ?? '').replaceAll(RegExp(r'[\s\-()]'), '');
     if (s.isEmpty) return null;
     if (!RegExp(r'^\+?[0-9]{7,15}$').hasMatch(s)) {
-      return 'Enter a valid phone number';
+      return AppLocale.l10n.valPhone;
     }
     return null;
   }
 
   static String? loginPassword(String? v) =>
-      (v ?? '').isEmpty ? 'Enter your password' : null;
+      (v ?? '').isEmpty ? AppLocale.l10n.valEnterPassword : null;
 
   static String? newPassword(String? v) {
     final s = v ?? '';
-    if (s.length < 8) return 'Use at least 8 characters';
+    if (s.length < 8) return AppLocale.l10n.valPasswordLength;
     if (passwordStrength(s) < PasswordStrength.fair) {
-      return 'Add numbers, symbols or upper-case letters';
+      return AppLocale.l10n.valPasswordMix;
     }
     return null;
   }
 }
 
 enum PasswordStrength {
-  empty('', 0),
-  weak('Weak', 1),
-  fair('Fair', 2),
-  good('Good', 3),
-  strong('Strong', 4);
+  empty(0),
+  weak(1),
+  fair(2),
+  good(3),
+  strong(4);
 
-  const PasswordStrength(this.label, this.level);
-  final String label;
+  const PasswordStrength(this.level);
   final int level;
+
+  /// Name in the active language ('' for [empty]).
+  String get label {
+    final l = AppLocale.l10n;
+    return switch (this) {
+      empty => '',
+      weak => l.pwWeak,
+      fair => l.pwFair,
+      good => l.pwGood,
+      strong => l.pwStrong,
+    };
+  }
 
   bool operator <(PasswordStrength other) => level < other.level;
 }

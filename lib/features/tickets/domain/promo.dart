@@ -1,3 +1,4 @@
+import 'package:eventra/l10n/l10n.dart';
 import 'package:meta/meta.dart';
 
 enum PromoKind { percent, fixed }
@@ -28,6 +29,20 @@ class PromoCode {
   /// Exclusive end.
   final DateTime validUntil;
   final String label;
+
+  /// [label] in the active language for the demo codes; codes that come
+  /// from elsewhere show their own label.
+  String get displayLabel {
+    final l = AppLocale.l10n;
+    return switch (code) {
+      'EVENTRA10' => l.promoL10,
+      'WELCOME5' => l.promoL5,
+      'VIP20' => l.promoL20,
+      'SUMMER25' => l.promoL25,
+      'FLASH50' => l.promoL50,
+      _ => label,
+    };
+  }
 
   /// Only these tiers are discounted (null = every tier).
   final Set<String>? tierIds;
@@ -101,17 +116,29 @@ PromoCode? findPromo(String raw, [List<PromoCode>? codes]) {
 }
 
 enum PromoError {
-  empty('Enter a promo code.'),
-  unknown('That code does not exist.'),
-  notYetActive('This code is not active yet.'),
-  expired('This code has expired.'),
-  exhausted('This code has been fully redeemed.'),
-  alreadyUsed('You have already used this code.'),
-  notApplicable('This code does not apply to the selected tickets.'),
-  minSubtotal('Add more tickets to use this code.');
+  empty,
+  unknown,
+  notYetActive,
+  expired,
+  exhausted,
+  alreadyUsed,
+  notApplicable,
+  minSubtotal;
 
-  const PromoError(this.message);
-  final String message;
+  /// User-facing message in the active language.
+  String get message {
+    final l = AppLocale.l10n;
+    return switch (this) {
+      empty => l.promoEmpty,
+      unknown => l.promoUnknown,
+      notYetActive => l.promoNotYet,
+      expired => l.promoExpired,
+      exhausted => l.promoExhausted,
+      alreadyUsed => l.promoUsed,
+      notApplicable => l.promoNotApplicable,
+      minSubtotal => l.promoMinSubtotal,
+    };
+  }
 }
 
 /// Outcome of checking a code against the current order.

@@ -8,6 +8,7 @@ import 'package:eventra/features/notifications/presentation/notifications_provid
 import 'package:eventra/features/profile/domain/user_profile.dart';
 import 'package:eventra/features/profile/presentation/profile_providers.dart';
 import 'package:eventra/features/profile/presentation/widgets/initials_avatar.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,11 +35,11 @@ class ProfileScreen extends ConsumerWidget {
         children: [
           Text(
             value,
-            style: EventraText.cardTitle.copyWith(color: Colors.white),
+            style: context.text.cardTitle.copyWith(color: Colors.white),
           ),
           Text(
             label,
-            style: EventraText.caption.copyWith(color: Colors.white),
+            style: context.text.caption.copyWith(color: Colors.white),
           ),
         ],
       ),
@@ -74,7 +75,7 @@ class ProfileScreen extends ConsumerWidget {
             Expanded(
               child: Text(
                 label,
-                style: EventraText.cardTitle.copyWith(fontSize: 17),
+                style: context.text.cardTitle.copyWith(fontSize: 17),
               ),
             ),
             if (badge != null)
@@ -89,7 +90,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 child: Text(
                   badge,
-                  style: EventraText.caption.copyWith(
+                  style: context.text.caption.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),
@@ -112,7 +113,7 @@ class ProfileScreen extends ConsumerWidget {
               bottom: Radius.circular(t.radii.header),
             ),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(24, top + 24, 24, 28),
+              padding: EdgeInsetsDirectional.fromSTEB(24, top + 24, 24, 28),
               child: Column(
                 children: [
                   Stack(
@@ -124,8 +125,8 @@ class ProfileScreen extends ConsumerWidget {
                         color: profile?.color ?? kAvatarColors.first,
                       ),
                       if (user != null)
-                        Positioned(
-                          right: -4,
+                        PositionedDirectional(
+                          end: -4,
                           bottom: -4,
                           child: Material(
                             color: Colors.white,
@@ -133,7 +134,7 @@ class ProfileScreen extends ConsumerWidget {
                             elevation: 2,
                             child: IconButton(
                               key: const ValueKey('profile-edit'),
-                              tooltip: 'Edit profile',
+                              tooltip: context.l10n.editProfile,
                               iconSize: 18,
                               color: t.primary,
                               onPressed: () => context.push('/profile/edit'),
@@ -145,13 +146,13 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    user?.name ?? 'Guest',
+                    user?.name ?? context.l10n.guest,
                     key: const ValueKey('profile-name'),
-                    style: EventraText.heroTitle.copyWith(fontSize: 26),
+                    style: context.text.heroTitle.copyWith(fontSize: 26),
                   ),
                   Text(
-                    user?.email ?? 'Log in to buy tickets and sync favorites',
-                    style: EventraText.body.copyWith(color: Colors.white),
+                    user?.email ?? context.l10n.profileGuestPrompt,
+                    style: context.text.body.copyWith(color: Colors.white),
                   ),
                   if (profile != null && profile.city.isNotEmpty) ...[
                     const SizedBox(height: 4),
@@ -167,7 +168,7 @@ class ProfileScreen extends ConsumerWidget {
                         Text(
                           profile.city,
                           key: const ValueKey('profile-city'),
-                          style: EventraText.caption.copyWith(
+                          style: context.text.caption.copyWith(
                             color: Colors.white,
                           ),
                         ),
@@ -180,15 +181,15 @@ class ProfileScreen extends ConsumerWidget {
                       profile.bio,
                       key: const ValueKey('profile-bio'),
                       textAlign: TextAlign.center,
-                      style: EventraText.body.copyWith(color: Colors.white),
+                      style: context.text.body.copyWith(color: Colors.white),
                     ),
                   ],
                   const SizedBox(height: 20),
                   Row(
                     children: [
-                      stat('${stats.tickets}', 'Tickets'),
-                      stat('${stats.saved}', 'Saved'),
-                      stat('${stats.reviews}', 'Reviews'),
+                      stat('${stats.tickets}', context.l10n.statTickets),
+                      stat('${stats.saved}', context.l10n.statSaved),
+                      stat('${stats.reviews}', context.l10n.statReviews),
                     ],
                   ),
                 ],
@@ -196,13 +197,13 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 130),
+            padding: const EdgeInsetsDirectional.fromSTEB(20, 24, 20, 130),
             child: Column(
               children: [
                 if (user == null) ...[
                   GradientPillButton(
                     key: const ValueKey('profile-login'),
-                    label: 'Log in or sign up',
+                    label: context.l10n.loginOrSignup,
                     onPressed: () => context.push(
                       Uri(
                         path: '/auth/login',
@@ -214,44 +215,42 @@ class ProfileScreen extends ConsumerWidget {
                 ],
                 action(
                   Icons.confirmation_number_outlined,
-                  'My Tickets',
+                  context.l10n.myTickets,
                   () => context.go('/tickets'),
                 ),
                 const SizedBox(height: 12),
                 action(
                   Icons.favorite_border_rounded,
-                  'Favorites',
+                  context.l10n.navFavorites,
                   () => context.go('/favorites'),
                 ),
                 const SizedBox(height: 12),
                 action(
                   Icons.notifications_none_rounded,
-                  'Notifications',
+                  context.l10n.notificationsTitle,
                   () => context.push('/profile/notifications'),
                   badge: unread > 0 ? '$unread' : null,
                 ),
                 const SizedBox(height: 12),
                 action(
                   Icons.settings_outlined,
-                  'Settings',
+                  context.l10n.settingsTitle,
                   () => context.push('/profile/settings'),
                 ),
                 const SizedBox(height: 12),
                 action(
                   Icons.person_add_alt_1_outlined,
-                  'Invite Friends',
+                  context.l10n.inviteFriendsTitle,
                   () => SharePlus.instance.share(
                     ShareParams(
-                      text:
-                          'I find events on Eventra - Discover. Book. Feel the '
-                          'moment. https://eventra.app',
+                      text: context.l10n.inviteShareText,
                     ),
                   ),
                 ),
                 const SizedBox(height: 12),
                 action(
                   Icons.interests_outlined,
-                  'Interests',
+                  context.l10n.interestsTitleShort,
                   () => context.push('/interests?edit=1'),
                 ),
                 if (kDebugMode) ...[
@@ -266,7 +265,7 @@ class ProfileScreen extends ConsumerWidget {
                   const SizedBox(height: 12),
                   action(
                     Icons.logout_rounded,
-                    'Log out',
+                    context.l10n.logOut,
                     () => confirmLogOut(context, ref),
                   ),
                 ],
@@ -284,20 +283,19 @@ Future<void> confirmLogOut(BuildContext context, WidgetRef ref) async {
   final ok = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('Log out?'),
-      content: const Text(
-        'Your tickets and favorites stay on this device for when you are '
-        'back.',
+      title: Text(context.l10n.logOutQ),
+      content: Text(
+        context.l10n.logOutBody,
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('Cancel'),
+          child: Text(context.l10n.cancel),
         ),
         TextButton(
           key: const ValueKey('logout-confirm'),
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('Log out'),
+          child: Text(context.l10n.logOut),
         ),
       ],
     ),

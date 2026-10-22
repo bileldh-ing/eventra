@@ -1,6 +1,7 @@
 import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/core/widgets/faceted_painter.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Phase 0 themed landing view for a tab.
@@ -18,11 +19,11 @@ class ThemedPlaceholder extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(title, style: EventraText.heroTitle),
+            Text(title, style: context.text.heroTitle),
             const SizedBox(height: 8),
             Text(
-              'Discover. Book. Feel the moment.',
-              style: EventraText.body.copyWith(color: Colors.white),
+              context.l10n.appTagline,
+              style: context.text.body.copyWith(color: Colors.white),
             ),
           ],
         ),

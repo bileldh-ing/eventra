@@ -5,6 +5,7 @@ import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/tickets/domain/ticketing_models.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:eventra/features/tickets/presentation/widgets/ticket_visuals.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,10 +14,10 @@ import 'package:go_router/go_router.dart';
 class MyTicketsScreen extends ConsumerWidget {
   const MyTicketsScreen({super.key});
 
-  static const List<(TicketBucket, String)> _tabs = [
-    (TicketBucket.upcoming, 'Upcoming'),
-    (TicketBucket.past, 'Past'),
-    (TicketBucket.cancelled, 'Cancelled'),
+  static List<(TicketBucket, String)> _tabs(AppLocalizations l) => [
+    (TicketBucket.upcoming, l.tabUpcoming),
+    (TicketBucket.past, l.tabPast),
+    (TicketBucket.cancelled, l.tabCancelled),
   ];
 
   @override
@@ -35,13 +36,13 @@ class MyTicketsScreen extends ConsumerWidget {
     }
 
     return DefaultTabController(
-      length: _tabs.length,
+      length: TicketBucket.values.length,
       child: Scaffold(
         backgroundColor: t.background,
         body: Column(
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(
+              padding: EdgeInsetsDirectional.fromSTEB(
                 24,
                 MediaQuery.paddingOf(context).top + 16,
                 24,
@@ -51,8 +52,8 @@ class MyTicketsScreen extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'My Tickets',
-                      style: EventraText.detailsTitle.copyWith(fontSize: 28),
+                      context.l10n.myTickets,
+                      style: context.text.detailsTitle.copyWith(fontSize: 28),
                     ),
                   ),
                   Icon(Icons.wallet_rounded, color: t.primary, size: 28),
@@ -77,19 +78,22 @@ class MyTicketsScreen extends ConsumerWidget {
                 ),
                 labelColor: Colors.white,
                 unselectedLabelColor: t.textSecondary,
-                labelStyle: EventraText.body.copyWith(
+                labelStyle: context.text.body.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
-                unselectedLabelStyle: EventraText.body.copyWith(
+                unselectedLabelStyle: context.text.body.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
                 tabs: [
-                  for (final (b, label) in _tabs)
+                  for (final (b, label) in _tabs(context.l10n))
                     Tab(
                       key: ValueKey('tab-${b.name}'),
                       height: 40,
                       text: tickets.hasValue
-                          ? '$label (${of(b).length})'
+                          ? context.l10n.tabWithCount(
+                              label,
+                              of(b).length.toString(),
+                            )
                           : label,
                     ),
                 ],
@@ -99,12 +103,12 @@ class MyTicketsScreen extends ConsumerWidget {
             Expanded(
               child: switch (tickets) {
                 AsyncError() => MessageView.error(
-                  message: 'We could not open your tickets.',
+                  message: context.l10n.mtLoadFailed,
                   onRetry: () => ref.invalidate(myTicketsProvider),
                 ),
                 AsyncData() => TabBarView(
                   children: [
-                    for (final (b, _) in _tabs)
+                    for (final (b, _) in _tabs(context.l10n))
                       _TicketList(bucket: b, items: of(b), now: now),
                   ],
                 ),
@@ -134,17 +138,16 @@ class _TicketList extends StatelessWidget {
     if (items.isEmpty) {
       final (title, message) = switch (bucket) {
         TicketBucket.upcoming => (
-          'No upcoming tickets',
-          'Find something you love and your tickets will live here, '
-              'ready to scan even offline.',
+          context.l10n.mtNoUpcoming,
+          context.l10n.mtNoUpcomingBody,
         ),
         TicketBucket.past => (
-          'No past events yet',
-          'Events you attend will be kept here.',
+          context.l10n.mtNoPast,
+          context.l10n.mtNoPastBody,
         ),
         TicketBucket.cancelled => (
-          'Nothing cancelled',
-          'Refunded tickets show up here.',
+          context.l10n.mtNoCancelled,
+          context.l10n.mtNoCancelledBody,
         ),
       };
       return SingleChildScrollView(
@@ -154,7 +157,7 @@ class _TicketList extends StatelessWidget {
           title: title,
           message: message,
           actionLabel: bucket == TicketBucket.upcoming
-              ? 'Explore events'
+              ? context.l10n.exploreEvents
               : null,
           onAction: bucket == TicketBucket.upcoming
               ? () => context.go('/home')
@@ -165,7 +168,7 @@ class _TicketList extends StatelessWidget {
     return ListView.separated(
       key: ValueKey('list-${bucket.name}'),
       // Room for the floating nav pill.
-      padding: EdgeInsets.fromLTRB(
+      padding: EdgeInsetsDirectional.fromSTEB(
         24,
         12,
         24,

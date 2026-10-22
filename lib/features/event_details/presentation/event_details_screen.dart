@@ -22,6 +22,7 @@ import 'package:eventra/features/events/presentation/widgets/event_cards.dart';
 import 'package:eventra/features/events/presentation/widgets/participants_sheet.dart';
 import 'package:eventra/features/events/presentation/widgets/share_event.dart';
 import 'package:eventra/features/reviews/presentation/review_widgets.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -138,10 +139,10 @@ class _DetailsViewState extends ConsumerState<_DetailsView> {
                 valueListenable: _offset,
                 builder: (context, offset, child) {
                   final over = math.max(0, -offset).toDouble();
-                  return Positioned(
+                  return PositionedDirectional(
                     top: -math.max(0, offset) * 0.5,
-                    left: 0,
-                    right: 0,
+                    start: 0,
+                    end: 0,
                     height: heroH + over,
                     child: child!,
                   );
@@ -188,7 +189,7 @@ class _DetailsViewState extends ConsumerState<_DetailsView> {
                               top: Radius.circular(t.radii.sheet),
                             ),
                           ),
-                          padding: EdgeInsets.fromLTRB(
+                          padding: EdgeInsetsDirectional.fromSTEB(
                             20,
                             28,
                             20,
@@ -217,9 +218,9 @@ class _DetailsViewState extends ConsumerState<_DetailsView> {
                   );
                 },
               ),
-              Positioned(
-                left: 0,
-                right: 0,
+              PositionedDirectional(
+                start: 0,
+                end: 0,
                 bottom: 0,
                 child: _BottomBar(
                   event: e,
@@ -270,7 +271,7 @@ class _TopBar extends StatelessWidget {
     final t = context.tokens;
     final solid = progress > 0.5;
     return Container(
-      padding: EdgeInsets.fromLTRB(20, top + 14, 20, 12),
+      padding: EdgeInsetsDirectional.fromSTEB(20, top + 14, 20, 12),
       decoration: BoxDecoration(
         color: t.sheet.withValues(alpha: progress),
         boxShadow: progress > 0.9 ? t.softShadow : null,
@@ -280,7 +281,7 @@ class _TopBar extends StatelessWidget {
           GlassCircleButton(
             key: const ValueKey('details-back'),
             icon: Icons.arrow_back_rounded,
-            semanticLabel: 'Back',
+            semanticLabel: context.l10n.back,
             size: 50,
             iconSize: 24,
             fill: solid ? t.primary.withValues(alpha: 0.9) : null,
@@ -293,8 +294,8 @@ class _TopBar extends StatelessWidget {
                 Opacity(
                   opacity: 1 - progress,
                   child: Text(
-                    'Events Details',
-                    style: EventraText.heroTitle.copyWith(fontSize: 24),
+                    context.l10n.detailsTitle,
+                    style: context.text.heroTitle.copyWith(fontSize: 24),
                   ),
                 ),
                 Opacity(
@@ -305,7 +306,7 @@ class _TopBar extends StatelessWidget {
                       event.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: EventraText.cardTitle,
+                      style: context.text.cardTitle,
                     ),
                   ),
                 ),
@@ -338,7 +339,7 @@ class _SheetContent extends ConsumerWidget {
         .where((x) => x.category == e.category && x.id != e.id)
         .take(8)
         .toList();
-    final meta = EventraText.body.copyWith(
+    final meta = context.text.body.copyWith(
       color: t.textSecondary,
       fontSize: 13.5,
       fontWeight: FontWeight.w500,
@@ -355,7 +356,7 @@ class _SheetContent extends ConsumerWidget {
                 children: [
                   Text(
                     e.title,
-                    style: EventraText.detailsTitle.copyWith(fontSize: 23),
+                    style: context.text.detailsTitle.copyWith(fontSize: 23),
                   ),
                   const SizedBox(height: 12),
                   Wrap(
@@ -405,7 +406,7 @@ class _SheetContent extends ConsumerWidget {
               child: Text(
                 formatPrice(e.price),
                 key: const ValueKey('details-price'),
-                style: EventraText.price,
+                style: context.text.price,
               ),
             ),
           ],
@@ -425,8 +426,10 @@ class _SheetContent extends ConsumerWidget {
               ),
               const SizedBox(width: 14),
               Text(
-                '+${math.max(0, e.participantsCount - 4)} Participants',
-                style: EventraText.body.copyWith(
+                context.l10n.plusParticipants(
+                  math.max(0, e.participantsCount - 4).toString(),
+                ),
+                style: context.text.body.copyWith(
                   fontSize: 18,
                   color: t.textPrimary.withValues(alpha: 0.85),
                 ),
@@ -434,26 +437,26 @@ class _SheetContent extends ConsumerWidget {
             ],
           ),
         ),
-        const DetailsSectionTitle('About Event'),
+        DetailsSectionTitle(context.l10n.detailsAbout),
         ExpandableText(
           text: e.description,
-          style: EventraText.body.copyWith(color: t.textSecondary),
+          style: context.text.body.copyWith(color: t.textSecondary),
         ),
-        const DetailsSectionTitle('Location'),
+        DetailsSectionTitle(context.l10n.detailsLocation),
         MiniMapCard(event: e, onOpen: onOpenMap),
         const SizedBox(height: 8),
-        Text('${e.venue}, ${e.address}', style: EventraText.caption),
-        const DetailsSectionTitle('Organizer'),
+        Text('${e.venue}, ${e.address}', style: context.text.caption),
+        DetailsSectionTitle(context.l10n.detailsOrganizer),
         OrganizerCard(organizer: e.organizer),
         if (e.lineup.isNotEmpty) ...[
-          const DetailsSectionTitle('Lineup & Schedule'),
+          DetailsSectionTitle(context.l10n.detailsLineup),
           LineupTimeline(items: e.lineup),
         ],
-        const DetailsSectionTitle('Ticket Policy'),
+        DetailsSectionTitle(context.l10n.detailsPolicy),
         PolicyCard(policy: e.policy),
         EventReviewsSection(event: e),
         if (similar.isNotEmpty) ...[
-          const DetailsSectionTitle('Similar events'),
+          DetailsSectionTitle(context.l10n.detailsSimilar),
           SizedBox(
             height: 196,
             child: ListView.separated(
@@ -491,15 +494,15 @@ class _BottomBar extends ConsumerWidget {
       waitlistProvider.select((s) => s.contains(event.id)),
     );
     return Container(
-      padding: EdgeInsets.fromLTRB(20, 14, 20, 14 + bottomInset),
+      padding: EdgeInsetsDirectional.fromSTEB(20, 14, 20, 14 + bottomInset),
       decoration: BoxDecoration(
         color: t.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x1F8A4FC8),
+            color: context.tokens.shadow(0.12),
             blurRadius: 30,
-            offset: Offset(0, -6),
+            offset: const Offset(0, -6),
           ),
         ],
       ),
@@ -508,7 +511,7 @@ class _BottomBar extends ConsumerWidget {
           Builder(
             builder: (context) => Semantics(
               button: true,
-              label: 'Share event',
+              label: context.l10n.shareEvent,
               child: Pressable(
                 key: const ValueKey('details-share'),
                 onTap: () => shareEvent(context, event),
@@ -529,9 +532,9 @@ class _BottomBar extends ConsumerWidget {
             child: event.isSoldOut
                 ? Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: GradientPillButton(
-                          label: 'Sold Out',
+                          label: context.l10n.soldOut,
                           onPressed: null,
                         ),
                       ),
@@ -548,15 +551,16 @@ class _BottomBar extends ConsumerWidget {
                               SnackBar(
                                 content: Text(
                                   added
-                                      ? "You're on the waitlist. We'll tell "
-                                            'you when a spot opens.'
-                                      : 'You left the waitlist.',
+                                      ? context.l10n.waitlistJoined
+                                      : context.l10n.waitlistLeft,
                                 ),
                               ),
                             );
                         },
                         child: Text(
-                          waitlisted ? 'On waitlist' : 'Join waitlist',
+                          waitlisted
+                              ? context.l10n.onWaitlist
+                              : context.l10n.joinWaitlist,
                           style: TextStyle(
                             color: t.primary,
                             fontWeight: FontWeight.w700,

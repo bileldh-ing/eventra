@@ -4,6 +4,7 @@ import 'package:eventra/core/utils/geo.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/domain/entities/event_category.dart';
 import 'package:eventra/features/onboarding/domain/interest.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:meta/meta.dart';
 
@@ -148,23 +149,37 @@ class SmartFeedScorer {
               interests,
               FeedReason(
                 FeedReasonKind.interest,
-                'Because you like ${interest.label}',
+                AppLocale.l10n.reasonBecauseYouLike(interest.label),
               ),
             ),
           if (km <= nearYouKm)
-            (proximity, const FeedReason(FeedReasonKind.nearby, 'Near you')),
+            (
+              proximity,
+              FeedReason(FeedReasonKind.nearby, AppLocale.l10n.reasonNearYou),
+            ),
           if (e.participantsCount >= trendingParticipants)
-            (popularity, const FeedReason(FeedReasonKind.trending, 'Trending')),
+            (
+              popularity,
+              FeedReason(
+                FeedReasonKind.trending,
+                AppLocale.l10n.reasonTrending,
+              ),
+            ),
           if (days >= 0 && days <= soonDays)
             (
               recency,
               FeedReason(
                 FeedReasonKind.soon,
-                days < 1 ? 'Starts soon' : 'This week',
+                days < 1
+                    ? AppLocale.l10n.reasonStartsSoon
+                    : AppLocale.l10n.reasonThisWeek,
               ),
             ),
           if (affinity > 0)
-            (social, const FeedReason(FeedReasonKind.saved, 'Like your saves')),
+            (
+              social,
+              FeedReason(FeedReasonKind.saved, AppLocale.l10n.reasonLikeSaves),
+            ),
         ]..sort((a, b) {
           final c = b.$1.compareTo(a.$1);
           return c != 0 ? c : a.$2.kind.index.compareTo(b.$2.kind.index);

@@ -1,5 +1,6 @@
 import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,6 +53,16 @@ const kPositronFilter = ColorFilter.matrix(<double>[
   0, 0, 0, 1, 0,
 ]);
 
+/// Dark-mode basemap: the same luminance, inverted and compressed into a
+/// deep aubergine range (land ~#1D1A2B, roads a touch darker, labels light
+/// gray), so maps sit quietly under the dark palette instead of glaring.
+const kPositronDarkFilter = ColorFilter.matrix(<double>[
+  -0.179, -0.352, -0.068, 0, 177, //
+  -0.179, -0.352, -0.068, 0, 171,
+  -0.179, -0.352, -0.068, 0, 186,
+  0, 0, 0, 1, 0,
+]);
+
 final mapStyleProvider = Provider<MapStyle>((ref) => MapStyle.osmPositron);
 
 /// Tile source. Tests override it with bundled fixture tiles.
@@ -70,7 +81,9 @@ class PositronTileLayer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final style = ref.watch(mapStyleProvider);
-    final filter = style.colorFilter;
+    final filter = context.tokens.isDark
+        ? kPositronDarkFilter
+        : style.colorFilter;
     return TileLayer(
       urlTemplate: style.urlTemplate,
       subdomains: style.subdomains,
@@ -93,7 +106,7 @@ class MapAttribution extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.75),
+        color: context.tokens.surface.withValues(alpha: 0.75),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Padding(
@@ -101,7 +114,7 @@ class MapAttribution extends StatelessWidget {
         child: Consumer(
           builder: (context, ref, _) => Text(
             ref.watch(mapStyleProvider).attribution,
-            style: EventraText.caption.copyWith(fontSize: 9),
+            style: context.text.caption.copyWith(fontSize: 9),
           ),
         ),
       ),
@@ -152,7 +165,7 @@ class _PulsingMarkerState extends ConsumerState<PulsingMarker>
   Widget build(BuildContext context) {
     final color = widget.color ?? context.tokens.primary;
     return Semantics(
-      label: 'Event location',
+      label: context.l10n.mapEventLocation,
       child: SizedBox.square(
         dimension: widget.size,
         child: AnimatedBuilder(

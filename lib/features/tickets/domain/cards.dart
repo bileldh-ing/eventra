@@ -1,3 +1,4 @@
+import 'package:eventra/l10n/l10n.dart';
 import 'package:meta/meta.dart';
 
 /// Luhn (mod 10) checksum over the digits of [input]; spaces and dashes are
@@ -27,8 +28,11 @@ enum CardBrand {
   discover('Discover', [16, 19], 3),
   unknown('Card', [16], 3);
 
-  const CardBrand(this.label, this.lengths, this.cvcLength);
-  final String label;
+  const CardBrand(this._name, this.lengths, this.cvcLength);
+  final String _name;
+
+  /// Brand names are not translated; the generic fallback is.
+  String get label => this == unknown ? AppLocale.l10n.cardGeneric : _name;
   final List<int> lengths;
   final int cvcLength;
 
@@ -66,31 +70,33 @@ String formatCardNumber(String raw) {
 
 String? validateCardNumber(String raw) {
   final d = digitsOnly(raw);
-  if (d.isEmpty) return 'Enter your card number.';
+  if (d.isEmpty) return AppLocale.l10n.cardEnterNumber;
   final brand = CardBrand.detect(d);
   if (!brand.lengths.contains(d.length) && brand != CardBrand.unknown) {
-    return 'That ${brand.label} number is incomplete.';
+    return AppLocale.l10n.cardIncomplete(brand.label);
   }
-  if (!luhnValid(d)) return 'That card number is not valid.';
+  if (!luhnValid(d)) return AppLocale.l10n.cardInvalid;
   return null;
 }
 
 /// [raw] as 'MM/YY'. Cards are valid through the end of their month.
 String? validateExpiry(String raw, DateTime now) {
   final m = RegExp(r'^(\d{2})\s*/\s*(\d{2})$').firstMatch(raw.trim());
-  if (m == null) return 'Use MM/YY.';
+  if (m == null) return AppLocale.l10n.cardUseMmYy;
   final month = int.parse(m.group(1)!);
   final year = 2000 + int.parse(m.group(2)!);
-  if (month < 1 || month > 12) return 'Use MM/YY.';
-  if (!now.isBefore(DateTime(year, month + 1))) return 'This card expired.';
-  if (year > now.year + 20) return 'Check the expiry year.';
+  if (month < 1 || month > 12) return AppLocale.l10n.cardUseMmYy;
+  if (!now.isBefore(DateTime(year, month + 1))) {
+    return AppLocale.l10n.cardExpired;
+  }
+  if (year > now.year + 20) return AppLocale.l10n.cardCheckYear;
   return null;
 }
 
 String? validateCvc(String raw, CardBrand brand) {
   final d = digitsOnly(raw);
   if (d.length != brand.cvcLength || d.length != raw.trim().length) {
-    return '${brand.cvcLength} digits.';
+    return AppLocale.l10n.cardCvcDigits(brand.cvcLength.toString());
   }
   return null;
 }

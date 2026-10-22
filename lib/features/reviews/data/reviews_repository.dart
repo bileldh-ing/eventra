@@ -3,6 +3,7 @@ import 'package:eventra/core/result/result.dart';
 import 'package:eventra/features/events/data/db/app_database.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/reviews/domain/review.dart';
+import 'package:eventra/l10n/l10n.dart';
 
 /// Reviews over raw SQL. Writes re-check every rule, so the UI cannot
 /// bypass them: only holders of a valid ticket for an ended event may
@@ -103,23 +104,23 @@ class ReviewsRepository {
         break;
       case ReviewEligibility.reviewed:
         return _fail(
-          const ReviewFailure(
+          ReviewFailure(
             ReviewError.duplicate,
-            'You already reviewed this event. Edit your review instead.',
+            AppLocale.l10n.revDupEdit,
           ),
         );
       case ReviewEligibility.notEnded:
         return _fail(
-          const ReviewFailure(
+          ReviewFailure(
             ReviewError.notAllowed,
-            'You can review this event after it ends.',
+            AppLocale.l10n.revAfterEnd,
           ),
         );
       case ReviewEligibility.signedOut || ReviewEligibility.noTicket:
         return _fail(
-          const ReviewFailure(
+          ReviewFailure(
             ReviewError.notAllowed,
-            'Only attendees with a ticket can review this event.',
+            AppLocale.l10n.revOnlyAttendees,
           ),
         );
     }
@@ -139,9 +140,9 @@ class ReviewsRepository {
     } on Object {
       // UNIQUE(event_id, user_id) caught a concurrent duplicate.
       return _fail(
-        const ReviewFailure(
+        ReviewFailure(
           ReviewError.duplicate,
-          'You already reviewed this event.',
+          AppLocale.l10n.revDup,
         ),
       );
     }
@@ -299,6 +300,6 @@ class ReviewsRepository {
   Result<T> _fail<T>(ReviewFailure e) => Result.failure(e);
 
   Result<T> _notFound<T>() => _fail(
-    const ReviewFailure(ReviewError.notFound, 'Review not found.'),
+    ReviewFailure(ReviewError.notFound, AppLocale.l10n.revNotFound),
   );
 }

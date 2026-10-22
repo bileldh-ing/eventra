@@ -1,4 +1,5 @@
 import 'package:eventra/features/tickets/domain/pricing.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:meta/meta.dart';
 
 enum HoldStatus { active, released, expired, converted }
@@ -170,10 +171,35 @@ TicketBucket bucketOf(TicketEntry e, DateTime now) {
   return TicketBucket.upcoming;
 }
 
+/// What the status chip on a ticket shows.
+enum TicketDisplayStatus {
+  valid,
+  used,
+  expired,
+  cancelled;
+
+  /// Name in the active language.
+  String get label {
+    final l = AppLocale.l10n;
+    return switch (this) {
+      valid => l.stValid,
+      used => l.stUsed,
+      expired => l.stExpired,
+      cancelled => l.stCancelled,
+    };
+  }
+}
+
+TicketDisplayStatus ticketDisplayStatus(TicketEntry e, DateTime now) =>
+    switch (e.ticket.status) {
+      TicketStatus.cancelled => TicketDisplayStatus.cancelled,
+      TicketStatus.used => TicketDisplayStatus.used,
+      TicketStatus.valid =>
+        now.isBefore(e.event.endAt)
+            ? TicketDisplayStatus.valid
+            : TicketDisplayStatus.expired,
+    };
+
 /// Label for the status chip on a ticket.
 String ticketStatusLabel(TicketEntry e, DateTime now) =>
-    switch (e.ticket.status) {
-      TicketStatus.cancelled => 'Cancelled',
-      TicketStatus.used => 'Used',
-      TicketStatus.valid => now.isBefore(e.event.endAt) ? 'Valid' : 'Expired',
-    };
+    ticketDisplayStatus(e, now).label;

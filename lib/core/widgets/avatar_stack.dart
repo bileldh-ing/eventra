@@ -30,8 +30,8 @@ class AvatarStack extends StatelessWidget {
       child: Stack(
         children: [
           for (var i = 0; i < urls.length; i++)
-            Positioned(
-              left: i * step,
+            PositionedDirectional(
+              start: i * step,
               child: NetAvatar(
                 url: urls[i],
                 size: size,
@@ -39,8 +39,8 @@ class AvatarStack extends StatelessWidget {
               ),
             ),
           if (extraCount != null && extraCount! > 0)
-            Positioned(
-              left: urls.length * step,
+            PositionedDirectional(
+              start: urls.length * step,
               child: Container(
                 width: size,
                 height: size,

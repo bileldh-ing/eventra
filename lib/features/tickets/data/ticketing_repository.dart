@@ -12,6 +12,7 @@ import 'package:eventra/features/tickets/domain/promo.dart';
 import 'package:eventra/features/tickets/domain/refund_policy.dart';
 import 'package:eventra/features/tickets/domain/ticketing_models.dart';
 import 'package:eventra/features/tickets/domain/tier_rules.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:meta/meta.dart';
 
 /// Everything the buyer confirmed on the checkout screen.
@@ -189,28 +190,42 @@ class TicketingRepository {
     final lines = <HoldLine>[];
     var total = 0;
     for (final MapEntry(key: tierId, value: q) in quantities.entries) {
-      if (q < 0) return _fail(TicketingError.invalidSelection, 'Bad quantity.');
+      if (q < 0) {
+        return _fail(
+          TicketingError.invalidSelection,
+          AppLocale.l10n.tkBadQuantity,
+        );
+      }
       if (q == 0) continue;
       final tier = event.tiers.where((t) => t.id == tierId).firstOrNull;
       if (tier == null) {
-        return _fail(TicketingError.invalidSelection, 'Unknown ticket type.');
+        return _fail(
+          TicketingError.invalidSelection,
+          AppLocale.l10n.tkUnknownTier,
+        );
       }
       if (q > perOrderMaxFor(tierId)) {
         return _fail(
           TicketingError.invalidSelection,
-          'You can buy up to ${perOrderMaxFor(tierId)} ${tier.name} tickets.',
+          AppLocale.l10n.tkTierMax(
+            perOrderMaxFor(tierId).toString(),
+            tier.name,
+          ),
         );
       }
       total += q;
       lines.add(HoldLine(tierId: tierId, quantity: q));
     }
     if (total == 0) {
-      return _fail(TicketingError.invalidSelection, 'Choose a ticket first.');
+      return _fail(
+        TicketingError.invalidSelection,
+        AppLocale.l10n.tkChooseFirst,
+      );
     }
     if (total > kMaxTicketsPerOrder) {
       return _fail(
         TicketingError.invalidSelection,
-        'You can buy up to $kMaxTicketsPerOrder tickets per order.',
+        AppLocale.l10n.tkOrderMax(kMaxTicketsPerOrder.toString()),
       );
     }
     await _ensureStock(event);
@@ -256,7 +271,7 @@ class TicketingRepository {
             throw _Abort(
               TicketingFailure(
                 TicketingError.soldOut,
-                'Not enough $name tickets left. Update your selection.',
+                AppLocale.l10n.tkNotEnough(name),
               ),
             );
           }
@@ -387,13 +402,13 @@ class TicketingRepository {
 
     final hold = await this.hold(r.holdId);
     if (hold == null || hold.userId != r.userId) {
-      return _fail(TicketingError.holdNotFound, 'Your selection was lost.');
+      return _fail(TicketingError.holdNotFound, AppLocale.l10n.tkSelectionLost);
     }
     if (!hold.isLive(_clock())) {
       await sweepExpired();
       return _fail(
         TicketingError.holdExpired,
-        'Your 10-minute hold ended and the tickets were released.',
+        AppLocale.l10n.tkHoldEnded,
       );
     }
 
@@ -417,7 +432,10 @@ class TicketingRepository {
     if (quote.totalCents > 0) {
       final method = r.method;
       if (method == null) {
-        return _fail(TicketingError.paymentDeclined, 'Choose how to pay.');
+        return _fail(
+          TicketingError.paymentDeclined,
+          AppLocale.l10n.tkChoosePay,
+        );
       }
       charge = await gateway.charge(
         idempotencyKey: r.idempotencyKey,
@@ -432,7 +450,7 @@ class TicketingRepository {
             TicketingError.authenticationFailed,
           _ => TicketingError.paymentDeclined,
         };
-        return _fail(code, charge.message ?? 'The payment failed.');
+        return _fail(code, charge.message ?? AppLocale.l10n.tkPaymentFailed);
       }
     }
 
@@ -524,11 +542,10 @@ class TicketingRepository {
               ],
             );
       if (changed == 0) {
-        throw const _Abort(
+        throw _Abort(
           TicketingFailure(
             TicketingError.soldOut,
-            'Those tickets sold out while you were paying. '
-            'You have not been charged.',
+            AppLocale.l10n.tkSoldOutPaying,
           ),
         );
       }
@@ -623,13 +640,16 @@ class TicketingRepository {
   }) async {
     final order = await orderById(orderId);
     if (order == null || order.userId != userId) {
-      return _fail(TicketingError.orderNotFound, 'Order not found.');
+      return _fail(
+        TicketingError.orderNotFound,
+        AppLocale.l10n.tkOrderNotFound,
+      );
     }
     if (order.status == OrderStatus.refunded) return Result.success(order);
     if (order.tickets.any((t) => t.status == TicketStatus.used)) {
       return _fail(
         TicketingError.refundNotAllowed,
-        'A ticket in this order was already used.',
+        AppLocale.l10n.tkTicketUsed,
       );
     }
     final decision = RefundPolicy.evaluate(
@@ -648,7 +668,7 @@ class TicketingRepository {
       if (!ok) {
         return _fail(
           TicketingError.refundNotAllowed,
-          'The refund could not be processed. Try again.',
+          AppLocale.l10n.tkRefundFailed,
         );
       }
     }

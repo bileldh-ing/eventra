@@ -4,30 +4,50 @@ import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/domain/entities/event_category.dart';
 import 'package:eventra/features/feed/domain/smart_feed_scorer.dart';
 import 'package:eventra/features/onboarding/domain/interest.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:meta/meta.dart';
 
 enum EventSort {
-  recommended('Recommended'),
-  soonest('Soonest'),
-  nearest('Nearest'),
-  priceLow('Price: low to high'),
-  popular('Most popular');
+  recommended,
+  soonest,
+  nearest,
+  priceLow,
+  popular;
 
-  const EventSort(this.label);
-  final String label;
+  /// Name in the active language.
+  String get label {
+    final l = AppLocale.l10n;
+    return switch (this) {
+      recommended => l.sortRecommended,
+      soonest => l.sortSoonest,
+      nearest => l.sortNearest,
+      priceLow => l.sortPriceLow,
+      popular => l.sortPopular,
+    };
+  }
 }
 
 enum DatePreset {
-  any('Any time'),
-  today('Today'),
-  tomorrow('Tomorrow'),
-  thisWeekend('This Weekend'),
-  thisWeek('Next 7 days'),
-  custom('Pick dates');
+  any,
+  today,
+  tomorrow,
+  thisWeekend,
+  thisWeek,
+  custom;
 
-  const DatePreset(this.label);
-  final String label;
+  /// Name in the active language.
+  String get label {
+    final l = AppLocale.l10n;
+    return switch (this) {
+      any => l.dateAny,
+      today => l.dateToday,
+      tomorrow => l.dateTomorrow,
+      thisWeekend => l.dateThisWeekend,
+      thisWeek => l.dateNext7,
+      custom => l.datePick,
+    };
+  }
 }
 
 /// A half-open [start, end) window.
@@ -276,7 +296,8 @@ bool matchesQuery(Event e, String query) {
   return e.title.toLowerCase().contains(q) ||
       e.venue.toLowerCase().contains(q) ||
       e.address.toLowerCase().contains(q) ||
-      e.category.label.toLowerCase().contains(q);
+      (e.category.label.toLowerCase().contains(q) ||
+          e.category.name.contains(q));
 }
 
 /// Saturday 00:00 to Monday 00:00 of the current (or coming) weekend.
@@ -299,8 +320,8 @@ class InterestRow {
   final List<Event> events;
 
   String get title => interest == null
-      ? 'Recommended For You'
-      : 'Because You Like ${interest!.label}';
+      ? AppLocale.l10n.rowRecommendedForYou
+      : AppLocale.l10n.rowBecauseYouLike(interest!.label);
 }
 
 /// Home sections below the carousel.
