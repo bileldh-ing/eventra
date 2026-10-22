@@ -693,6 +693,61 @@ class TicketingRepository {
 
   Future<Order?> orderById(String id) => _orderWhere('id', id);
 
+  /// Demo data: a paid order for an event that already happened, so the
+  /// demo account can try reviews. Idempotent per user and event.
+  Future<void> ensureDemoPastOrder({
+    required String userId,
+    required String attendeeName,
+    required String attendeeEmail,
+    required Event event,
+  }) async {
+    final id = 'ord_demo_${userId}_${event.id}';
+    if (event.tiers.isEmpty || await orderById(id) != null) return;
+    final tier = event.tiers.first;
+    final unit = toCents(tier.price);
+    final order = Order(
+      id: id,
+      userId: userId,
+      idempotencyKey: 'demo:$id',
+      status: OrderStatus.paid,
+      event: snapshotOf(event),
+      lines: [
+        PriceLine(
+          tierId: tier.id,
+          tierName: tier.name,
+          unitCents: unit,
+          quantity: 1,
+        ),
+      ],
+      subtotalCents: unit,
+      discountCents: 0,
+      feesCents: 0,
+      taxCents: 0,
+      totalCents: unit,
+      refundCents: 0,
+      attendeeName: attendeeName,
+      attendeeEmail: attendeeEmail,
+      createdAt: event.startAt.subtract(const Duration(days: 14)),
+      paymentRef: 'demo',
+      cardBrand: 'Visa',
+      cardLast4: '4242',
+      tickets: [
+        Ticket(
+          id: 'tkt_demo_${userId}_${event.id}',
+          orderId: id,
+          userId: userId,
+          eventId: event.id,
+          tierId: tier.id,
+          tierName: tier.name,
+          holderName: attendeeName,
+          status: TicketStatus.valid,
+          seq: 1,
+        ),
+      ],
+    );
+    await db.transaction(() => _insertOrder(order));
+  }
+
   Future<Order?> _orderWhere(String column, String value) async {
     final r = await db
         .customSelect(

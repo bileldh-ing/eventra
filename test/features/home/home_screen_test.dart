@@ -9,7 +9,10 @@ import '../../helpers/harness.dart';
 import '../../helpers/seed.dart';
 
 void main() {
-  final seed = loadSeed().events;
+  // Home lists upcoming events only (the seed also has past events).
+  final seed = loadSeed().events
+      .where((e) => e.endAt.isAfter(kTestNow))
+      .toList();
   String idOf(String title) => seed.firstWhere((e) => e.title == title).id;
 
   Future<TestApp> pumpHome(WidgetTester tester, {TestApp? app}) async {

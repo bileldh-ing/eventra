@@ -1,7 +1,7 @@
 name: eventra
 description: "Eventra - Discover. Book. Feel the moment."
 publish_to: 'none'
-version: 0.7.0+7
+version: 0.8.0+8
 
 environment:
   sdk: ^3.9.0
@@ -21,6 +21,7 @@ dependencies:
   flutter:
     sdk: flutter
   # Event reminders (spec: platform; Phase 7).
+  flutter_cache_manager: ^3.4.1
   flutter_local_notifications: ^22.3.2
   # Map tiles + markers with CARTO Positron, no API key (spec: maps).
   flutter_map: ^8.2.0

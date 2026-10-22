@@ -6327,6 +6327,429 @@
     }
    ],
    "imageCredit": "Unsplash (Unsplash License)"
+  },
+  {
+   "id": "evt-p01-summer-rooftop-sessions",
+   "title": "Summer Rooftop Sessions",
+   "category": "music",
+   "description": "Summer Rooftop Sessions is a high-energy live music event that brings together standout artists, passionate fans, and cutting-edge sound in one unforgettable night. Expect a full production with immersive lighting, a tuned sound system and food trucks on site at Rockland Lake State Park. Doors open one hour before the first set, and re-entry is allowed with your wristband.",
+   "startAt": "2026-09-12T19:00:00",
+   "endAt": "2026-09-12T23:00:00",
+   "tiers": [
+    {
+     "id": "early",
+     "name": "Early Bird",
+     "price": 52.0,
+     "capacity": 24,
+     "sold": 24,
+     "perks": [
+      "Entry for one",
+      "Best price"
+     ]
+    },
+    {
+     "id": "ga",
+     "name": "General Admission",
+     "price": 65.0,
+     "capacity": 84,
+     "sold": 84,
+     "perks": [
+      "Entry for one"
+     ]
+    },
+    {
+     "id": "vip",
+     "name": "VIP",
+     "price": 143.0,
+     "capacity": 12,
+     "sold": 12,
+     "perks": [
+      "Priority entry",
+      "Lounge access",
+      "Welcome drink"
+     ]
+    }
+   ],
+   "capacity": 120,
+   "soldCount": 120,
+   "venue": "Rockland Lake State Park",
+   "address": "4517 Manchester",
+   "latitude": 41.1495,
+   "longitude": -73.9195,
+   "organizerId": "org-pulse",
+   "rating": 4.9,
+   "reviewCount": 123,
+   "participantsCount": 15,
+   "participantAvatars": [
+    "https://randomuser.me/api/portraits/women/1.jpg",
+    "https://randomuser.me/api/portraits/men/14.jpg",
+    "https://randomuser.me/api/portraits/women/27.jpg",
+    "https://randomuser.me/api/portraits/men/40.jpg",
+    "https://randomuser.me/api/portraits/women/53.jpg",
+    "https://randomuser.me/api/portraits/men/66.jpg"
+   ],
+   "tags": [
+    "music",
+    "ticketed",
+    "past"
+   ],
+   "coverImageUrl": "https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1200&q=80&fm=jpg&fit=crop",
+   "gallery": [
+    "https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200&q=80&fm=jpg&fit=crop"
+   ],
+   "lineup": [
+    {
+     "time": "2027-06-20T23:00:00",
+     "title": "Doors open"
+    },
+    {
+     "time": "2027-06-20T23:45:00",
+     "title": "Opening DJ set"
+    },
+    {
+     "time": "2027-06-21T00:30:00",
+     "title": "Main act"
+    },
+    {
+     "time": "2027-06-21T01:15:00",
+     "title": "Closing set"
+    }
+   ],
+   "policy": "Full refund up to 7 days before the event. 50% refund between 7 days and 48 hours before. No refunds within 48 hours of the start time; tickets can still be transferred to a friend.",
+   "reviews": [
+    {
+     "author": "Maya Chen",
+     "avatarUrl": "https://randomuser.me/api/portraits/women/21.jpg",
+     "rating": 5,
+     "text": "Great sound and a friendly crowd. Getting in took less than five minutes.",
+     "date": "2026-09-13T00:00:00"
+    },
+    {
+     "author": "Jordan Blake",
+     "avatarUrl": "https://randomuser.me/api/portraits/men/52.jpg",
+     "rating": 5,
+     "text": "Well organized, clear signage and helpful staff all evening.",
+     "date": "2026-09-14T00:00:00"
+    },
+    {
+     "author": "Priya Patel",
+     "avatarUrl": "https://randomuser.me/api/portraits/women/68.jpg",
+     "rating": 4,
+     "text": "Good value for the price. Seating was a bit tight near the front.",
+     "date": "2026-09-15T00:00:00"
+    }
+   ],
+   "imageCredit": "Unsplash (Unsplash License)"
+  },
+  {
+   "id": "evt-p02-ai-builders-meetup",
+   "title": "AI Builders Meetup",
+   "category": "tech",
+   "description": "AI Builders Meetup brings builders, designers and curious minds together at Chelsea Tech Hub. The programme mixes short talks, live demos and open discussion, followed by time to network. Bring a laptop if you want to join the hands-on part; power and Wi-Fi are provided.",
+   "startAt": "2026-09-26T18:00:00",
+   "endAt": "2026-09-26T21:00:00",
+   "tiers": [
+    {
+     "id": "rsvp",
+     "name": "Free RSVP",
+     "price": 0,
+     "capacity": 5000,
+     "sold": 5000,
+     "perks": [
+      "Entry for one",
+      "Reminder before the event"
+     ]
+    }
+   ],
+   "capacity": 5000,
+   "soldCount": 5000,
+   "venue": "Chelsea Tech Hub",
+   "address": "111 8th Ave, New York",
+   "latitude": 40.7411,
+   "longitude": -74.0034,
+   "organizerId": "org-devhub",
+   "rating": 4.3,
+   "reviewCount": 563,
+   "participantsCount": 1123,
+   "participantAvatars": [
+    "https://randomuser.me/api/portraits/men/66.jpg",
+    "https://randomuser.me/api/portraits/women/79.jpg",
+    "https://randomuser.me/api/portraits/men/2.jpg",
+    "https://randomuser.me/api/portraits/women/15.jpg",
+    "https://randomuser.me/api/portraits/men/28.jpg",
+    "https://randomuser.me/api/portraits/women/41.jpg"
+   ],
+   "tags": [
+    "tech",
+    "nyc",
+    "free",
+    "past"
+   ],
+   "coverImageUrl": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=80&fm=jpg&fit=crop",
+   "gallery": [
+    "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&q=80&fm=jpg&fit=crop"
+   ],
+   "lineup": [
+    {
+     "time": "2027-01-04T12:30:00",
+     "title": "Check-in and coffee"
+    },
+    {
+     "time": "2027-01-04T13:15:00",
+     "title": "Keynote"
+    },
+    {
+     "time": "2027-01-04T14:00:00",
+     "title": "Live demos"
+    },
+    {
+     "time": "2027-01-04T14:45:00",
+     "title": "Networking"
+    }
+   ],
+   "policy": "Free entry with RSVP. If you can no longer attend, cancel your RSVP so someone on the waitlist can take your spot.",
+   "reviews": [
+    {
+     "author": "Ethan Brooks",
+     "avatarUrl": "https://randomuser.me/api/portraits/men/61.jpg",
+     "rating": 5,
+     "text": "The hosts made everyone feel welcome. Easy to meet people.",
+     "date": "2026-09-27T00:00:00"
+    },
+    {
+     "author": "Maya Chen",
+     "avatarUrl": "https://randomuser.me/api/portraits/women/21.jpg",
+     "rating": 5,
+     "text": "Great sound and a friendly crowd. Getting in took less than five minutes.",
+     "date": "2026-09-28T00:00:00"
+    },
+    {
+     "author": "Jordan Blake",
+     "avatarUrl": "https://randomuser.me/api/portraits/men/52.jpg",
+     "rating": 5,
+     "text": "Well organized, clear signage and helpful staff all evening.",
+     "date": "2026-09-29T00:00:00"
+    }
+   ],
+   "imageCredit": "Unsplash (Unsplash License)"
+  },
+  {
+   "id": "evt-p03-harvest-street-food-fair",
+   "title": "Harvest Street Food Fair",
+   "category": "food",
+   "description": "Harvest Street Food Fair is a celebration of good food at East River State Park. Local vendors, chefs and producers serve tasting portions throughout the day, with cooking demos on the main stage and seating areas for families. Vegetarian and gluten-free options are clearly labelled.",
+   "startAt": "2026-10-04T12:00:00",
+   "endAt": "2026-10-04T18:00:00",
+   "tiers": [
+    {
+     "id": "rsvp",
+     "name": "Free RSVP",
+     "price": 0,
+     "capacity": 1500,
+     "sold": 1500,
+     "perks": [
+      "Entry for one",
+      "Reminder before the event"
+     ]
+    }
+   ],
+   "capacity": 1500,
+   "soldCount": 1500,
+   "venue": "East River State Park",
+   "address": "90 Kent Ave, Brooklyn",
+   "latitude": 40.7215,
+   "longitude": -73.962,
+   "organizerId": "org-taste",
+   "rating": 4.7,
+   "reviewCount": 237,
+   "participantsCount": 393,
+   "participantAvatars": [
+    "https://randomuser.me/api/portraits/women/25.jpg",
+    "https://randomuser.me/api/portraits/men/38.jpg",
+    "https://randomuser.me/api/portraits/women/51.jpg",
+    "https://randomuser.me/api/portraits/men/64.jpg",
+    "https://randomuser.me/api/portraits/women/77.jpg",
+    "https://randomuser.me/api/portraits/men/90.jpg"
+   ],
+   "tags": [
+    "food",
+    "nyc",
+    "free",
+    "past"
+   ],
+   "coverImageUrl": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1200&q=80&fm=jpg&fit=crop",
+   "gallery": [
+    "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1200&q=80&fm=jpg&fit=crop"
+   ],
+   "lineup": [
+    {
+     "time": "2027-02-13T10:30:00",
+     "title": "Market opens"
+    },
+    {
+     "time": "2027-02-13T11:15:00",
+     "title": "Chef demo"
+    },
+    {
+     "time": "2027-02-13T12:00:00",
+     "title": "Tasting hour"
+    },
+    {
+     "time": "2027-02-13T12:45:00",
+     "title": "Last call at the stalls"
+    }
+   ],
+   "policy": "Free entry with RSVP. If you can no longer attend, cancel your RSVP so someone on the waitlist can take your spot.",
+   "reviews": [
+    {
+     "author": "Maya Chen",
+     "avatarUrl": "https://randomuser.me/api/portraits/women/21.jpg",
+     "rating": 5,
+     "text": "Great sound and a friendly crowd. Getting in took less than five minutes.",
+     "date": "2026-10-05T00:00:00"
+    },
+    {
+     "author": "Jordan Blake",
+     "avatarUrl": "https://randomuser.me/api/portraits/men/52.jpg",
+     "rating": 5,
+     "text": "Well organized, clear signage and helpful staff all evening.",
+     "date": "2026-10-06T00:00:00"
+    },
+    {
+     "author": "Priya Patel",
+     "avatarUrl": "https://randomuser.me/api/portraits/women/68.jpg",
+     "rating": 4,
+     "text": "Good value for the price. Seating was a bit tight near the front.",
+     "date": "2026-10-07T00:00:00"
+    }
+   ],
+   "imageCredit": "Unsplash (Unsplash License)"
+  },
+  {
+   "id": "evt-p04-late-laughs-showcase",
+   "title": "Late Laughs Showcase",
+   "category": "comedy",
+   "description": "Late Laughs Showcase at Comedy Cellar lines up sharp stand-up from touring headliners and rising local talent. Each comic does a tight set, and the host keeps the room moving between acts. The show contains adult language; a two-drink minimum applies at the venue.",
+   "startAt": "2026-10-17T20:00:00",
+   "endAt": "2026-10-17T22:30:00",
+   "tiers": [
+    {
+     "id": "early",
+     "name": "Early Bird",
+     "price": 22.4,
+     "capacity": 40,
+     "sold": 40,
+     "perks": [
+      "Entry for one",
+      "Best price"
+     ]
+    },
+    {
+     "id": "ga",
+     "name": "General Admission",
+     "price": 28.0,
+     "capacity": 140,
+     "sold": 140,
+     "perks": [
+      "Entry for one"
+     ]
+    },
+    {
+     "id": "vip",
+     "name": "VIP",
+     "price": 62.0,
+     "capacity": 20,
+     "sold": 20,
+     "perks": [
+      "Priority entry",
+      "Lounge access",
+      "Welcome drink"
+     ]
+    }
+   ],
+   "capacity": 200,
+   "soldCount": 200,
+   "venue": "Comedy Cellar",
+   "address": "117 MacDougal St, New York",
+   "latitude": 40.7302,
+   "longitude": -74.0006,
+   "organizerId": "org-laugh",
+   "rating": 4.4,
+   "reviewCount": 140,
+   "participantsCount": 77,
+   "participantAvatars": [
+    "https://randomuser.me/api/portraits/men/74.jpg",
+    "https://randomuser.me/api/portraits/women/87.jpg",
+    "https://randomuser.me/api/portraits/men/10.jpg",
+    "https://randomuser.me/api/portraits/women/23.jpg",
+    "https://randomuser.me/api/portraits/men/36.jpg",
+    "https://randomuser.me/api/portraits/women/49.jpg"
+   ],
+   "tags": [
+    "comedy",
+    "nyc",
+    "ticketed",
+    "past"
+   ],
+   "coverImageUrl": "https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=1200&q=80&fm=jpg&fit=crop",
+   "gallery": [
+    "https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=1200&q=80&fm=jpg&fit=crop",
+    "https://images.unsplash.com/photo-1503095396549-807759245b35?w=1200&q=80&fm=jpg&fit=crop"
+   ],
+   "lineup": [
+    {
+     "time": "2027-05-20T14:30:00",
+     "title": "Doors open"
+    },
+    {
+     "time": "2027-05-20T15:15:00",
+     "title": "Host warm-up"
+    },
+    {
+     "time": "2027-05-20T16:00:00",
+     "title": "Featured comics"
+    },
+    {
+     "time": "2027-05-20T16:45:00",
+     "title": "Headliner"
+    }
+   ],
+   "policy": "Full refund up to 7 days before the event. 50% refund between 7 days and 48 hours before. No refunds within 48 hours of the start time; tickets can still be transferred to a friend.",
+   "reviews": [
+    {
+     "author": "Jordan Blake",
+     "avatarUrl": "https://randomuser.me/api/portraits/men/52.jpg",
+     "rating": 5,
+     "text": "Well organized, clear signage and helpful staff all evening.",
+     "date": "2026-10-18T00:00:00"
+    },
+    {
+     "author": "Priya Patel",
+     "avatarUrl": "https://randomuser.me/api/portraits/women/68.jpg",
+     "rating": 4,
+     "text": "Good value for the price. Seating was a bit tight near the front.",
+     "date": "2026-10-19T00:00:00"
+    },
+    {
+     "author": "Lucas Romero",
+     "avatarUrl": "https://randomuser.me/api/portraits/men/23.jpg",
+     "rating": 5,
+     "text": "Loved the atmosphere. I would come back with friends next time.",
+     "date": "2026-10-20T00:00:00"
+    }
+   ],
+   "imageCredit": "Unsplash (Unsplash License)"
   }
  ]
 }

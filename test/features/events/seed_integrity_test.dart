@@ -37,7 +37,12 @@ void main() {
 
   test('dates are after the seed generation date and end after start', () {
     for (final e in events) {
-      expect(e.startAt.isAfter(seed.generatedAt), isTrue, reason: e.id);
+      // `evt-p*` are past events (reviews need finished events).
+      if (e.id.startsWith('evt-p')) {
+        expect(e.endAt.isBefore(seed.generatedAt), isTrue, reason: e.id);
+      } else {
+        expect(e.startAt.isAfter(seed.generatedAt), isTrue, reason: e.id);
+      }
       expect(e.endAt.isAfter(e.startAt), isTrue, reason: e.id);
     }
   });

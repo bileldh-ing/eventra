@@ -63,8 +63,12 @@ abstract final class EventraText {
   );
 }
 
-ThemeData buildEventraTheme() {
-  const tokens = EventraTokens.light;
+/// Builds the app theme for [brightness]. Every screen reads colors from
+/// [EventraTokens], so the dark palette only has to be added to
+/// [EventraTokens.forBrightness] (until then both modes share the light
+/// tokens and `ThemeMode` is already wired end to end).
+ThemeData buildEventraTheme({Brightness brightness = Brightness.light}) {
+  final tokens = EventraTokens.forBrightness(brightness);
   final base = ThemeData(
     useMaterial3: true,
     fontFamily: kFontFamily,
@@ -77,7 +81,7 @@ ThemeData buildEventraTheme() {
     scaffoldBackgroundColor: tokens.background,
   );
   return base.copyWith(
-    extensions: const [tokens],
+    extensions: [tokens],
     textTheme: base.textTheme.apply(
       fontFamily: kFontFamily,
       bodyColor: tokens.textPrimary,

@@ -13,6 +13,7 @@ import 'package:eventra/features/auth/domain/password_hasher.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/events/data/db/app_database.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
+import 'package:eventra/features/profile/presentation/profile_providers.dart';
 import 'package:eventra/features/tickets/domain/payment.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:flutter/material.dart';
@@ -168,6 +169,7 @@ class TestApp {
     locationServiceProvider.overrideWithValue(location),
     mapTileProviderProvider.overrideWithValue(FixtureTileProvider()),
     loopingAnimationsProvider.overrideWithValue(false),
+    diskImageCacheClearerProvider.overrideWithValue(() async {}),
   ];
 
   Widget build({String initialLocation = '/home'}) => ProviderScope(

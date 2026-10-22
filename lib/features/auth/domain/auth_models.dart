@@ -19,6 +19,15 @@ class AppUser {
   final bool verified;
   final DateTime createdAt;
 
+  AppUser copyWith({String? name}) => AppUser(
+    id: id,
+    name: name ?? this.name,
+    email: email,
+    phone: phone,
+    verified: verified,
+    createdAt: createdAt,
+  );
+
   String get firstName => name.trim().split(RegExp(r'\s+')).first;
 
   @override

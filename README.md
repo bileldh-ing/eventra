@@ -131,6 +131,23 @@ match the code.*
 - Local reminders 24 hours and 2 hours before the event (tapping one opens
   the ticket).
 
+### Profile, settings, favorites, notifications, reviews
+- Profile with an initials avatar on your color, city, bio and stats
+  (tickets, saved, reviews); edit profile with validation.
+- Settings: theme mode (System/Light/Dark), language (EN/FR/AR, stored now,
+  strings later), notification toggles that really gate reminders and inbox
+  items, personalized feed, clear cache, about/version, log out, delete
+  account (type DELETE).
+- Favorites in a list or grid, sortable, swipe to remove with Undo.
+- Notification center stored on the device: welcome items, booking
+  confirmations and refunds, unread badge, mark all read, swipe dismiss with
+  Undo, tap to open the ticket or event.
+- Reviews: only attendees holding a ticket for an event that has ended can
+  review (1-5 stars, 10-500 characters, one per event, edit/delete your own).
+  Event Details shows the average, count, histogram and latest reviews, with
+  a See all screen (star filter, sort). The demo account attends one past
+  event, so you can try it.
+
 ### Quality
 - Respects reduce-motion (looping and entrance animations are skipped).
 - Semantics labels on every icon button, card and list row.
@@ -163,12 +180,16 @@ lib/
     onboarding/   splash, slides, interests, location setup
     tickets/      pricing, promo, Luhn, payment gateway, QR signing, refunds,
                   reminders; ticketing repository; picker, checkout, wallet
-    favorites/ notifications/ profile/ search/ design_system/
+    profile/      profile repository (profiles table), edit profile, account deletion
+    settings/     AppSettings + SettingsController (prefs), settings screen
+    notifications/ notifications table + repository, inbox screen
+    reviews/      ReviewRules, reviews repository, details section, all-reviews screen
+    favorites/ search/ design_system/
 ```
 
 - **State**: Riverpod `Notifier`/`Provider` (favorites with optimistic
   updates and rollback, filters, query, user location, nearest events).
-- **Data**: a 56-event seed (`assets/seed/events.json`, 8 categories, real
+- **Data**: a 60-event seed (56 upcoming, 4 past) (`assets/seed/events.json`, 8 categories, real
   Unsplash photos, coordinates around New City, NY like the reference map) is
   loaded into a drift SQLite database through `LocalDemoBackend`, which
   simulates latency and failures. Repositories return `Result<T>`.

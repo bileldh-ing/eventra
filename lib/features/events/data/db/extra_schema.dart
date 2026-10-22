@@ -98,4 +98,42 @@ const kExtraSchema = <String>[
     user_id TEXT NOT NULL,
     created_at INTEGER NOT NULL
   )''',
+  // Profile details beyond the account row (Phase 8).
+  '''
+  CREATE TABLE IF NOT EXISTS profiles (
+    user_id TEXT NOT NULL PRIMARY KEY,
+    bio TEXT NOT NULL DEFAULT '',
+    city TEXT NOT NULL DEFAULT '',
+    avatar_color INTEGER NOT NULL DEFAULT 0,
+    updated_at INTEGER NOT NULL
+  )''',
+  // Notification center. `scope` is the user id, or 'guest'.
+  '''
+  CREATE TABLE IF NOT EXISTS notifications (
+    id TEXT NOT NULL PRIMARY KEY,
+    scope TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    title TEXT NOT NULL,
+    body TEXT NOT NULL,
+    event_id TEXT,
+    ticket_id TEXT,
+    created_at INTEGER NOT NULL,
+    read INTEGER NOT NULL DEFAULT 0
+  )''',
+  'CREATE INDEX IF NOT EXISTS notifications_scope ON notifications (scope)',
+  // Reviews: one per user per event, 1-5 stars.
+  '''
+  CREATE TABLE IF NOT EXISTS reviews (
+    id TEXT NOT NULL PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    author_name TEXT NOT NULL,
+    avatar_url TEXT NOT NULL DEFAULT '',
+    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    body TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    UNIQUE (event_id, user_id)
+  )''',
+  'CREATE INDEX IF NOT EXISTS reviews_event ON reviews (event_id)',
 ];

@@ -4,8 +4,11 @@ import 'package:eventra/core/storage/storage_providers.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
+import 'package:eventra/features/notifications/presentation/notifications_providers.dart';
+import 'package:eventra/features/settings/presentation/settings_providers.dart';
 import 'package:eventra/features/tickets/data/ticketing_repository.dart';
 import 'package:eventra/features/tickets/domain/device_services.dart';
+import 'package:eventra/features/tickets/domain/money.dart';
 import 'package:eventra/features/tickets/domain/payment.dart';
 import 'package:eventra/features/tickets/domain/qr_token.dart';
 import 'package:eventra/features/tickets/domain/reminders.dart';
@@ -147,31 +150,97 @@ class TicketingActions {
     final r = await _repo.placeOrder(request);
     if (r case Success(value: final order)) {
       _bump();
-      if (order.tickets.isNotEmpty) {
-        await _ref
-            .read(reminderSchedulerProvider)
-            .schedule(
-              ReminderRequest(
-                orderId: order.id,
-                ticketId: order.tickets.first.id,
-                eventTitle: order.event.title,
-                venue: order.event.venue,
-                start: order.event.startAt,
-              ),
-              now: _ref.read(clockProvider)(),
-            );
+      if (order.tickets.isNotEmpty &&
+          _ref.read(settingsProvider).eventReminders) {
+        await _schedule(order);
       }
+      await _notify(
+        order,
+        kind: NotificationKind.orderConfirmed,
+        title: 'Booking confirmed',
+        body:
+            '${order.ticketCount} ticket${order.ticketCount == 1 ? '' : 's'} '
+            'for ${order.event.title}. Your QR code is ready.',
+      );
     }
     return r;
   }
 
   Future<Result<Order>> refund(String orderId, {required String userId}) async {
     final r = await _repo.refundOrder(orderId, userId: userId);
-    if (r.isSuccess) {
+    if (r case Success(value: final order)) {
       _bump();
       await _ref.read(reminderSchedulerProvider).cancel(orderId);
+      await _notify(
+        order,
+        kind: NotificationKind.refund,
+        title: 'Refund issued',
+        body:
+            '${formatCents(order.refundCents)} for ${order.event.title} is '
+            'on its way to your card.',
+      );
     }
     return r;
+  }
+
+  /// Applies the Settings reminder toggle to existing orders: off cancels
+  /// every scheduled reminder, on schedules them again for paid orders
+  /// whose event is still ahead.
+  Future<void> applyReminderSetting({
+    required String userId,
+    required bool enabled,
+  }) async {
+    final scheduler = _ref.read(reminderSchedulerProvider);
+    final now = _ref.read(clockProvider)();
+    for (final order in await _repo.ordersFor(userId)) {
+      if (!enabled) {
+        await scheduler.cancel(order.id);
+      } else if (order.status == OrderStatus.paid &&
+          order.tickets.isNotEmpty &&
+          order.event.startAt.isAfter(now)) {
+        await _schedule(order);
+      }
+    }
+  }
+
+  Future<List<DateTime>> _schedule(Order order) => _ref
+      .read(reminderSchedulerProvider)
+      .schedule(
+        ReminderRequest(
+          orderId: order.id,
+          ticketId: order.tickets.first.id,
+          eventTitle: order.event.title,
+          venue: order.event.venue,
+          start: order.event.startAt,
+        ),
+        now: _ref.read(clockProvider)(),
+      );
+
+  /// Adds an order update to the inbox unless the user turned them off.
+  Future<void> _notify(
+    Order order, {
+    required NotificationKind kind,
+    required String title,
+    required String body,
+  }) async {
+    if (!_ref.read(settingsProvider).orderUpdates) return;
+    try {
+      await _ref
+          .read(notificationsRepositoryProvider)
+          .add(
+            order.userId,
+            kind: kind,
+            title: title,
+            body: body,
+            eventId: order.event.id,
+            ticketId: order.tickets.isEmpty ? null : order.tickets.first.id,
+          );
+      if (_ref.read(notificationScopeProvider) == order.userId) {
+        await _ref.read(notificationsProvider.notifier).reload();
+      }
+    } on Object {
+      // The inbox is best effort; the order itself already succeeded.
+    }
   }
 }
 

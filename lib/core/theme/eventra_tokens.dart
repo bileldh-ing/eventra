@@ -97,6 +97,10 @@ class EventraTokens extends ThemeExtension<EventraTokens> {
     this.navPillHeight = 72,
   });
 
+  /// Tokens for [brightness]. The dark palette lands with the theming pass;
+  /// until then dark mode falls back to the light tokens.
+  static EventraTokens forBrightness(Brightness brightness) => light;
+
   static const light = EventraTokens(
     primary: EventraPalette.primary,
     primaryLight: EventraPalette.primaryLight,

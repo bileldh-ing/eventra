@@ -1,112 +1,80 @@
-import 'package:eventra/features/events/domain/entities/event.dart';
+import 'dart:async';
+
+import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
-import 'package:flutter/material.dart';
+import 'package:eventra/features/notifications/data/notifications_repository.dart';
+import 'package:eventra/features/notifications/domain/app_notification.dart';
+import 'package:eventra/features/settings/presentation/settings_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum NotificationKind {
-  reminder(Icons.alarm_rounded),
-  priceDrop(Icons.local_offer_outlined),
-  friendGoing(Icons.group_outlined),
-  newEvent(Icons.auto_awesome_outlined);
+export 'package:eventra/features/notifications/domain/app_notification.dart';
 
-  const NotificationKind(this.icon);
-  final IconData icon;
-}
+final notificationsRepositoryProvider = Provider<NotificationsRepository>(
+  (ref) => NotificationsRepository(
+    ref.watch(appDatabaseProvider),
+    clock: ref.watch(clockProvider),
+  ),
+);
 
-@immutable
-class AppNotification {
-  const AppNotification({
-    required this.id,
-    required this.kind,
-    required this.title,
-    required this.body,
-    required this.time,
-    required this.eventId,
-    this.read = false,
-  });
+/// Inbox scope: the signed-in user id, or 'guest'.
+final notificationScopeProvider = Provider<String>(
+  (ref) => ref.watch(authControllerProvider.select((s) => s.scope)),
+);
 
-  final String id;
-  final NotificationKind kind;
-  final String title;
-  final String body;
-  final DateTime time;
-  final String eventId;
-  final bool read;
-
-  AppNotification markRead() => AppNotification(
-    id: id,
-    kind: kind,
-    title: title,
-    body: body,
-    time: time,
-    eventId: eventId,
-    read: true,
-  );
-}
-
-/// Demo inbox generated from the catalogue (Phase 8 persists it in drift).
+/// The current inbox, newest first. Updates are optimistic and persisted.
 class NotificationsNotifier extends Notifier<List<AppNotification>> {
+  NotificationsRepository get _repo =>
+      ref.read(notificationsRepositoryProvider);
+  String get _scope => ref.read(notificationScopeProvider);
+
   @override
   List<AppNotification> build() {
-    // Rebuild only when data first becomes available, so refreshing the
-    // feed does not reset read state.
-    ref.watch(eventsProvider.select((a) => a.hasValue));
-    final events = ref.read(eventsProvider).value ?? const <Event>[];
-    if (events.isEmpty) return const [];
-    final now = ref.read(clockProvider)();
-    Event pick(int i) => events[i % events.length];
-    final music = events.where((e) => e.title == 'Pitchfork Music Night');
-    final pitchfork = music.isEmpty ? pick(0) : music.first;
-    return [
-      AppNotification(
-        id: 'n1',
-        kind: NotificationKind.friendGoing,
-        title: '2 friends are going',
-        body: 'Sarah and Liam saved ${pitchfork.title}.',
-        time: now.subtract(const Duration(minutes: 25)),
-        eventId: pitchfork.id,
-      ),
-      AppNotification(
-        id: 'n2',
-        kind: NotificationKind.reminder,
-        title: 'Coming up soon',
-        body: '${pick(0).title} is one of the next events near you.',
-        time: now.subtract(const Duration(hours: 3)),
-        eventId: pick(0).id,
-      ),
-      AppNotification(
-        id: 'n3',
-        kind: NotificationKind.newEvent,
-        title: 'New in Music near you',
-        body: '${pick(5).title} was just announced.',
-        time: now.subtract(const Duration(days: 1, hours: 2)),
-        eventId: pick(5).id,
-        read: true,
-      ),
-      AppNotification(
-        id: 'n4',
-        kind: NotificationKind.priceDrop,
-        title: 'Early Bird price available',
-        body: 'Save 20% on ${pick(9).title} while Early Bird lasts.',
-        time: now.subtract(const Duration(days: 2)),
-        eventId: pick(9).id,
-        read: true,
-      ),
-    ];
+    ref
+      ..watch(notificationScopeProvider)
+      ..watch(notificationsRepositoryProvider)
+      // Seed once the catalogue is available.
+      ..watch(eventsProvider.select((a) => a.hasValue));
+    unawaited(_load());
+    return const [];
   }
 
-  void markRead(String id) =>
-      state = state.map((n) => n.id == id ? n.markRead() : n).toList();
+  Future<void> _load() async {
+    final scope = _scope;
+    final events = ref.read(eventsProvider).value;
+    if (events != null) await _repo.seedIfNeeded(scope, events);
+    final items = await _repo.list(scope);
+    if (ref.mounted && scope == _scope) state = items;
+  }
 
-  void markAllRead() => state = [for (final n in state) n.markRead()];
+  /// Reloads from storage (after another feature added an item).
+  Future<void> reload() => _load();
 
-  void remove(String id) => state = [
-    for (final n in state)
-      if (n.id != id) n,
-  ];
+  Future<void> markRead(String id) async {
+    state = [
+      for (final n in state)
+        if (n.id == id) n.copyWith(read: true) else n,
+    ];
+    await _repo.markRead(_scope, id);
+  }
 
-  void insert(int index, AppNotification n) =>
-      state = [...state]..insert(index.clamp(0, state.length), n);
+  Future<void> markAllRead() async {
+    state = [for (final n in state) n.copyWith(read: true)];
+    await _repo.markAllRead(_scope);
+  }
+
+  Future<void> remove(String id) async {
+    state = [
+      for (final n in state)
+        if (n.id != id) n,
+    ];
+    await _repo.remove(_scope, id);
+  }
+
+  /// Undo for [remove].
+  Future<void> insert(int index, AppNotification n) async {
+    state = [...state]..insert(index.clamp(0, state.length), n);
+    await _repo.put(_scope, n);
+  }
 }
 
 final notificationsProvider =
@@ -114,6 +82,19 @@ final notificationsProvider =
       NotificationsNotifier.new,
     );
 
+/// What the inbox shows: recommendation items are hidden when the user
+/// turns them off in Settings.
+final visibleNotificationsProvider = Provider<List<AppNotification>>((ref) {
+  final all = ref.watch(notificationsProvider);
+  final recs = ref.watch(settingsProvider.select((s) => s.recommendations));
+  return recs
+      ? all
+      : [
+          for (final n in all)
+            if (!n.kind.recommendation) n,
+        ];
+});
+
 final unreadCountProvider = Provider<int>(
-  (ref) => ref.watch(notificationsProvider).where((n) => !n.read).length,
+  (ref) => ref.watch(visibleNotificationsProvider).where((n) => !n.read).length,
 );

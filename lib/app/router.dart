@@ -16,8 +16,11 @@ import 'package:eventra/features/onboarding/presentation/interests_screen.dart';
 import 'package:eventra/features/onboarding/presentation/location_setup_screen.dart';
 import 'package:eventra/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:eventra/features/onboarding/presentation/splash_screen.dart';
+import 'package:eventra/features/profile/presentation/edit_profile_screen.dart';
 import 'package:eventra/features/profile/presentation/profile_screen.dart';
+import 'package:eventra/features/reviews/presentation/all_reviews_screen.dart';
 import 'package:eventra/features/search/presentation/search_screen.dart';
+import 'package:eventra/features/settings/presentation/settings_screen.dart';
 import 'package:eventra/features/tickets/presentation/booking_success_screen.dart';
 import 'package:eventra/features/tickets/presentation/checkout_screen.dart';
 import 'package:eventra/features/tickets/presentation/my_tickets_screen.dart';
@@ -45,6 +48,11 @@ List<RouteBase> _eventRoutes() => [
         path: 'map',
         builder: (context, state) =>
             ExploreScreen(focusEventId: state.pathParameters['id']),
+      ),
+      GoRoute(
+        path: 'reviews',
+        builder: (context, state) =>
+            AllReviewsScreen(eventId: state.pathParameters['id']!),
       ),
     ],
   ),
@@ -219,6 +227,14 @@ GoRouter buildRouter({
                   GoRoute(
                     path: 'tickets',
                     redirect: (context, state) => '/tickets',
+                  ),
+                  GoRoute(
+                    path: 'edit',
+                    builder: (context, state) => const EditProfileScreen(),
+                  ),
+                  GoRoute(
+                    path: 'settings',
+                    builder: (context, state) => const SettingsScreen(),
                   ),
                   GoRoute(
                     path: 'design-system',

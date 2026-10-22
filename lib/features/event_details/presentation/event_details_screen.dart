@@ -21,6 +21,7 @@ import 'package:eventra/features/events/presentation/widgets/bookmark_button.dar
 import 'package:eventra/features/events/presentation/widgets/event_cards.dart';
 import 'package:eventra/features/events/presentation/widgets/participants_sheet.dart';
 import 'package:eventra/features/events/presentation/widgets/share_event.dart';
+import 'package:eventra/features/reviews/presentation/review_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -450,19 +451,7 @@ class _SheetContent extends ConsumerWidget {
         ],
         const DetailsSectionTitle('Ticket Policy'),
         PolicyCard(policy: e.policy),
-        DetailsSectionTitle(
-          'Reviews',
-          trailing: TextButton(
-            key: const ValueKey('reviews-see-all'),
-            onPressed: () => showAllReviews(context, e),
-            child: Text('See all', style: TextStyle(color: t.primary)),
-          ),
-        ),
-        ReviewSummary(event: e),
-        for (final r in e.reviews) ...[
-          const SizedBox(height: 12),
-          ReviewCard(review: r),
-        ],
+        EventReviewsSection(event: e),
         if (similar.isNotEmpty) ...[
           const DetailsSectionTitle('Similar events'),
           SizedBox(

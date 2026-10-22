@@ -1,6 +1,7 @@
 import 'package:eventra/app/router.dart';
 import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
+import 'package:eventra/features/settings/presentation/settings_providers.dart';
 import 'package:eventra/features/tickets/domain/reminders.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,12 @@ class _EventraAppState extends ConsumerState<EventraApp> {
   void initState() {
     super.initState();
     ref
-      ..listenManual(authControllerProvider, (_, _) => _refresh.value++)
+      // Only sign-in status matters to the guard; profile edits that swap
+      // the user object must not re-run routing mid-navigation.
+      ..listenManual(
+        authControllerProvider.select((s) => s.status),
+        (_, _) => _refresh.value++,
+      )
       ..listenManual(onboardingSeenProvider, (_, _) => _refresh.value++);
     // Tapping an event reminder opens its ticket.
     if (ref.read(reminderSchedulerProvider)
@@ -55,6 +61,8 @@ class _EventraAppState extends ConsumerState<EventraApp> {
       title: 'Eventra',
       debugShowCheckedModeBanner: false,
       theme: buildEventraTheme(),
+      darkTheme: buildEventraTheme(brightness: Brightness.dark),
+      themeMode: ref.watch(settingsProvider.select((s) => s.themeMode)),
       routerConfig: _router,
     );
   }

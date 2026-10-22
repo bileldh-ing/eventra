@@ -3,11 +3,18 @@ import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/feed/domain/smart_feed_scorer.dart';
 import 'package:eventra/features/onboarding/domain/interest.dart';
+import 'package:eventra/features/settings/presentation/settings_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// The user's feed inputs: interests, origin (device or home city), saves.
 final feedProfileProvider = Provider<FeedProfile>((ref) {
-  final interests = ref.watch(interestsProvider);
+  // Privacy setting: without personalization the feed ignores interests.
+  final personalized = ref.watch(
+    settingsProvider.select((s) => s.personalizedFeed),
+  );
+  final interests = personalized
+      ? ref.watch(interestsProvider)
+      : const <Interest>{};
   final origin = ref.watch(userLocationProvider.select((l) => l.position));
   final now = ref.watch(clockProvider)();
   final savedIds = ref.watch(favoritesProvider);

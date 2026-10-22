@@ -58,6 +58,21 @@ enum TicketingError {
   orderNotFound,
 }
 
+/// Review rule violations (eligibility, validation, ownership).
+final class ReviewFailure extends AppFailure {
+  const ReviewFailure(this.code, super.message);
+  final ReviewError code;
+}
+
+enum ReviewError {
+  notAllowed,
+  invalidRating,
+  tooShort,
+  tooLong,
+  duplicate,
+  notFound,
+}
+
 final class UnknownFailure extends AppFailure {
   const UnknownFailure([super.message = 'Something went wrong.']);
 }

@@ -389,6 +389,101 @@ Details and Explore unchanged.
 
 ---
 
+## Phase 8a: Profile, settings, favorites, notifications, reviews (done)
+
+Version 0.8.0+8. Localization/RTL and the dark palette are Phase 8b; every
+new screen reads colors from `EventraTokens`, so they inherit it.
+
+- **Profile**: initials avatar on a chosen color, name, email, city, bio and
+  live stats (valid tickets, saved events, reviews written). Edit profile
+  (`/profile/edit`) validates name (2-50), city (60) and bio (160); saving
+  renames the account (`users.name`) and upserts `profiles` in one
+  transaction, then swaps the signed-in user so Home/checkout use the new
+  name. Unread badge on the Notifications row; Settings row.
+- **Settings** (`/profile/settings`, persisted in prefs via
+  `SettingsController`):
+  - Theme mode System/Light/Dark wired to `MaterialApp.themeMode` (dark
+    theme comes from `buildEventraTheme(brightness:)` and
+    `EventraTokens.forBrightness`, which returns the light tokens until the
+    dark palette lands).
+  - Language EN/FR/AR persisted (strings wired in 8b).
+  - Notifications: *Event reminders* gates the Phase 7 scheduler (off: new
+    orders schedule nothing and existing reminders are cancelled; on again:
+    reminders are rescheduled for paid upcoming orders); *Order updates*
+    gates the inbox items for confirmations/refunds; *Recommendations* hides
+    new-event and price-drop items.
+  - Privacy: *Personalized feed* off makes the smart feed ignore interests.
+  - Clear cache (memory + disk image cache, recent searches), About with the
+    version (`kAppVersion`, test-checked against pubspec), Log out, and
+    Delete account (type DELETE to confirm): releases open holds, cancels
+    reminders, deletes the user's orders/tickets/holds/promo uses/reviews/
+    notifications/profile/account and per-user prefs, then signs out.
+- **Favorites**: list/grid toggle and sort (recently saved, soonest, price,
+  name), both persisted; swipe to remove with Undo in both views; empty
+  state with a link Home.
+- **Notification center**: `notifications` table + `NotificationsRepository`
+  per scope (user id or guest). A welcome set is seeded once per scope
+  (friends going, coming up soon, a review prompt for a finished event, new
+  event, price drop). Orders add "Booking confirmed" and refunds add "Refund
+  issued" (deep-link to the ticket). Unread dot on the Home bell and count on
+  Profile; mark all read; swipe dismiss with Undo (persisted); tap marks read
+  and opens the ticket or event.
+- **Reviews**: `reviews` table with `CHECK (rating BETWEEN 1 AND 5)` and
+  `UNIQUE (event_id, user_id)`. `ReviewRules` (pure) validates 1-5 stars and
+  10-500 characters and decides eligibility; `ReviewsRepository` re-checks
+  every rule on write: only a signed-in user holding a non-cancelled ticket
+  for an event that has ended may review, once; only the author can edit or
+  delete. Event Details shows average, count, a 5-to-1 histogram, the three
+  newest reviews and a Write / Edit button or the reason you cannot review;
+  `/<tab>/event/:id/reviews` lists all reviews with star filters and sort.
+  The editor sheet has animated stars, a live character counter and inline
+  errors.
+- **Seed**: four past events were added (`evt-p01`..`evt-p04`, Sept-Oct
+  2026, tagged `past`, sold out, not featured) so reviews have finished
+  events. Catalogue reviews are imported into `reviews` once, plus seven
+  attendee reviews per past event. Logging in with the demo account gives it
+  a ticket to the most recent past event (`ensureDemoPastOrder`), so reviews
+  can be tried right away.
+- Fix: the router guard now refreshes only when the sign-in *status*
+  changes, so swapping the user object (profile edit) does not re-run routing
+  mid-navigation. Settings cards paint their surface with `Material` so list
+  tile ink is visible.
+
+### New dependency
+| Package | Why |
+| --- | --- |
+| `flutter_cache_manager` (was transitive via `cached_network_image`) | Clear cache empties the on-disk image cache. |
+
+### Tests added (Phase 8a, 43 tests in 7 files)
+- `test/features/reviews/review_rules_test.dart` (5): rating and length
+  rules, eligibility matrix, summary math.
+- `test/features/reviews/reviews_repository_test.dart` (8): no ticket,
+  not ended, cancelled ticket, create/duplicate/edit/delete and ownership,
+  validation on create and update, DB unique constraint, seeding, summary.
+- `test/features/reviews/reviews_screen_test.dart` (4, widgets): details
+  summary/histogram, no ticket on upcoming events, write -> edit -> delete,
+  See all with star filter and sort.
+- `test/features/notifications/notifications_repository_test.dart` (5):
+  seed once per scope, scopes isolated, add/mark read/mark all, remove and
+  restore, kind parsing.
+- `test/features/notifications/notifications_screen_test.dart` (3,
+  widgets): swipe dismiss persisted + undo, tap opens event and marks read,
+  purchase adds a confirmation that opens the ticket.
+- `test/features/settings/settings_test.dart` (11): defaults, persistence
+  across relaunch, corrupt values, version vs pubspec, reminders on/off
+  gating and reschedule, order-update items on purchase/refund and when off,
+  theme mode wired to `MaterialApp`, recommendations hidden, clear cache,
+  delete account confirm.
+- `test/features/profile/profile_favorites_test.dart` (7): initials and
+  validators, edit profile end to end (persisted), Settings entry, favorites
+  empty state, grid/list + sort persisted, swipe remove + undo, sort logic.
+- Updated: seed integrity allows `evt-p*` past events; Home/filter tests use
+  upcoming events.
+
+**Gate (Phase 8a):** dart format clean, `flutter analyze` No issues found,
+`flutter test` 256 passed / 0 failed across 38 files (run file-by-file with
+-j 1).
+
 ## Known limitations
 
 - **Map tiles**: CARTO's keyless Positron raster endpoint now returns an "API
@@ -420,6 +515,12 @@ Details and Explore unchanged.
 - Live stock is tracked in `tier_stock`; Home/Details still read sold-out
   state from the seed snapshot, so an event can look available there after
   its last ticket is bought on this device (the picker is always live).
+- Phase 8a: language choice is stored but strings are English until 8b;
+  dark mode uses the light tokens until the dark palette lands (8b). Review
+  tags and helpful votes from the spec are not built. Event cards still show
+  the catalogue's aggregate rating; the Reviews section shows the live
+  average from the `reviews` table. Deleting an account does not refund or
+  restock its tickets (the dialog says so).
 - Goldens are rendered on Linux (arm64) with the Flutter test font stack; on
   another OS, regenerate them before comparing.
 - Device-only behaviour (real GPS permission prompts, share sheet, opening

@@ -15,7 +15,7 @@ class NotificationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.tokens;
-    final items = ref.watch(notificationsProvider);
+    final items = ref.watch(visibleNotificationsProvider);
     final notifier = ref.read(notificationsProvider.notifier);
     final now = ref.watch(clockProvider)();
     bool isToday(DateTime d) =>
@@ -33,7 +33,7 @@ class NotificationsScreen extends ConsumerWidget {
         child: Icon(Icons.delete_outline_rounded, color: t.error),
       ),
       onDismissed: (_) {
-        final index = items.indexOf(n);
+        final index = ref.read(notificationsProvider).indexOf(n);
         notifier.remove(n.id);
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
@@ -48,6 +48,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
       },
       child: ListTile(
+        key: ValueKey('notif-tile-${n.id}'),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
         leading: CircleAvatar(
           backgroundColor: t.primary.withValues(alpha: 0.12),
@@ -66,7 +67,9 @@ class NotificationsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              DateFormat('h:mm a').format(n.time),
+              isToday(n.time)
+                  ? DateFormat('h:mm a').format(n.time)
+                  : DateFormat('MMM d').format(n.time),
               style: EventraText.caption,
             ),
             if (!n.read) ...[
@@ -84,7 +87,11 @@ class NotificationsScreen extends ConsumerWidget {
         ),
         onTap: () {
           notifier.markRead(n.id);
-          context.push('${currentTabRoot(context)}/event/${n.eventId}');
+          if (n.ticketId case final ticket?) {
+            context.go('/tickets/$ticket');
+          } else if (n.eventId case final event?) {
+            context.push('${currentTabRoot(context)}/event/$event');
+          }
         },
       ),
     );

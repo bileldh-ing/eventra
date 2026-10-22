@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:eventra/core/result/result.dart';
 import 'package:eventra/core/storage/storage_providers.dart';
 import 'package:eventra/features/auth/data/local_auth_repository.dart';
@@ -6,6 +8,7 @@ import 'package:eventra/features/auth/domain/auth_repository.dart';
 import 'package:eventra/features/auth/domain/password_hasher.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/onboarding/domain/interest.dart';
+import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final passwordHasherProvider = Provider<PasswordHasher>(
@@ -56,7 +59,34 @@ class AuthController extends Notifier<AuthState> {
   Future<Result<AppUser>> logIn(String email, String password) =>
       _signedIn(_repo.logIn(email: email, password: password));
 
-  Future<Result<AppUser>> logInDemo() => _signedIn(_repo.logInDemo());
+  Future<Result<AppUser>> logInDemo() async {
+    final r = await _signedIn(_repo.logInDemo());
+    if (r case Success(:final value)) unawaited(_seedDemoHistory(value));
+    return r;
+  }
+
+  /// Gives the demo account a ticket to an event that already ended, so
+  /// reviews can be tried right away. Best effort.
+  Future<void> _seedDemoHistory(AppUser user) async {
+    try {
+      final now = ref.read(clockProvider)();
+      final events = await ref.read(eventsProvider.future);
+      final past = events.where((e) => !e.endAt.isAfter(now)).toList()
+        ..sort((a, b) => b.endAt.compareTo(a.endAt));
+      if (past.isEmpty) return;
+      await ref
+          .read(ticketingRepositoryProvider)
+          .ensureDemoPastOrder(
+            userId: user.id,
+            attendeeName: user.name,
+            attendeeEmail: user.email,
+            event: past.first,
+          );
+      if (ref.mounted) ref.read(ticketingRevisionProvider.notifier).bump();
+    } on Object {
+      // Demo extras never block signing in.
+    }
+  }
 
   Future<Result<AppUser>> verifyOtp(String email, String code) =>
       _signedIn(_repo.verifyOtp(email: email, code: code));
@@ -78,6 +108,11 @@ class AuthController extends Notifier<AuthState> {
     await _repo.logOut();
     await ref.read(prefsStoreProvider).setBool(_guestKey, value: false);
     state = const AuthState.signedOut();
+  }
+
+  /// Swaps in an updated copy of the signed-in account (profile edits).
+  void replaceUser(AppUser user) {
+    if (state.user?.id == user.id) state = AuthState.signedIn(user);
   }
 
   Future<Result<AppUser>> _signedIn(Future<Result<AppUser>> call) async {
