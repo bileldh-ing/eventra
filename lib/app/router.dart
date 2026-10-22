@@ -18,7 +18,11 @@ import 'package:eventra/features/onboarding/presentation/onboarding_screen.dart'
 import 'package:eventra/features/onboarding/presentation/splash_screen.dart';
 import 'package:eventra/features/profile/presentation/profile_screen.dart';
 import 'package:eventra/features/search/presentation/search_screen.dart';
-import 'package:eventra/features/tickets/presentation/tickets_placeholder_screen.dart';
+import 'package:eventra/features/tickets/presentation/booking_success_screen.dart';
+import 'package:eventra/features/tickets/presentation/checkout_screen.dart';
+import 'package:eventra/features/tickets/presentation/my_tickets_screen.dart';
+import 'package:eventra/features/tickets/presentation/ticket_detail_screen.dart';
+import 'package:eventra/features/tickets/presentation/tier_picker_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -35,7 +39,7 @@ List<RouteBase> _eventRoutes() => [
       GoRoute(
         path: 'tickets',
         builder: (context, state) =>
-            TicketsPlaceholderScreen(eventId: state.pathParameters['id']),
+            TierPickerScreen(eventId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: 'map',
@@ -120,6 +124,20 @@ GoRouter buildRouter({
             '/home/event/${state.pathParameters['id']}',
       ),
       GoRoute(path: '/', redirect: (context, state) => '/home'),
+      // Checkout and the success page cover the tabs (no nav pill).
+      GoRoute(
+        path: '/checkout/:holdId',
+        builder: (context, s) =>
+            CheckoutScreen(holdId: s.pathParameters['holdId']!),
+      ),
+      GoRoute(
+        path: '/booking-success/:orderId',
+        pageBuilder: (context, s) => _fade(
+          s,
+          BookingSuccessScreen(orderId: s.pathParameters['orderId']!),
+        ),
+      ),
+      GoRoute(path: '/my-tickets', redirect: (context, state) => '/tickets'),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) =>
             AppShell(navigationShell: shell, location: state.uri.path),
@@ -173,6 +191,23 @@ GoRouter buildRouter({
           StatefulShellBranch(
             routes: [
               GoRoute(
+                path: '/tickets',
+                builder: (context, state) => const MyTicketsScreen(),
+                routes: [
+                  ..._eventRoutes(),
+                  GoRoute(
+                    path: ':ticketId',
+                    builder: (context, state) => TicketDetailScreen(
+                      ticketId: state.pathParameters['ticketId']!,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
                 path: '/profile',
                 builder: (context, state) => const ProfileScreen(),
                 routes: [
@@ -183,8 +218,7 @@ GoRouter buildRouter({
                   ),
                   GoRoute(
                     path: 'tickets',
-                    builder: (context, state) =>
-                        const TicketsPlaceholderScreen(),
+                    redirect: (context, state) => '/tickets',
                   ),
                   GoRoute(
                     path: 'design-system',

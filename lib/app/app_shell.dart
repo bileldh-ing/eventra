@@ -2,7 +2,7 @@ import 'package:eventra/app/nav_pill.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Hosts the four tab branches and the floating nav pill. The pill hides when
+/// Hosts the five tab branches and the floating nav pill. The pill hides when
 /// a branch shows a nested page (for example Event Details) and on the
 /// full-screen Explore map.
 class AppShell extends StatelessWidget {
@@ -15,7 +15,13 @@ class AppShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
   final String location;
 
-  static const tabRoots = ['/home', '/explore', '/favorites', '/profile'];
+  static const tabRoots = [
+    '/home',
+    '/explore',
+    '/favorites',
+    '/tickets',
+    '/profile',
+  ];
 
   @override
   Widget build(BuildContext context) {

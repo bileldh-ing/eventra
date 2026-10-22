@@ -143,7 +143,7 @@ class ProfileScreen extends ConsumerWidget {
                 action(
                   Icons.confirmation_number_outlined,
                   'My Tickets',
-                  () => context.push('/profile/tickets'),
+                  () => context.go('/tickets'),
                 ),
                 const SizedBox(height: 12),
                 action(

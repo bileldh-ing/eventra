@@ -13,6 +13,10 @@ a floating gradient nav pill and a full light-gray map with a draggable
 |:---:|:---:|:---:|
 | ![Home](test/features/home/goldens/home.png) | ![Event Details](test/features/event_details/goldens/details.png) | ![Explore](test/features/explore/goldens/explore.png) |
 
+| Checkout | Ticket (rotating QR) |
+|:---:|:---:|
+| ![Checkout](test/features/tickets/goldens/checkout.png) | ![Ticket](test/features/tickets/goldens/ticket_detail.png) |
+
 *Screenshots are the golden files rendered by the widget tests (390x844 at
 2x, real Urbanist fonts, real photos and offline map tiles), so they always
 match the code.*
@@ -100,6 +104,33 @@ match the code.*
   (never plain text), session token in the Keychain/Keystore, 30-day
   sessions, 5 failed logins lock the email for 30 seconds with a countdown.
 
+### Tickets, checkout and wallet
+- Tier picker with live availability (other buyers' holds count), quantity
+  steppers with per-tier and 8-per-order limits, low-stock and sold-out
+  states, and a running total with fees and tax.
+- Seats are held for 10 minutes when you continue (countdown banner that
+  turns orange, then red); leaving checkout or letting the hold expire gives
+  the seats back. Stock changes are atomic, and a database CHECK makes
+  overselling impossible.
+- Checkout: attendee details prefilled from your account, promo codes
+  (`EVENTRA10` 10% off, `WELCOME5` $5 off once per account, `VIP20` 20% off
+  VIP; `SUMMER25` is expired and `FLASH50` fully redeemed), a price breakdown
+  in integer cents, and simulated card payments (demo mode, nothing is
+  charged): saved Visa 4242 and Mastercard 4444 (asks for 3-D Secure), or a
+  new card checked with Luhn. `4000 0000 0000 0002` is declined, `4000 0000
+  0000 3220` asks for 3-D Secure, `4000 0000 0000 0119` times out. Every
+  attempt has an idempotency key, so a double tap never charges twice. Only
+  the card brand and last four digits are stored.
+- Success page with a ticket that slides in, a perforation that draws itself
+  and a one-time holographic shine; Add to Calendar and Invite Friends.
+- **My Tickets** tab (Upcoming / Past / Cancelled, swipeable) and a ticket
+  page with a signed QR code that rotates every 30 seconds (HMAC-SHA256,
+  verifiable offline), brightness at max while it is open, directions,
+  calendar, invite, order details and refunds: a full refund when you cancel
+  more than 48 hours before the start, none after; stock is restored.
+- Local reminders 24 hours and 2 hours before the event (tapping one opens
+  the ticket).
+
 ### Quality
 - Respects reduce-motion (looping and entrance animations are skipped).
 - Semantics labels on every icon button, card and list row.
@@ -113,7 +144,7 @@ Feature-first clean architecture with Riverpod 3 and go_router.
 
 ```
 lib/
-  app/            app widget, router (StatefulShellRoute, 4 tabs), auth guard, nav pill
+  app/            app widget, router (StatefulShellRoute, 5 tabs), auth guard, nav pill
   core/
     theme/        design tokens (EventraTokens ThemeExtension), text styles
     widgets/      glass, gradient button, pressable, skeleton, avatar stack, images
@@ -130,7 +161,9 @@ lib/
     explore/      nearest-events domain, map screen, sheet widgets
     auth/         AuthRepository, local PBKDF2 implementation, login/sign-up/OTP
     onboarding/   splash, slides, interests, location setup
-    favorites/ notifications/ profile/ search/ tickets/ design_system/
+    tickets/      pricing, promo, Luhn, payment gateway, QR signing, refunds,
+                  reminders; ticketing repository; picker, checkout, wallet
+    favorites/ notifications/ profile/ search/ design_system/
 ```
 
 - **State**: Riverpod `Notifier`/`Provider` (favorites with optimistic
@@ -189,7 +222,10 @@ repositories with an in-memory drift DB) and widget tests for every
 interaction on the three reference screens: chip filtering, bookmark, carousel
 navigation, filters sheet, search, See more, Get a Ticket, follow, Hero
 navigation, map selection, search, locate-me (granted and denied), sheet
-snapping and Continue. Golden tests render Home, Event Details and Explore
+snapping and Continue, plus the ticketing rules (pricing, promo codes, Luhn,
+holds with a fake clock, no oversell under concurrency, idempotency, QR
+signing and rotation, refunds) and the full purchase journey. Golden tests
+render Home, Event Details, Explore, Checkout and the ticket
 with real fonts, photos (test/fixtures/images) and map tiles
 (test/fixtures/tiles). See [PROGRESS.md](PROGRESS.md) for exact counts per
 phase.

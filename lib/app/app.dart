@@ -1,6 +1,8 @@
 import 'package:eventra/app/router.dart';
 import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
+import 'package:eventra/features/tickets/domain/reminders.dart';
+import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +35,11 @@ class _EventraAppState extends ConsumerState<EventraApp> {
     ref
       ..listenManual(authControllerProvider, (_, _) => _refresh.value++)
       ..listenManual(onboardingSeenProvider, (_, _) => _refresh.value++);
+    // Tapping an event reminder opens its ticket.
+    if (ref.read(reminderSchedulerProvider)
+        case final LocalReminderScheduler s) {
+      s.onOpenTicket = (ticketId) => _router.go('/tickets/$ticketId');
+    }
   }
 
   @override

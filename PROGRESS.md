@@ -15,8 +15,10 @@ flutter test --update-goldens --tags golden  # refresh screenshots after UI chan
 
 Goldens: `test/features/home/goldens/home.png`,
 `test/features/event_details/goldens/details.png`,
-`test/features/explore/goldens/explore.png` (390x844 logical at 2x, real
-fonts, fixture photos and fixture map tiles).
+`test/features/explore/goldens/explore.png`,
+`test/features/tickets/goldens/checkout.png`,
+`test/features/tickets/goldens/ticket_detail.png` (390x844 logical at 2x,
+real fonts, fixture photos and fixture map tiles).
 
 ---
 
@@ -266,6 +268,125 @@ horizontal scrollables); they now target the outer scroll view.
 
 **Gate (Phase 6):** dart format clean, `flutter analyze` No issues found, `flutter test` 154 passed / 0 failed across 26 files (43 new tests in 6 new files plus 2 new Home widget tests; run file-by-file with -j 1 due to sandbox memory). Home, Event Details and Explore goldens unchanged.
 
+## Phase 7: Tickets, checkout, wallet (done)
+
+Replaces the Phase 2 ticket placeholder with the full money flow. All money
+is integer cents; nothing uses doubles after reading the seed's tier prices.
+
+- **Tier picker** (`/<tab>/event/:id/tickets`): seed tiers (Early Bird,
+  General Admission, VIP; free events have one RSVP tier) with perks, price,
+  "N of M left" and a progress bar, "Only N left" at 10 or fewer, greyed
+  Sold out cards. Steppers stop at the per-tier limit (Early Bird 4, VIP 4,
+  GA 8, RSVP 2), at live stock and at 8 tickets per order (banner when
+  reached). Bottom bar: running subtotal, fees and tax, total.
+- **Holds** (`TicketingRepository.createHold`): Continue reserves the seats
+  for 10 minutes, all-or-nothing, replacing the user's earlier hold for the
+  same event. Each tier change is one conditional `UPDATE ... WHERE capacity
+  - sold - held >= ?` inside a transaction, and `tier_stock` has a `CHECK
+  (sold + held <= capacity)`, so overselling is impossible. Expired holds are
+  swept (seats released) before every read and write; Back from checkout
+  asks, then releases.
+- **Checkout** (`/checkout/:holdId`, outside the tabs): countdown banner
+  with a ring (purple, orange under 2 min, red under 1 min; on expiry Pay is
+  disabled and "Choose again" returns to the picker), order summary,
+  attendee name and email prefilled from the account and validated, promo
+  codes, payment methods, price details, refund policy line, "Pay $X" (or
+  "Confirm free reservation"; free orders skip payment).
+- **Promo codes** (`domain/promo.dart`): `EVENTRA10` 10%, `WELCOME5` $5 off
+  once per account with a $10 minimum, `VIP20` 20% on VIP only, `SUMMER25`
+  expired, `FLASH50` fully redeemed. Validation covers the date window,
+  global and per-user usage (redemptions table; a refund frees the use), tier
+  restrictions and minimum spend. Codes are case and space insensitive.
+- **Pricing** (`domain/pricing.dart`): discount only on eligible tiers and
+  never above them; service fee $1.50 per paid ticket + 3% of the discounted
+  subtotal (none when it is $0); tax 8.875% on discounted subtotal + fees;
+  half-up integer rounding.
+- **Payments** (`PaymentGateway` interface, `MockPaymentGateway`): saved
+  demo cards (Visa 4242; Mastercard 4444 asks for 3-D Secure), or a new card
+  in a sheet with Luhn, brand detection, number and MM/YY formatting, expiry
+  and CVC checks. Test numbers: `4000 0000 0000 0002` declined, `...0119`
+  timeout, `...3220` 3-D Secure. The 3-D Secure sheet (Approve / Cancel) is
+  shown mid-charge. Only brand and last four are stored. Processing overlay,
+  then an animated check, then the success page.
+- **Idempotency**: one key per payment attempt. The repository dedupes
+  in-flight calls by key, returns the stored order for a known key (UNIQUE
+  column) and the gateway dedupes charges by key; a failed attempt gets a
+  new key. If a hold lapsed during a slow 3-D Secure and the seats were
+  taken, the charge is refunded instead of overselling.
+- **Orders and tickets**: `orders` (with an event snapshot so tickets open
+  offline), `order_items`, `tickets` (one per seat), `promo_redemptions`,
+  all raw SQL in `kExtraSchema` (build_runner is unavailable here).
+- **Success page** (`/booking-success/:orderId`): "You're in!", the ticket
+  slides up with a bounce, the perforation draws in and a holographic shine
+  sweeps once; View Ticket(s), Add to Calendar, Invite Friends, Done; back
+  goes to My Tickets, never to the finished checkout.
+- **My Tickets tab** (new 4th nav item, `/tickets`; `/my-tickets` and
+  `/profile/tickets` redirect): Upcoming / Past / Cancelled with counts,
+  swipeable, wallet-style perforated cards with status chip; empty state with
+  Explore events.
+- **Ticket page** (`/tickets/:ticketId`): perforated ticket, status chip
+  (Valid / Used / Expired / Cancelled), signed QR that rotates every 30 s
+  with a countdown ring (`QrTokenService`: `ETK1.ticket.event.holder.window.sig`,
+  HMAC-SHA256 with a per-event key derived from a device key kept in secure
+  storage; verifies offline, accepts the previous window for clock skew,
+  rejects tampering), screen brightness at max while open and restored on
+  leave, Add to Calendar (`add_2_calendar`), Directions, Invite friends,
+  Event details, order breakdown, refund.
+- **Refunds** (`RefundPolicy`): full refund when cancelled more than 48 h
+  before the start, none after (free reservations cancel any time before the
+  start). Refunding marks the order Refunded, cancels its tickets, restores
+  stock, frees the promo use, cancels reminders; repeating it is a no-op.
+- **Reminders** (`ReminderScheduler`; `LocalReminderScheduler` on
+  flutter_local_notifications + timezone, absolute UTC instants): 24 h and
+  2 h before the start, skipping times already past; tapping opens the
+  ticket. Android: POST_NOTIFICATIONS and RECEIVE_BOOT_COMPLETED
+  permissions, the plugin's scheduled/boot receivers, core library
+  desugaring (`desugar_jdk_libs` 2.1.4). Inexact alarms, so no exact-alarm
+  permission.
+- **Guards**: `/tickets*`, `/checkout*`, `/booking-success*` and
+  `*/tickets` need an account; guests log in and return to `from`.
+- Device services (brightness, calendar, share, reminders, payment, ids)
+  are providers with fakes in tests.
+
+### Tests added (Phase 7)
+
+- `test/features/tickets/pricing_promo_test.dart` (15): cents and rounding,
+  fee/tax math, percent, tier-restricted and fixed promos, free tickets,
+  every promo error (empty, unknown, expired, not yet active, exhausted,
+  already used, not applicable, minimum spend), tier limits and the 8 cap.
+- `test/features/tickets/cards_qr_refund_test.dart` (12): Luhn, brand,
+  formatting, expiry/CVC; QR sign/verify, rotation and skew window,
+  tampering, wrong key, malformed; refund policy boundaries; reminder times
+  and ids.
+- `test/features/tickets/ticketing_repository_test.dart` (16, in-memory
+  drift + fake clock): hold/release, expiry at 10:00, replacing holds,
+  selection validation, all-or-nothing, **20 concurrent buyers for 5 seats
+  -> exactly 5 holds**, CHECK constraint, order conversion, **3 concurrent
+  + 1 repeated placeOrder with one key -> one order, one charge**, decline
+  then retry, timeout and cancelled 3-D Secure not charged, promo per user,
+  lapsed hold refunded, free orders, refund restores stock and promo, no
+  refund within 48 h, other users cannot refund.
+- `test/features/tickets/checkout_flow_test.dart` (9, widgets): picker
+  totals, limits, low stock, order cap; end-to-end picker -> hold ->
+  expired then valid promo -> pay -> success -> reminders, calendar, invite
+  -> My Tickets -> QR ticket with brightness boost/restore; double tap pays
+  once; declined new card (Luhn error first) then saved card; 3-D Secure
+  cancel then approve; hold countdown expiry; leave checkout releases seats;
+  attendee validation; checkout golden.
+- `test/features/tickets/my_tickets_test.dart` (6): tabs with counts and
+  swipe; empty state; guest redirected to login; QR rotation at 30 s with
+  signature verification; calendar, share and refund restoring stock and
+  cancelling reminders; ticket detail golden.
+- `test/app/auth_guard_test.dart`: +1 for the new protected paths.
+- Updated: Event Details "Get a Ticket" now lands on the tier picker; Home
+  golden re-rendered for the 5-item nav pill.
+
+**Gate (Phase 7):** dart format clean, `flutter analyze` No issues found,
+`flutter test` **213 passed / 0 failed** across 31 files (58 new tests in 5
+new files plus 1 guard test; run file-by-file with -j 1 due to sandbox
+memory). Goldens: Home updated (nav pill), Checkout and Ticket added; Event
+Details and Explore unchanged.
+
 ---
 
 ## Known limitations
@@ -290,7 +411,15 @@ horizontal scrollables); they now target the outer scroll view.
 - Not built in Phase 5: biometric login toggle (needs `local_auth`), Google /
   Apple sign-in (spec: feature-flagged, hidden when unavailable; they are
   hidden), a Firebase `AuthRepository`.
-- Ticket purchase is a placeholder screen (Phase 7 in the plan).
+- Ticketing (Phase 7) runs on the device: the mock gateway never charges a
+  real card, and the QR signing key lives in this device's secure storage,
+  so an organizer scanner (Phase 9) needs the same per-event key provisioned
+  from a backend. Not built in Phase 7: ticket transfer to a friend,
+  Apple/Google Pay and cash-at-venue methods, a debug outcome switcher for
+  payments, gyroscope tilt on the ticket shine, waitlists, saving new cards.
+- Live stock is tracked in `tier_stock`; Home/Details still read sold-out
+  state from the seed snapshot, so an event can look available there after
+  its last ticket is bought on this device (the picker is always live).
 - Goldens are rendered on Linux (arm64) with the Flutter test font stack; on
   another OS, regenerate them before comparing.
 - Device-only behaviour (real GPS permission prompts, share sheet, opening

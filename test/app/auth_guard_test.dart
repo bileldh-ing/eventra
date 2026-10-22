@@ -61,4 +61,21 @@ void main() {
     expect(go('/auth/login?from=%2F%2Fevil.com', inside), '/home');
     expect(go('/auth/otp', inside), isNull);
   });
+
+  test('wallet, checkout and success pages need an account (Phase 7)', () {
+    for (final p in [
+      '/tickets',
+      '/tickets/tkt_1',
+      '/checkout/hold_1',
+      '/booking-success/ord_1',
+      '/my-tickets',
+    ]) {
+      final r = Uri.parse(go(p, guest)!);
+      expect(r.path, '/auth/login', reason: p);
+      expect(r.queryParameters['from'], p);
+      expect(go(p, inside), isNull, reason: p);
+    }
+    // A tickets-like word elsewhere is not protected.
+    expect(go('/home/ticketsearch', guest), isNull);
+  });
 }

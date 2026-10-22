@@ -119,6 +119,7 @@ class AuthField extends StatelessWidget {
     this.onSubmitted,
     this.onChanged,
     this.enabled = true,
+    this.inputFormatters,
   });
 
   final TextEditingController controller;
@@ -133,6 +134,7 @@ class AuthField extends StatelessWidget {
   final ValueChanged<String>? onSubmitted;
   final ValueChanged<String>? onChanged;
   final bool enabled;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +153,7 @@ class AuthField extends StatelessWidget {
       autofillHints: autofillHints,
       onFieldSubmitted: onSubmitted,
       onChanged: onChanged,
+      inputFormatters: inputFormatters,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       style: EventraText.body.copyWith(color: t.textPrimary, fontSize: 16),
       decoration: InputDecoration(

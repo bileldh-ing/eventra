@@ -13,6 +13,7 @@ const kNavItems = [
   NavPillItem(icon: Icons.home_outlined, label: 'Home'),
   NavPillItem(icon: Icons.explore_outlined, label: 'Explore'),
   NavPillItem(icon: Icons.favorite_border_rounded, label: 'Favorites'),
+  NavPillItem(icon: Icons.confirmation_number_outlined, label: 'Tickets'),
   NavPillItem(icon: Icons.account_circle_outlined, label: 'Profile'),
 ];
 

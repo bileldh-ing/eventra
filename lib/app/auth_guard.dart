@@ -7,7 +7,10 @@ bool isPublicPath(String path) =>
 /// Pages that need a real account (guests are sent to log in first).
 bool needsAccount(String path) =>
     path.endsWith('/tickets') ||
+    path == '/tickets' ||
+    path.startsWith('/tickets/') ||
     path.startsWith('/checkout') ||
+    path.startsWith('/booking-success') ||
     path.startsWith('/my-tickets');
 
 String loginFor(Uri uri) => Uri(

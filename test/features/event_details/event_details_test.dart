@@ -73,7 +73,7 @@ void main() {
     expect(find.byKey(const ValueKey('ticket-done')), findsOneWidget);
     await tester.pumpAndSettle();
     expect(find.text('Get a Ticket'), findsWidgets);
-    expect(find.text('Ticketing is coming in Phase 7'), findsOneWidget);
+    expect(find.byKey(const ValueKey('tier-list')), findsOneWidget);
   });
 
   testWidgets('organizer Follow toggles to Following', (tester) async {

@@ -13,6 +13,8 @@ import 'package:eventra/features/auth/domain/password_hasher.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/events/data/db/app_database.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
+import 'package:eventra/features/tickets/domain/payment.dart';
+import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -99,14 +101,23 @@ class TestApp {
     MemoryPrefsStore? prefs,
     MemorySecureStore? secure,
     this.db,
-  }) : auth = auth ?? AuthState.signedIn(kTestUser),
+    DateTime Function()? clock,
+    MockPaymentGateway? gateway,
+  }) : clock = clock ?? (() => kTestNow),
+       gateway = gateway ?? MockPaymentGateway(latency: Duration.zero),
+       auth = auth ?? AuthState.signedIn(kTestUser),
        prefs =
            prefs ??
            MemoryPrefsStore({
              'onboarding.seen': onboardingSeen,
              'interests.u_demo': ['music', 'tech', 'food'],
            }),
-       secure = secure ?? MemorySecureStore(),
+       secure =
+           secure ??
+           MemorySecureStore({
+             // Fixed QR signing key so codes (and goldens) are stable.
+             kQrKeyStorageKey: 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8',
+           }),
        events = events ?? FakeEventsRepository(loadSeed().events),
        favorites = favorites ?? FakeFavoritesRepository(),
        location =
@@ -125,6 +136,13 @@ class TestApp {
 
   /// Shared database (to simulate a relaunch); a fresh in-memory one if null.
   final AppDatabase? db;
+  final DateTime Function() clock;
+  final MockPaymentGateway gateway;
+  final reminders = FakeReminderScheduler();
+  final _ids = SequentialIds();
+  final brightness = FakeBrightness();
+  final calendar = FakeCalendar();
+  final share = FakeShare();
 
   List<Override> get overrides => [
     prefsStoreProvider.overrideWithValue(prefs),
@@ -139,7 +157,13 @@ class TestApp {
     }),
     eventsRepositoryProvider.overrideWithValue(events),
     favoritesRepositoryProvider.overrideWithValue(favorites),
-    clockProvider.overrideWithValue(() => kTestNow),
+    clockProvider.overrideWithValue(clock),
+    paymentGatewayProvider.overrideWithValue(gateway),
+    ticketingIdsProvider.overrideWithValue(_ids.next),
+    reminderSchedulerProvider.overrideWithValue(reminders),
+    brightnessControllerProvider.overrideWithValue(brightness),
+    calendarServiceProvider.overrideWithValue(calendar),
+    shareServiceProvider.overrideWithValue(share),
     imageProviderFactory.overrideWithValue(fixtureImage),
     locationServiceProvider.overrideWithValue(location),
     mapTileProviderProvider.overrideWithValue(FixtureTileProvider()),

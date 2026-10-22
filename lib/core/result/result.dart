@@ -38,6 +38,26 @@ final class AuthFailure extends AppFailure {
   final Duration? retryAfter;
 }
 
+/// Ticketing problems (stock, holds, payment, promo, refunds). The enum
+/// lives with the ticketing domain.
+final class TicketingFailure extends AppFailure {
+  const TicketingFailure(this.code, super.message);
+  final TicketingError code;
+}
+
+enum TicketingError {
+  soldOut,
+  invalidSelection,
+  holdExpired,
+  holdNotFound,
+  paymentDeclined,
+  paymentTimeout,
+  authenticationFailed,
+  promoInvalid,
+  refundNotAllowed,
+  orderNotFound,
+}
+
 final class UnknownFailure extends AppFailure {
   const UnknownFailure([super.message = 'Something went wrong.']);
 }

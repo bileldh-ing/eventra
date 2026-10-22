@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 /// pushed from a tab stay inside that tab's navigator.
 String currentTabRoot(BuildContext context) {
   final segments = GoRouterState.of(context).uri.pathSegments;
-  const tabs = {'home', 'explore', 'favorites', 'profile'};
+  const tabs = {'home', 'explore', 'favorites', 'tickets', 'profile'};
   final first = segments.isEmpty ? 'home' : segments.first;
   return '/${tabs.contains(first) ? first : 'home'}';
 }

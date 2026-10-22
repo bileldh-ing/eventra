@@ -1,3 +1,4 @@
+import 'package:eventra/app/app_shell.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/core/widgets/entrance.dart';
 import 'package:eventra/core/widgets/state_views.dart';
@@ -86,7 +87,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     activeFilters: filter.refinementCount,
                     onAvatar: () => StatefulNavigationShell.maybeOf(
                       context,
-                    )?.goBranch(3),
+                    )?.goBranch(AppShell.tabRoots.indexOf('/profile')),
                     onBell: () => context.push('/home/notifications'),
                     onSearch: () => context.push('/home/search'),
                     onFilter: () => showFiltersSheet(context),
