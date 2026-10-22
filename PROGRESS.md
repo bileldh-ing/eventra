@@ -525,3 +525,14 @@ new screen reads colors from `EventraTokens`, so they inherit it.
   another OS, regenerate them before comparing.
 - Device-only behaviour (real GPS permission prompts, share sheet, opening
   the maps app) is covered through abstractions in tests, not on a device.
+
+## Phase 8b: i18n (EN/FR/AR), RTL, dark palette
+
+- 551 ARB keys in `lib/l10n/app_{en,fr,ar}.arb` (18 plurals with full Arabic plural forms), generated with `flutter gen-l10n` into `lib/l10n/gen`.
+- Locale wired to `MaterialApp`; context-free code reads `AppLocale` (`lib/l10n/l10n.dart`). Dates, times, numbers and currency follow the locale.
+- Full RTL: directional insets/alignment, mirrored icons and nav pill, bidi isolation for addresses and counts. Bundled Noto Sans Arabic (OFL 1.1) as fallback.
+- Dark token set across every screen, dimmed/inverted map tiles, WCAG AA contrast checked by test.
+- New goldens: `test/l10n/goldens/home_dark.png`, `home_ar.png`, `details_dark.png` (reviewed).
+- Known limits: Design System dev screen is English-only; notifications keep the language active when created; seed event content is English.
+
+**Gate (Phase 8b):** dart format clean (187 files), `flutter analyze` No issues found, `flutter test` 300 passed / 0 failed (file by file, -j 1). Version 0.8.1+9.

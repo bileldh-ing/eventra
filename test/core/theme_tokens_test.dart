@@ -35,4 +35,54 @@ void main() {
     );
     expect(mid.primary, isNot(EventraTokens.light.primary));
   });
+
+  group('dark palette', () {
+    double contrast(Color a, Color b) {
+      final la = a.computeLuminance();
+      final lb = b.computeLuminance();
+      final hi = la > lb ? la : lb;
+      final lo = la > lb ? lb : la;
+      return (hi + 0.05) / (lo + 0.05);
+    }
+
+    test('forBrightness picks the dark tokens', () {
+      expect(EventraTokens.forBrightness(Brightness.dark), EventraTokens.dark);
+      expect(
+        EventraTokens.forBrightness(Brightness.light),
+        EventraTokens.light,
+      );
+      expect(EventraTokens.dark.isDark, isTrue);
+      expect(
+        EventraTokens.dark.background,
+        isNot(EventraTokens.light.background),
+      );
+    });
+
+    test('text clears WCAG AA on every dark surface', () {
+      const t = EventraTokens.dark;
+      for (final surface in [
+        t.background,
+        t.sheet,
+        t.surface,
+        t.surfaceMuted,
+      ]) {
+        expect(contrast(t.textPrimary, surface), greaterThanOrEqualTo(7));
+        expect(contrast(t.textSecondary, surface), greaterThanOrEqualTo(4.5));
+        expect(contrast(t.textHint, surface), greaterThanOrEqualTo(3));
+        expect(contrast(t.primary, surface), greaterThanOrEqualTo(3));
+      }
+    });
+
+    test('dark theme wires brightness, scaffold and Arabic fallback', () {
+      final theme = buildEventraTheme(brightness: Brightness.dark);
+      expect(theme.brightness, Brightness.dark);
+      expect(theme.scaffoldBackgroundColor, EventraTokens.dark.background);
+      expect(theme.extension<EventraTokens>(), EventraTokens.dark);
+      expect(theme.textTheme.bodyMedium?.fontFamilyFallback, kFontFallback);
+      expect(
+        EventraTextStyles.of(EventraTokens.dark).body.color,
+        EventraTokens.dark.textSecondary,
+      );
+    });
+  });
 }
