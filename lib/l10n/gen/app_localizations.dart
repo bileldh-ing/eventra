@@ -3412,6 +3412,672 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Review not found.'**
   String get revNotFound;
+
+  /// No description provided for @profOrganizerMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer mode'**
+  String get profOrganizerMode;
+
+  /// No description provided for @profOrganizerModeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish events, track sales and check guests in'**
+  String get profOrganizerModeBody;
+
+  /// No description provided for @profOrganizerDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer dashboard'**
+  String get profOrganizerDashboard;
+
+  /// No description provided for @orgDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get orgDashboardTitle;
+
+  /// No description provided for @orgCreateEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Create event'**
+  String get orgCreateEvent;
+
+  /// No description provided for @orgRevenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue'**
+  String get orgRevenue;
+
+  /// No description provided for @orgTicketsSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets sold'**
+  String get orgTicketsSold;
+
+  /// No description provided for @orgCheckInRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in rate'**
+  String get orgCheckInRate;
+
+  /// No description provided for @orgOfCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'{sold} of {capacity}'**
+  String orgOfCapacity(String sold, String capacity);
+
+  /// No description provided for @orgCheckedInOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{checkedIn} of {total} checked in'**
+  String orgCheckedInOf(String checkedIn, String total);
+
+  /// No description provided for @orgSalesOverTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales, last 14 days'**
+  String get orgSalesOverTime;
+
+  /// No description provided for @orgTicketsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No tickets} =1{1 ticket} other{{count} tickets}}'**
+  String orgTicketsCount(int count);
+
+  /// No description provided for @orgByTier.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales by tier'**
+  String get orgByTier;
+
+  /// No description provided for @orgDrafts.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafts'**
+  String get orgDrafts;
+
+  /// No description provided for @orgDraftUntitled.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled event'**
+  String get orgDraftUntitled;
+
+  /// No description provided for @orgDraftSavedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {when}'**
+  String orgDraftSavedAt(String when);
+
+  /// No description provided for @orgDraftDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft deleted'**
+  String get orgDraftDeleted;
+
+  /// No description provided for @orgDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get orgDelete;
+
+  /// No description provided for @orgUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming events'**
+  String get orgUpcoming;
+
+  /// No description provided for @orgNoEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming events yet. Create your first one.'**
+  String get orgNoEvents;
+
+  /// No description provided for @orgStatusLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live now'**
+  String get orgStatusLive;
+
+  /// No description provided for @orgStatusOnSale.
+  ///
+  /// In en, this message translates to:
+  /// **'On sale'**
+  String get orgStatusOnSale;
+
+  /// No description provided for @orgStatusSoldOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold out'**
+  String get orgStatusSoldOut;
+
+  /// No description provided for @orgCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in'**
+  String get orgCheckIn;
+
+  /// No description provided for @orgEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get orgEdit;
+
+  /// No description provided for @orgScanTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get orgScanTab;
+
+  /// No description provided for @orgGuestsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest list'**
+  String get orgGuestsTab;
+
+  /// No description provided for @orgScanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at the attendee\'s ticket QR code.'**
+  String get orgScanHint;
+
+  /// No description provided for @orgCameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera is unavailable. Enter the code by hand instead.'**
+  String get orgCameraUnavailable;
+
+  /// No description provided for @orgEnterCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter code manually'**
+  String get orgEnterCode;
+
+  /// No description provided for @orgEnterCodeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste the QR payload or type the ticket ID.'**
+  String get orgEnterCodeBody;
+
+  /// No description provided for @orgCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'ETK1… or ticket ID'**
+  String get orgCodeHint;
+
+  /// No description provided for @orgVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get orgVerify;
+
+  /// No description provided for @orgSearchGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name, tier or ticket'**
+  String get orgSearchGuests;
+
+  /// No description provided for @orgNoGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'No guests'**
+  String get orgNoGuests;
+
+  /// No description provided for @orgNoGuestsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets sold for this event will appear here.'**
+  String get orgNoGuestsBody;
+
+  /// No description provided for @orgNoMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No guest matches your search.'**
+  String get orgNoMatches;
+
+  /// No description provided for @orgCheckInAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get orgCheckInAction;
+
+  /// No description provided for @orgPendingSync.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 to sync} other{{count} to sync}}'**
+  String orgPendingSync(int count);
+
+  /// No description provided for @orgSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'All check-ins are synced.'**
+  String get orgSynced;
+
+  /// No description provided for @orgSyncOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Offline: 1 check-in will sync later.} other{Offline: {count} check-ins will sync later.}}'**
+  String orgSyncOffline(int count);
+
+  /// No description provided for @resValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid ticket. Welcome!'**
+  String get resValid;
+
+  /// No description provided for @resAlready.
+  ///
+  /// In en, this message translates to:
+  /// **'Already checked in'**
+  String get resAlready;
+
+  /// No description provided for @resAlreadyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket was used at {time}.'**
+  String resAlreadyBody(String time);
+
+  /// No description provided for @resWrongEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong event'**
+  String get resWrongEvent;
+
+  /// No description provided for @resWrongEventBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket is for a different event.'**
+  String get resWrongEventBody;
+
+  /// No description provided for @resExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Code expired'**
+  String get resExpired;
+
+  /// No description provided for @resExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket codes refresh every 30 seconds. Ask the guest to reopen their ticket.'**
+  String get resExpiredBody;
+
+  /// No description provided for @resForged.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid ticket'**
+  String get resForged;
+
+  /// No description provided for @resForgedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This code is not a genuine Eventra ticket.'**
+  String get resForgedBody;
+
+  /// No description provided for @resCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get resCancelled;
+
+  /// No description provided for @resCancelledBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket was refunded or cancelled.'**
+  String get resCancelledBody;
+
+  /// No description provided for @resNextScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan next'**
+  String get resNextScan;
+
+  /// No description provided for @wizNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New event'**
+  String get wizNewTitle;
+
+  /// No description provided for @wizEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit event'**
+  String get wizEditTitle;
+
+  /// No description provided for @wizSaveDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Save draft'**
+  String get wizSaveDraft;
+
+  /// No description provided for @wizDraftSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft saved'**
+  String get wizDraftSaved;
+
+  /// No description provided for @wizStepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String wizStepOf(int step, int total);
+
+  /// No description provided for @wizStepBasics.
+  ///
+  /// In en, this message translates to:
+  /// **'Basics'**
+  String get wizStepBasics;
+
+  /// No description provided for @wizStepSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Date and time'**
+  String get wizStepSchedule;
+
+  /// No description provided for @wizStepVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get wizStepVenue;
+
+  /// No description provided for @wizStepTiers.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets and pricing'**
+  String get wizStepTiers;
+
+  /// No description provided for @wizStepCover.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover photo'**
+  String get wizStepCover;
+
+  /// No description provided for @wizStepReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review and publish'**
+  String get wizStepReview;
+
+  /// No description provided for @wizNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get wizNext;
+
+  /// No description provided for @wizPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish event'**
+  String get wizPublish;
+
+  /// No description provided for @wizSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get wizSaveChanges;
+
+  /// No description provided for @wizPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Your event is live.'**
+  String get wizPublished;
+
+  /// No description provided for @wizUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Event updated.'**
+  String get wizUpdated;
+
+  /// No description provided for @wizPublishFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not publish the event. Try again.'**
+  String get wizPublishFailed;
+
+  /// No description provided for @wizTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event title'**
+  String get wizTitle;
+
+  /// No description provided for @wizCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get wizCategory;
+
+  /// No description provided for @wizDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get wizDescription;
+
+  /// No description provided for @wizStarts.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts'**
+  String get wizStarts;
+
+  /// No description provided for @wizEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends'**
+  String get wizEnds;
+
+  /// No description provided for @wizPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose'**
+  String get wizPick;
+
+  /// No description provided for @wizDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration: {hours} h {minutes} min'**
+  String wizDuration(int hours, int minutes);
+
+  /// No description provided for @wizVenueName.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue name'**
+  String get wizVenueName;
+
+  /// No description provided for @wizAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get wizAddress;
+
+  /// No description provided for @wizPinHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the map to place the entrance pin.'**
+  String get wizPinHint;
+
+  /// No description provided for @wizPinHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my location'**
+  String get wizPinHere;
+
+  /// No description provided for @wizTierN.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier {n}'**
+  String wizTierN(int n);
+
+  /// No description provided for @wizTierName.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier name'**
+  String get wizTierName;
+
+  /// No description provided for @wizTierNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'General Admission'**
+  String get wizTierNameHint;
+
+  /// No description provided for @wizTierPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get wizTierPrice;
+
+  /// No description provided for @wizTierCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get wizTierCapacity;
+
+  /// No description provided for @wizFreeTier.
+  ///
+  /// In en, this message translates to:
+  /// **'Price 0 makes this tier free (RSVP).'**
+  String get wizFreeTier;
+
+  /// No description provided for @wizAddTier.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a tier'**
+  String get wizAddTier;
+
+  /// No description provided for @wizCapacityTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No seats yet} =1{1 seat in total} other{{count} seats in total}}'**
+  String wizCapacityTotal(int count);
+
+  /// No description provided for @wizCoverN.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover photo {n}'**
+  String wizCoverN(int n);
+
+  /// No description provided for @wizCoverCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos: Unsplash (Unsplash License).'**
+  String get wizCoverCredit;
+
+  /// No description provided for @wizDefaultPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Full refund up to 48 hours before the event. No refunds within 48 hours of the start time.'**
+  String get wizDefaultPolicy;
+
+  /// No description provided for @wizErrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use {min} to {max} characters.'**
+  String wizErrTitle(int min, int max);
+
+  /// No description provided for @wizErrCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a category.'**
+  String get wizErrCategory;
+
+  /// No description provided for @wizErrDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the event in at least {n} characters.'**
+  String wizErrDescription(int n);
+
+  /// No description provided for @wizErrStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose when the event starts.'**
+  String get wizErrStart;
+
+  /// No description provided for @wizErrStartPast.
+  ///
+  /// In en, this message translates to:
+  /// **'The start must be in the future.'**
+  String get wizErrStartPast;
+
+  /// No description provided for @wizErrEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose when the event ends.'**
+  String get wizErrEnd;
+
+  /// No description provided for @wizErrEndBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'The end must be after the start.'**
+  String get wizErrEndBefore;
+
+  /// No description provided for @wizErrTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'An event can last at most 7 days.'**
+  String get wizErrTooLong;
+
+  /// No description provided for @wizErrVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the venue name.'**
+  String get wizErrVenue;
+
+  /// No description provided for @wizErrAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the address.'**
+  String get wizErrAddress;
+
+  /// No description provided for @wizErrPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Place the pin on the map.'**
+  String get wizErrPin;
+
+  /// No description provided for @wizErrTiers.
+  ///
+  /// In en, this message translates to:
+  /// **'Add between 1 and {n} tiers.'**
+  String wizErrTiers(int n);
+
+  /// No description provided for @wizErrTierName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name the tier (2 to 30 characters).'**
+  String get wizErrTierName;
+
+  /// No description provided for @wizErrTierDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Each tier needs a different name.'**
+  String get wizErrTierDuplicate;
+
+  /// No description provided for @wizErrTierPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a price from 0 to 10,000.'**
+  String get wizErrTierPrice;
+
+  /// No description provided for @wizErrTierCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a quantity from 1 to 100,000.'**
+  String get wizErrTierCapacity;
+
+  /// No description provided for @wizErrTierBelowSold.
+  ///
+  /// In en, this message translates to:
+  /// **'The quantity can not go below the tickets already sold.'**
+  String get wizErrTierBelowSold;
+
+  /// No description provided for @wizErrTierBelowSoldN.
+  ///
+  /// In en, this message translates to:
+  /// **'At least {n} (already sold).'**
+  String wizErrTierBelowSoldN(int n);
+
+  /// No description provided for @wizErrCover.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a cover photo.'**
+  String get wizErrCover;
 }
 
 class _AppLocalizationsDelegate

@@ -10,6 +10,8 @@ import 'package:eventra/features/events/data/repositories/local_events_repositor
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/domain/repositories/events_repository.dart';
 import 'package:eventra/features/onboarding/presentation/onboarding_providers.dart';
+import 'package:eventra/features/organizer/data/organizer_repository.dart';
+import 'package:eventra/features/tickets/data/ticketing_repository.dart';
 import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,6 +39,20 @@ final favoritesRepositoryProvider = Provider<FavoritesRepository>(
   (ref) => LocalFavoritesRepository(ref.watch(backendProvider)),
 );
 
+/// Ids for new rows (orders, tickets, drafts); sequential in tests.
+final ticketingIdsProvider = Provider<String Function(String prefix)>(
+  (ref) => TicketingRepository.newId,
+);
+
+/// Drafts, organizer-published events, door lists and check-ins.
+final organizerRepositoryProvider = Provider<OrganizerRepository>(
+  (ref) => OrganizerRepository(
+    db: ref.watch(appDatabaseProvider),
+    clock: ref.watch(clockProvider),
+    ids: ref.watch(ticketingIdsProvider),
+  ),
+);
+
 /// Injectable clock so "upcoming" and "this weekend" are testable.
 final clockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
 
@@ -51,10 +67,24 @@ class EventsNotifier extends AsyncNotifier<List<Event>> {
 
   Future<List<Event>> _load() async {
     final result = await ref.read(eventsRepositoryProvider).getEvents();
-    return switch (result) {
+    final catalogue = switch (result) {
       Success(:final value) => value,
       Failure(:final failure) => throw FailureException(failure),
     };
+    // Events published from organizer mode join the catalogue.
+    var published = const <Event>[];
+    try {
+      published = await ref.read(organizerRepositoryProvider).publishedEvents();
+    } on Object {
+      published = const [];
+    }
+    if (published.isEmpty) return catalogue;
+    final ids = {for (final e in published) e.id};
+    return [
+      for (final e in catalogue)
+        if (!ids.contains(e.id)) e,
+      ...published,
+    ]..sort((a, b) => a.startAt.compareTo(b.startAt));
   }
 
   /// Pull-to-refresh / retry. Keeps showing old data while reloading.
@@ -93,7 +123,9 @@ final FutureProviderFamily<Event, String> eventByIdProvider =
       final r = await ref.read(eventsRepositoryProvider).getEvent(id);
       return switch (r) {
         Success(:final value) => value,
-        Failure(:final failure) => throw FailureException(failure),
+        Failure(:final failure) =>
+          await ref.read(organizerRepositoryProvider).publishedEvent(id) ??
+              (throw FailureException(failure)),
       };
     });
 

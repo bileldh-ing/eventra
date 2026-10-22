@@ -11,7 +11,12 @@ bool needsAccount(String path) =>
     path.startsWith('/tickets/') ||
     path.startsWith('/checkout') ||
     path.startsWith('/booking-success') ||
-    path.startsWith('/my-tickets');
+    path.startsWith('/my-tickets') ||
+    isOrganizerPath(path);
+
+/// Organizer pages: need an account with organizer mode switched on.
+bool isOrganizerPath(String path) =>
+    path == '/organizer' || path.startsWith('/organizer/');
 
 String loginFor(Uri uri) => Uri(
   path: '/auth/login',
@@ -30,11 +35,13 @@ String? safeFrom(String? from) =>
 /// - First launch shows onboarding once.
 /// - Guests browse Home, Explore, Details and Favorites; tickets and checkout
 ///   need an account and come back to `from` after logging in.
+/// - Organizer pages also need organizer mode on (else back to Profile).
 /// - Signed-out users (not guests) only see onboarding and auth.
 String? authRedirect({
   required AuthState auth,
   required bool onboardingSeen,
   required Uri uri,
+  bool organizerMode = false,
 }) {
   final path = uri.path;
   if (!auth.isRestored) {
@@ -52,6 +59,7 @@ String? authRedirect({
   }
   if (public) return null;
   if (needsAccount(path) && !auth.isSignedIn) return loginFor(uri);
+  if (isOrganizerPath(path) && !organizerMode) return '/profile';
   if (!auth.canBrowse) return loginFor(uri);
   return null;
 }

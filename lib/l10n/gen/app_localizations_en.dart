@@ -2016,4 +2016,401 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get revNotFound => 'Review not found.';
+
+  @override
+  String get profOrganizerMode => 'Organizer mode';
+
+  @override
+  String get profOrganizerModeBody =>
+      'Publish events, track sales and check guests in';
+
+  @override
+  String get profOrganizerDashboard => 'Organizer dashboard';
+
+  @override
+  String get orgDashboardTitle => 'Dashboard';
+
+  @override
+  String get orgCreateEvent => 'Create event';
+
+  @override
+  String get orgRevenue => 'Revenue';
+
+  @override
+  String get orgTicketsSold => 'Tickets sold';
+
+  @override
+  String get orgCheckInRate => 'Check-in rate';
+
+  @override
+  String orgOfCapacity(String sold, String capacity) {
+    return '$sold of $capacity';
+  }
+
+  @override
+  String orgCheckedInOf(String checkedIn, String total) {
+    return '$checkedIn of $total checked in';
+  }
+
+  @override
+  String get orgSalesOverTime => 'Sales, last 14 days';
+
+  @override
+  String orgTicketsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tickets',
+      one: '1 ticket',
+      zero: 'No tickets',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgByTier => 'Sales by tier';
+
+  @override
+  String get orgDrafts => 'Drafts';
+
+  @override
+  String get orgDraftUntitled => 'Untitled event';
+
+  @override
+  String orgDraftSavedAt(String when) {
+    return 'Saved $when';
+  }
+
+  @override
+  String get orgDraftDeleted => 'Draft deleted';
+
+  @override
+  String get orgDelete => 'Delete';
+
+  @override
+  String get orgUpcoming => 'Upcoming events';
+
+  @override
+  String get orgNoEvents => 'No upcoming events yet. Create your first one.';
+
+  @override
+  String get orgStatusLive => 'Live now';
+
+  @override
+  String get orgStatusOnSale => 'On sale';
+
+  @override
+  String get orgStatusSoldOut => 'Sold out';
+
+  @override
+  String get orgCheckIn => 'Check-in';
+
+  @override
+  String get orgEdit => 'Edit';
+
+  @override
+  String get orgScanTab => 'Scan';
+
+  @override
+  String get orgGuestsTab => 'Guest list';
+
+  @override
+  String get orgScanHint =>
+      'Point the camera at the attendee\'s ticket QR code.';
+
+  @override
+  String get orgCameraUnavailable =>
+      'The camera is unavailable. Enter the code by hand instead.';
+
+  @override
+  String get orgEnterCode => 'Enter code manually';
+
+  @override
+  String get orgEnterCodeBody => 'Paste the QR payload or type the ticket ID.';
+
+  @override
+  String get orgCodeHint => 'ETK1… or ticket ID';
+
+  @override
+  String get orgVerify => 'Verify';
+
+  @override
+  String get orgSearchGuests => 'Search by name, tier or ticket';
+
+  @override
+  String get orgNoGuests => 'No guests';
+
+  @override
+  String get orgNoGuestsBody => 'Tickets sold for this event will appear here.';
+
+  @override
+  String get orgNoMatches => 'No guest matches your search.';
+
+  @override
+  String get orgCheckInAction => 'Check in';
+
+  @override
+  String orgPendingSync(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count to sync',
+      one: '1 to sync',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgSynced => 'All check-ins are synced.';
+
+  @override
+  String orgSyncOffline(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Offline: $count check-ins will sync later.',
+      one: 'Offline: 1 check-in will sync later.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get resValid => 'Valid ticket. Welcome!';
+
+  @override
+  String get resAlready => 'Already checked in';
+
+  @override
+  String resAlreadyBody(String time) {
+    return 'This ticket was used at $time.';
+  }
+
+  @override
+  String get resWrongEvent => 'Wrong event';
+
+  @override
+  String get resWrongEventBody => 'This ticket is for a different event.';
+
+  @override
+  String get resExpired => 'Code expired';
+
+  @override
+  String get resExpiredBody =>
+      'Ticket codes refresh every 30 seconds. Ask the guest to reopen their ticket.';
+
+  @override
+  String get resForged => 'Invalid ticket';
+
+  @override
+  String get resForgedBody => 'This code is not a genuine Eventra ticket.';
+
+  @override
+  String get resCancelled => 'Cancelled';
+
+  @override
+  String get resCancelledBody => 'This ticket was refunded or cancelled.';
+
+  @override
+  String get resNextScan => 'Scan next';
+
+  @override
+  String get wizNewTitle => 'New event';
+
+  @override
+  String get wizEditTitle => 'Edit event';
+
+  @override
+  String get wizSaveDraft => 'Save draft';
+
+  @override
+  String get wizDraftSaved => 'Draft saved';
+
+  @override
+  String wizStepOf(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get wizStepBasics => 'Basics';
+
+  @override
+  String get wizStepSchedule => 'Date and time';
+
+  @override
+  String get wizStepVenue => 'Venue';
+
+  @override
+  String get wizStepTiers => 'Tickets and pricing';
+
+  @override
+  String get wizStepCover => 'Cover photo';
+
+  @override
+  String get wizStepReview => 'Review and publish';
+
+  @override
+  String get wizNext => 'Continue';
+
+  @override
+  String get wizPublish => 'Publish event';
+
+  @override
+  String get wizSaveChanges => 'Save changes';
+
+  @override
+  String get wizPublished => 'Your event is live.';
+
+  @override
+  String get wizUpdated => 'Event updated.';
+
+  @override
+  String get wizPublishFailed => 'We could not publish the event. Try again.';
+
+  @override
+  String get wizTitle => 'Event title';
+
+  @override
+  String get wizCategory => 'Category';
+
+  @override
+  String get wizDescription => 'Description';
+
+  @override
+  String get wizStarts => 'Starts';
+
+  @override
+  String get wizEnds => 'Ends';
+
+  @override
+  String get wizPick => 'Choose';
+
+  @override
+  String wizDuration(int hours, int minutes) {
+    return 'Duration: $hours h $minutes min';
+  }
+
+  @override
+  String get wizVenueName => 'Venue name';
+
+  @override
+  String get wizAddress => 'Address';
+
+  @override
+  String get wizPinHint => 'Tap the map to place the entrance pin.';
+
+  @override
+  String get wizPinHere => 'Use my location';
+
+  @override
+  String wizTierN(int n) {
+    return 'Tier $n';
+  }
+
+  @override
+  String get wizTierName => 'Tier name';
+
+  @override
+  String get wizTierNameHint => 'General Admission';
+
+  @override
+  String get wizTierPrice => 'Price';
+
+  @override
+  String get wizTierCapacity => 'Quantity';
+
+  @override
+  String get wizFreeTier => 'Price 0 makes this tier free (RSVP).';
+
+  @override
+  String get wizAddTier => 'Add a tier';
+
+  @override
+  String wizCapacityTotal(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count seats in total',
+      one: '1 seat in total',
+      zero: 'No seats yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String wizCoverN(int n) {
+    return 'Cover photo $n';
+  }
+
+  @override
+  String get wizCoverCredit => 'Photos: Unsplash (Unsplash License).';
+
+  @override
+  String get wizDefaultPolicy =>
+      'Full refund up to 48 hours before the event. No refunds within 48 hours of the start time.';
+
+  @override
+  String wizErrTitle(int min, int max) {
+    return 'Use $min to $max characters.';
+  }
+
+  @override
+  String get wizErrCategory => 'Pick a category.';
+
+  @override
+  String wizErrDescription(int n) {
+    return 'Describe the event in at least $n characters.';
+  }
+
+  @override
+  String get wizErrStart => 'Choose when the event starts.';
+
+  @override
+  String get wizErrStartPast => 'The start must be in the future.';
+
+  @override
+  String get wizErrEnd => 'Choose when the event ends.';
+
+  @override
+  String get wizErrEndBefore => 'The end must be after the start.';
+
+  @override
+  String get wizErrTooLong => 'An event can last at most 7 days.';
+
+  @override
+  String get wizErrVenue => 'Enter the venue name.';
+
+  @override
+  String get wizErrAddress => 'Enter the address.';
+
+  @override
+  String get wizErrPin => 'Place the pin on the map.';
+
+  @override
+  String wizErrTiers(int n) {
+    return 'Add between 1 and $n tiers.';
+  }
+
+  @override
+  String get wizErrTierName => 'Name the tier (2 to 30 characters).';
+
+  @override
+  String get wizErrTierDuplicate => 'Each tier needs a different name.';
+
+  @override
+  String get wizErrTierPrice => 'Enter a price from 0 to 10,000.';
+
+  @override
+  String get wizErrTierCapacity => 'Enter a quantity from 1 to 100,000.';
+
+  @override
+  String get wizErrTierBelowSold =>
+      'The quantity can not go below the tickets already sold.';
+
+  @override
+  String wizErrTierBelowSoldN(int n) {
+    return 'At least $n (already sold).';
+  }
+
+  @override
+  String get wizErrCover => 'Pick a cover photo.';
 }

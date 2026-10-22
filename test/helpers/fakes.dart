@@ -5,8 +5,10 @@ import 'package:eventra/core/location/location_service.dart';
 import 'package:eventra/core/result/result.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/domain/repositories/events_repository.dart';
+import 'package:eventra/features/organizer/presentation/widgets/code_scanner.dart';
 import 'package:eventra/features/tickets/domain/device_services.dart';
 import 'package:eventra/features/tickets/domain/reminders.dart';
+import 'package:flutter/widgets.dart';
 import 'package:latlong2/latlong.dart';
 
 class FakeEventsRepository implements EventsRepository {
@@ -135,4 +137,26 @@ class SequentialIds {
   int _n = 0;
   String next(String prefix) =>
       '${prefix}_${(++_n).toString().padLeft(4, '0')}';
+}
+
+/// Camera-free scanner: tests call [emit] as if a QR code was in view.
+class FakeCodeScanner implements CodeScannerBackend {
+  ValueChanged<String>? _onCode;
+  VoidCallback? _onUnavailable;
+
+  void emit(String code) => _onCode?.call(code);
+  void failCamera() => _onUnavailable?.call();
+
+  @override
+  Widget preview({
+    required ValueChanged<String> onCode,
+    required VoidCallback onUnavailable,
+  }) {
+    _onCode = onCode;
+    _onUnavailable = onUnavailable;
+    return const ColoredBox(
+      key: ValueKey('fake-camera'),
+      color: Color(0xFF000000),
+    );
+  }
 }

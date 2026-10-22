@@ -2040,4 +2040,406 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get revNotFound => 'Avis introuvable.';
+
+  @override
+  String get profOrganizerMode => 'Mode organisateur';
+
+  @override
+  String get profOrganizerModeBody =>
+      'Publiez des événements, suivez les ventes et contrôlez les entrées';
+
+  @override
+  String get profOrganizerDashboard => 'Tableau de bord organisateur';
+
+  @override
+  String get orgDashboardTitle => 'Tableau de bord';
+
+  @override
+  String get orgCreateEvent => 'Créer un événement';
+
+  @override
+  String get orgRevenue => 'Revenus';
+
+  @override
+  String get orgTicketsSold => 'Billets vendus';
+
+  @override
+  String get orgCheckInRate => 'Taux d\'entrée';
+
+  @override
+  String orgOfCapacity(String sold, String capacity) {
+    return '$sold sur $capacity';
+  }
+
+  @override
+  String orgCheckedInOf(String checkedIn, String total) {
+    return '$checkedIn sur $total entrés';
+  }
+
+  @override
+  String get orgSalesOverTime => 'Ventes, 14 derniers jours';
+
+  @override
+  String orgTicketsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count billets',
+      one: '1 billet',
+      zero: 'Aucun billet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgByTier => 'Ventes par catégorie';
+
+  @override
+  String get orgDrafts => 'Brouillons';
+
+  @override
+  String get orgDraftUntitled => 'Événement sans titre';
+
+  @override
+  String orgDraftSavedAt(String when) {
+    return 'Enregistré le $when';
+  }
+
+  @override
+  String get orgDraftDeleted => 'Brouillon supprimé';
+
+  @override
+  String get orgDelete => 'Supprimer';
+
+  @override
+  String get orgUpcoming => 'Événements à venir';
+
+  @override
+  String get orgNoEvents => 'Aucun événement à venir. Créez le premier.';
+
+  @override
+  String get orgStatusLive => 'En cours';
+
+  @override
+  String get orgStatusOnSale => 'En vente';
+
+  @override
+  String get orgStatusSoldOut => 'Complet';
+
+  @override
+  String get orgCheckIn => 'Contrôle';
+
+  @override
+  String get orgEdit => 'Modifier';
+
+  @override
+  String get orgScanTab => 'Scanner';
+
+  @override
+  String get orgGuestsTab => 'Liste des invités';
+
+  @override
+  String get orgScanHint => 'Visez le QR code du billet du participant.';
+
+  @override
+  String get orgCameraUnavailable =>
+      'La caméra est indisponible. Saisissez le code à la main.';
+
+  @override
+  String get orgEnterCode => 'Saisir le code';
+
+  @override
+  String get orgEnterCodeBody =>
+      'Collez le contenu du QR code ou saisissez l\'identifiant du billet.';
+
+  @override
+  String get orgCodeHint => 'ETK1… ou identifiant du billet';
+
+  @override
+  String get orgVerify => 'Vérifier';
+
+  @override
+  String get orgSearchGuests => 'Rechercher par nom, catégorie ou billet';
+
+  @override
+  String get orgNoGuests => 'Aucun invité';
+
+  @override
+  String get orgNoGuestsBody =>
+      'Les billets vendus pour cet événement apparaîtront ici.';
+
+  @override
+  String get orgNoMatches => 'Aucun invité ne correspond à votre recherche.';
+
+  @override
+  String get orgCheckInAction => 'Faire entrer';
+
+  @override
+  String orgPendingSync(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count à synchroniser',
+      one: '1 à synchroniser',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgSynced => 'Toutes les entrées sont synchronisées.';
+
+  @override
+  String orgSyncOffline(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Hors ligne : $count entrées seront synchronisées plus tard.',
+      one: 'Hors ligne : 1 entrée sera synchronisée plus tard.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get resValid => 'Billet valide. Bienvenue !';
+
+  @override
+  String get resAlready => 'Déjà entré';
+
+  @override
+  String resAlreadyBody(String time) {
+    return 'Ce billet a été utilisé à $time.';
+  }
+
+  @override
+  String get resWrongEvent => 'Mauvais événement';
+
+  @override
+  String get resWrongEventBody => 'Ce billet est pour un autre événement.';
+
+  @override
+  String get resExpired => 'Code expiré';
+
+  @override
+  String get resExpiredBody =>
+      'Les codes changent toutes les 30 secondes. Demandez au participant de rouvrir son billet.';
+
+  @override
+  String get resForged => 'Billet invalide';
+
+  @override
+  String get resForgedBody =>
+      'Ce code n\'est pas un billet Eventra authentique.';
+
+  @override
+  String get resCancelled => 'Annulé';
+
+  @override
+  String get resCancelledBody => 'Ce billet a été remboursé ou annulé.';
+
+  @override
+  String get resNextScan => 'Scanner le suivant';
+
+  @override
+  String get wizNewTitle => 'Nouvel événement';
+
+  @override
+  String get wizEditTitle => 'Modifier l\'événement';
+
+  @override
+  String get wizSaveDraft => 'Enregistrer';
+
+  @override
+  String get wizDraftSaved => 'Brouillon enregistré';
+
+  @override
+  String wizStepOf(int step, int total) {
+    return 'Étape $step sur $total';
+  }
+
+  @override
+  String get wizStepBasics => 'L\'essentiel';
+
+  @override
+  String get wizStepSchedule => 'Date et heure';
+
+  @override
+  String get wizStepVenue => 'Lieu';
+
+  @override
+  String get wizStepTiers => 'Billets et tarifs';
+
+  @override
+  String get wizStepCover => 'Photo de couverture';
+
+  @override
+  String get wizStepReview => 'Vérifier et publier';
+
+  @override
+  String get wizNext => 'Continuer';
+
+  @override
+  String get wizPublish => 'Publier l\'événement';
+
+  @override
+  String get wizSaveChanges => 'Enregistrer les modifications';
+
+  @override
+  String get wizPublished => 'Votre événement est en ligne.';
+
+  @override
+  String get wizUpdated => 'Événement mis à jour.';
+
+  @override
+  String get wizPublishFailed =>
+      'Impossible de publier l\'événement. Réessayez.';
+
+  @override
+  String get wizTitle => 'Titre de l\'événement';
+
+  @override
+  String get wizCategory => 'Catégorie';
+
+  @override
+  String get wizDescription => 'Description';
+
+  @override
+  String get wizStarts => 'Début';
+
+  @override
+  String get wizEnds => 'Fin';
+
+  @override
+  String get wizPick => 'Choisir';
+
+  @override
+  String wizDuration(int hours, int minutes) {
+    return 'Durée : $hours h $minutes min';
+  }
+
+  @override
+  String get wizVenueName => 'Nom du lieu';
+
+  @override
+  String get wizAddress => 'Adresse';
+
+  @override
+  String get wizPinHint => 'Touchez la carte pour placer l\'entrée.';
+
+  @override
+  String get wizPinHere => 'Ma position';
+
+  @override
+  String wizTierN(int n) {
+    return 'Catégorie $n';
+  }
+
+  @override
+  String get wizTierName => 'Nom de la catégorie';
+
+  @override
+  String get wizTierNameHint => 'Entrée générale';
+
+  @override
+  String get wizTierPrice => 'Prix';
+
+  @override
+  String get wizTierCapacity => 'Quantité';
+
+  @override
+  String get wizFreeTier =>
+      'Un prix de 0 rend cette catégorie gratuite (sur inscription).';
+
+  @override
+  String get wizAddTier => 'Ajouter une catégorie';
+
+  @override
+  String wizCapacityTotal(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count places au total',
+      one: '1 place au total',
+      zero: 'Aucune place pour l\'instant',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String wizCoverN(int n) {
+    return 'Photo de couverture $n';
+  }
+
+  @override
+  String get wizCoverCredit => 'Photos : Unsplash (licence Unsplash).';
+
+  @override
+  String get wizDefaultPolicy =>
+      'Remboursement intégral jusqu\'à 48 heures avant l\'événement. Aucun remboursement dans les 48 heures précédant le début.';
+
+  @override
+  String wizErrTitle(int min, int max) {
+    return 'Entre $min et $max caractères.';
+  }
+
+  @override
+  String get wizErrCategory => 'Choisissez une catégorie.';
+
+  @override
+  String wizErrDescription(int n) {
+    return 'Décrivez l\'événement en au moins $n caractères.';
+  }
+
+  @override
+  String get wizErrStart => 'Choisissez le début de l\'événement.';
+
+  @override
+  String get wizErrStartPast => 'Le début doit être dans le futur.';
+
+  @override
+  String get wizErrEnd => 'Choisissez la fin de l\'événement.';
+
+  @override
+  String get wizErrEndBefore => 'La fin doit être après le début.';
+
+  @override
+  String get wizErrTooLong => 'Un événement dure au plus 7 jours.';
+
+  @override
+  String get wizErrVenue => 'Saisissez le nom du lieu.';
+
+  @override
+  String get wizErrAddress => 'Saisissez l\'adresse.';
+
+  @override
+  String get wizErrPin => 'Placez le repère sur la carte.';
+
+  @override
+  String wizErrTiers(int n) {
+    return 'Ajoutez entre 1 et $n catégories.';
+  }
+
+  @override
+  String get wizErrTierName => 'Nommez la catégorie (2 à 30 caractères).';
+
+  @override
+  String get wizErrTierDuplicate =>
+      'Chaque catégorie doit avoir un nom différent.';
+
+  @override
+  String get wizErrTierPrice => 'Saisissez un prix entre 0 et 10 000.';
+
+  @override
+  String get wizErrTierCapacity => 'Saisissez une quantité entre 1 et 100 000.';
+
+  @override
+  String get wizErrTierBelowSold =>
+      'La quantité ne peut pas être inférieure aux billets déjà vendus.';
+
+  @override
+  String wizErrTierBelowSoldN(int n) {
+    return 'Au moins $n (déjà vendus).';
+  }
+
+  @override
+  String get wizErrCover => 'Choisissez une photo de couverture.';
 }

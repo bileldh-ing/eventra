@@ -1,6 +1,7 @@
 import 'package:eventra/app/router.dart';
 import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
+import 'package:eventra/features/organizer/presentation/organizer_providers.dart';
 import 'package:eventra/features/settings/presentation/settings_providers.dart';
 import 'package:eventra/features/tickets/domain/reminders.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
@@ -29,6 +30,7 @@ class _EventraAppState extends ConsumerState<EventraApp> {
     initialLocation: widget.initialLocation,
     readAuth: () => ref.read(authControllerProvider),
     readOnboardingSeen: () => ref.read(onboardingSeenProvider),
+    readOrganizerMode: () => ref.read(organizerModeProvider),
     refresh: _refresh,
   );
 
@@ -42,7 +44,8 @@ class _EventraAppState extends ConsumerState<EventraApp> {
         authControllerProvider.select((s) => s.status),
         (_, _) => _refresh.value++,
       )
-      ..listenManual(onboardingSeenProvider, (_, _) => _refresh.value++);
+      ..listenManual(onboardingSeenProvider, (_, _) => _refresh.value++)
+      ..listenManual(organizerModeProvider, (_, _) => _refresh.value++);
     // Tapping an event reminder opens its ticket.
     if (ref.read(reminderSchedulerProvider)
         case final LocalReminderScheduler s) {

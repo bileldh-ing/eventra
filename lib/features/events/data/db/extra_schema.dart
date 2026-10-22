@@ -136,4 +136,33 @@ const kExtraSchema = <String>[
     UNIQUE (event_id, user_id)
   )''',
   'CREATE INDEX IF NOT EXISTS reviews_event ON reviews (event_id)',
+  // Organizer mode (Phase 9). Published events keep their full JSON, like
+  // the catalogue; drafts are wizard state saved as JSON.
+  '''
+  CREATE TABLE IF NOT EXISTS organizer_events (
+    id TEXT NOT NULL PRIMARY KEY,
+    owner_id TEXT NOT NULL,
+    organizer_id TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  )''',
+  '''
+  CREATE TABLE IF NOT EXISTS event_drafts (
+    id TEXT NOT NULL PRIMARY KEY,
+    owner_id TEXT NOT NULL,
+    event_id TEXT,
+    payload TEXT NOT NULL,
+    updated_at INTEGER NOT NULL
+  )''',
+  // One row per admitted ticket; `synced = 0` rows are the offline queue.
+  '''
+  CREATE TABLE IF NOT EXISTS checkins (
+    ticket_id TEXT NOT NULL PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    at INTEGER NOT NULL,
+    method TEXT NOT NULL,
+    synced INTEGER NOT NULL DEFAULT 0
+  )''',
+  'CREATE INDEX IF NOT EXISTS tickets_event ON tickets (event_id)',
 ];

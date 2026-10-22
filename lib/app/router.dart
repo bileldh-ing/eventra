@@ -16,6 +16,9 @@ import 'package:eventra/features/onboarding/presentation/interests_screen.dart';
 import 'package:eventra/features/onboarding/presentation/location_setup_screen.dart';
 import 'package:eventra/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:eventra/features/onboarding/presentation/splash_screen.dart';
+import 'package:eventra/features/organizer/presentation/check_in_screen.dart';
+import 'package:eventra/features/organizer/presentation/event_wizard_screen.dart';
+import 'package:eventra/features/organizer/presentation/organizer_dashboard_screen.dart';
 import 'package:eventra/features/profile/presentation/edit_profile_screen.dart';
 import 'package:eventra/features/profile/presentation/profile_screen.dart';
 import 'package:eventra/features/reviews/presentation/all_reviews_screen.dart';
@@ -72,6 +75,7 @@ Page<void> _fade(GoRouterState state, Widget child) => CustomTransitionPage(
 GoRouter buildRouter({
   required AuthState Function() readAuth,
   required bool Function() readOnboardingSeen,
+  bool Function() readOrganizerMode = _off,
   String initialLocation = '/splash',
   Listenable? refresh,
 }) {
@@ -83,6 +87,7 @@ GoRouter buildRouter({
     redirect: (context, state) => authRedirect(
       auth: readAuth(),
       onboardingSeen: readOnboardingSeen(),
+      organizerMode: readOrganizerMode(),
       uri: state.uri,
     ),
     routes: [
@@ -146,6 +151,38 @@ GoRouter buildRouter({
         ),
       ),
       GoRoute(path: '/my-tickets', redirect: (context, state) => '/tickets'),
+      // Organizer mode: full-screen pages over the tabs, guarded by
+      // [authRedirect] (account + organizer mode on).
+      GoRoute(
+        path: '/organizer',
+        redirect: (context, state) =>
+            state.uri.path == '/organizer' ? '/organizer/dashboard' : null,
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (context, s) => const OrganizerDashboardScreen(),
+          ),
+          GoRoute(
+            path: 'events/new',
+            builder: (context, s) => const EventWizardScreen(),
+          ),
+          GoRoute(
+            path: 'drafts/:draftId',
+            builder: (context, s) =>
+                EventWizardScreen(draftId: s.pathParameters['draftId']),
+          ),
+          GoRoute(
+            path: 'events/:id/edit',
+            builder: (context, s) =>
+                EventWizardScreen(eventId: s.pathParameters['id']),
+          ),
+          GoRoute(
+            path: 'events/:id/check-in',
+            builder: (context, s) =>
+                CheckInScreen(eventId: s.pathParameters['id']!),
+          ),
+        ],
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) =>
             AppShell(navigationShell: shell, location: state.uri.path),
@@ -249,3 +286,5 @@ GoRouter buildRouter({
     ],
   );
 }
+
+bool _off() => false;

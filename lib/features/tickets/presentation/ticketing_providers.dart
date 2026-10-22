@@ -18,13 +18,11 @@ import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+export 'package:eventra/features/events/presentation/providers.dart'
+    show ticketingIdsProvider;
+
 final paymentGatewayProvider = Provider<PaymentGateway>(
   (ref) => MockPaymentGateway(),
-);
-
-/// Id generator for holds, orders and tickets (deterministic in tests).
-final ticketingIdsProvider = Provider<String Function(String prefix)>(
-  (ref) => TicketingRepository.newId,
 );
 
 final ticketingRepositoryProvider = Provider<TicketingRepository>(

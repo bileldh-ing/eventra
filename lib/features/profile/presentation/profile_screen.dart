@@ -5,6 +5,7 @@ import 'package:eventra/core/widgets/gradient_button.dart';
 import 'package:eventra/core/widgets/pressable.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/notifications/presentation/notifications_providers.dart';
+import 'package:eventra/features/organizer/presentation/organizer_providers.dart';
 import 'package:eventra/features/profile/domain/user_profile.dart';
 import 'package:eventra/features/profile/presentation/profile_providers.dart';
 import 'package:eventra/features/profile/presentation/widgets/initials_avatar.dart';
@@ -28,6 +29,7 @@ class ProfileScreen extends ConsumerWidget {
     final top = MediaQuery.paddingOf(context).top;
     final user = ref.watch(authControllerProvider).user;
     final profile = ref.watch(profileProvider).value;
+    final organizer = ref.watch(organizerModeProvider);
 
     Widget stat(String value, String label) => Expanded(
       child: Column(
@@ -213,6 +215,18 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                 ],
+                if (user != null) ...[
+                  _OrganizerSwitch(enabled: organizer),
+                  if (organizer) ...[
+                    const SizedBox(height: 12),
+                    action(
+                      Icons.space_dashboard_outlined,
+                      context.l10n.profOrganizerDashboard,
+                      () => context.push('/organizer/dashboard'),
+                    ),
+                  ],
+                  const SizedBox(height: 12),
+                ],
                 action(
                   Icons.confirmation_number_outlined,
                   context.l10n.myTickets,
@@ -273,6 +287,55 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Attendee / organizer switch. Turning it on opens the dashboard.
+class _OrganizerSwitch extends ConsumerWidget {
+  const _OrganizerSwitch({required this.enabled});
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.tokens;
+    return Container(
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 8, 8),
+      decoration: BoxDecoration(
+        color: t.surface,
+        borderRadius: BorderRadius.circular(t.radii.listCard),
+        boxShadow: t.softShadow,
+        border: enabled ? Border.all(color: t.primary, width: 1.5) : null,
+      ),
+      child: SwitchListTile.adaptive(
+        key: const ValueKey('organizer-switch'),
+        contentPadding: EdgeInsets.zero,
+        value: enabled,
+        activeTrackColor: t.primary,
+        secondary: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            gradient: t.primaryGradient,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.storefront_outlined, color: Colors.white),
+        ),
+        title: Text(
+          context.l10n.profOrganizerMode,
+          style: context.text.cardTitle.copyWith(fontSize: 17),
+        ),
+        subtitle: Text(
+          context.l10n.profOrganizerModeBody,
+          style: context.text.caption,
+        ),
+        onChanged: (on) async {
+          await ref.read(organizerModeProvider.notifier).set(enabled: on);
+          if (on && context.mounted) {
+            await context.push('/organizer/dashboard');
+          }
+        },
       ),
     );
   }

@@ -13,6 +13,9 @@ import 'package:eventra/features/auth/domain/password_hasher.dart';
 import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/events/data/db/app_database.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
+import 'package:eventra/features/organizer/data/organizer_repository.dart';
+import 'package:eventra/features/organizer/presentation/organizer_providers.dart';
+import 'package:eventra/features/organizer/presentation/widgets/code_scanner.dart';
 import 'package:eventra/features/profile/presentation/profile_providers.dart';
 import 'package:eventra/features/tickets/domain/payment.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
@@ -144,6 +147,8 @@ class TestApp {
   final brightness = FakeBrightness();
   final calendar = FakeCalendar();
   final share = FakeShare();
+  final scanner = FakeCodeScanner();
+  final sync = DemoCheckInSync();
 
   List<Override> get overrides => [
     prefsStoreProvider.overrideWithValue(prefs),
@@ -165,6 +170,8 @@ class TestApp {
     brightnessControllerProvider.overrideWithValue(brightness),
     calendarServiceProvider.overrideWithValue(calendar),
     shareServiceProvider.overrideWithValue(share),
+    codeScannerProvider.overrideWithValue(scanner),
+    checkInSyncProvider.overrideWithValue(sync),
     imageProviderFactory.overrideWithValue(fixtureImage),
     locationServiceProvider.overrideWithValue(location),
     mapTileProviderProvider.overrideWithValue(FixtureTileProvider()),

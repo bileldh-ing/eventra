@@ -1323,5 +1323,243 @@
   },
   "revDupEdit": "You already reviewed this event. Edit your review instead.",
   "revDup": "You already reviewed this event.",
-  "revNotFound": "Review not found."
+  "revNotFound": "Review not found.",
+  "profOrganizerMode": "Organizer mode",
+  "profOrganizerModeBody": "Publish events, track sales and check guests in",
+  "profOrganizerDashboard": "Organizer dashboard",
+  "orgDashboardTitle": "Dashboard",
+  "orgCreateEvent": "Create event",
+  "orgRevenue": "Revenue",
+  "orgTicketsSold": "Tickets sold",
+  "orgCheckInRate": "Check-in rate",
+  "orgOfCapacity": "{sold} of {capacity}",
+  "@orgOfCapacity": {
+    "placeholders": {
+      "sold": {
+        "type": "String"
+      },
+      "capacity": {
+        "type": "String"
+      }
+    }
+  },
+  "orgCheckedInOf": "{checkedIn} of {total} checked in",
+  "@orgCheckedInOf": {
+    "placeholders": {
+      "checkedIn": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "orgSalesOverTime": "Sales, last 14 days",
+  "orgTicketsCount": "{count, plural, =0{No tickets} =1{1 ticket} other{{count} tickets}}",
+  "@orgTicketsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgByTier": "Sales by tier",
+  "orgDrafts": "Drafts",
+  "orgDraftUntitled": "Untitled event",
+  "orgDraftSavedAt": "Saved {when}",
+  "@orgDraftSavedAt": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "orgDraftDeleted": "Draft deleted",
+  "orgDelete": "Delete",
+  "orgUpcoming": "Upcoming events",
+  "orgNoEvents": "No upcoming events yet. Create your first one.",
+  "orgStatusLive": "Live now",
+  "orgStatusOnSale": "On sale",
+  "orgStatusSoldOut": "Sold out",
+  "orgCheckIn": "Check-in",
+  "orgEdit": "Edit",
+  "orgScanTab": "Scan",
+  "orgGuestsTab": "Guest list",
+  "orgScanHint": "Point the camera at the attendee's ticket QR code.",
+  "orgCameraUnavailable": "The camera is unavailable. Enter the code by hand instead.",
+  "orgEnterCode": "Enter code manually",
+  "orgEnterCodeBody": "Paste the QR payload or type the ticket ID.",
+  "orgCodeHint": "ETK1… or ticket ID",
+  "orgVerify": "Verify",
+  "orgSearchGuests": "Search by name, tier or ticket",
+  "orgNoGuests": "No guests",
+  "orgNoGuestsBody": "Tickets sold for this event will appear here.",
+  "orgNoMatches": "No guest matches your search.",
+  "orgCheckInAction": "Check in",
+  "orgPendingSync": "{count, plural, =1{1 to sync} other{{count} to sync}}",
+  "@orgPendingSync": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgSynced": "All check-ins are synced.",
+  "orgSyncOffline": "{count, plural, =1{Offline: 1 check-in will sync later.} other{Offline: {count} check-ins will sync later.}}",
+  "@orgSyncOffline": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resValid": "Valid ticket. Welcome!",
+  "resAlready": "Already checked in",
+  "resAlreadyBody": "This ticket was used at {time}.",
+  "@resAlreadyBody": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "resWrongEvent": "Wrong event",
+  "resWrongEventBody": "This ticket is for a different event.",
+  "resExpired": "Code expired",
+  "resExpiredBody": "Ticket codes refresh every 30 seconds. Ask the guest to reopen their ticket.",
+  "resForged": "Invalid ticket",
+  "resForgedBody": "This code is not a genuine Eventra ticket.",
+  "resCancelled": "Cancelled",
+  "resCancelledBody": "This ticket was refunded or cancelled.",
+  "resNextScan": "Scan next",
+  "wizNewTitle": "New event",
+  "wizEditTitle": "Edit event",
+  "wizSaveDraft": "Save draft",
+  "wizDraftSaved": "Draft saved",
+  "wizStepOf": "Step {step} of {total}",
+  "@wizStepOf": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "wizStepBasics": "Basics",
+  "wizStepSchedule": "Date and time",
+  "wizStepVenue": "Venue",
+  "wizStepTiers": "Tickets and pricing",
+  "wizStepCover": "Cover photo",
+  "wizStepReview": "Review and publish",
+  "wizNext": "Continue",
+  "wizPublish": "Publish event",
+  "wizSaveChanges": "Save changes",
+  "wizPublished": "Your event is live.",
+  "wizUpdated": "Event updated.",
+  "wizPublishFailed": "We could not publish the event. Try again.",
+  "wizTitle": "Event title",
+  "wizCategory": "Category",
+  "wizDescription": "Description",
+  "wizStarts": "Starts",
+  "wizEnds": "Ends",
+  "wizPick": "Choose",
+  "wizDuration": "Duration: {hours} h {minutes} min",
+  "@wizDuration": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "wizVenueName": "Venue name",
+  "wizAddress": "Address",
+  "wizPinHint": "Tap the map to place the entrance pin.",
+  "wizPinHere": "Use my location",
+  "wizTierN": "Tier {n}",
+  "@wizTierN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "wizTierName": "Tier name",
+  "wizTierNameHint": "General Admission",
+  "wizTierPrice": "Price",
+  "wizTierCapacity": "Quantity",
+  "wizFreeTier": "Price 0 makes this tier free (RSVP).",
+  "wizAddTier": "Add a tier",
+  "wizCapacityTotal": "{count, plural, =0{No seats yet} =1{1 seat in total} other{{count} seats in total}}",
+  "@wizCapacityTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wizCoverN": "Cover photo {n}",
+  "@wizCoverN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "wizCoverCredit": "Photos: Unsplash (Unsplash License).",
+  "wizDefaultPolicy": "Full refund up to 48 hours before the event. No refunds within 48 hours of the start time.",
+  "wizErrTitle": "Use {min} to {max} characters.",
+  "@wizErrTitle": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "wizErrCategory": "Pick a category.",
+  "wizErrDescription": "Describe the event in at least {n} characters.",
+  "@wizErrDescription": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "wizErrStart": "Choose when the event starts.",
+  "wizErrStartPast": "The start must be in the future.",
+  "wizErrEnd": "Choose when the event ends.",
+  "wizErrEndBefore": "The end must be after the start.",
+  "wizErrTooLong": "An event can last at most 7 days.",
+  "wizErrVenue": "Enter the venue name.",
+  "wizErrAddress": "Enter the address.",
+  "wizErrPin": "Place the pin on the map.",
+  "wizErrTiers": "Add between 1 and {n} tiers.",
+  "@wizErrTiers": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "wizErrTierName": "Name the tier (2 to 30 characters).",
+  "wizErrTierDuplicate": "Each tier needs a different name.",
+  "wizErrTierPrice": "Enter a price from 0 to 10,000.",
+  "wizErrTierCapacity": "Enter a quantity from 1 to 100,000.",
+  "wizErrTierBelowSold": "The quantity can not go below the tickets already sold.",
+  "wizErrTierBelowSoldN": "At least {n} (already sold).",
+  "@wizErrTierBelowSoldN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "wizErrCover": "Pick a cover photo."
 }

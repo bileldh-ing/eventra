@@ -2058,4 +2058,410 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get revNotFound => 'التقييم غير موجود.';
+
+  @override
+  String get profOrganizerMode => 'وضع المنظّم';
+
+  @override
+  String get profOrganizerModeBody =>
+      'انشر الفعاليات وتابع المبيعات وسجّل دخول الضيوف';
+
+  @override
+  String get profOrganizerDashboard => 'لوحة المنظّم';
+
+  @override
+  String get orgDashboardTitle => 'لوحة التحكم';
+
+  @override
+  String get orgCreateEvent => 'إنشاء فعالية';
+
+  @override
+  String get orgRevenue => 'الإيرادات';
+
+  @override
+  String get orgTicketsSold => 'التذاكر المباعة';
+
+  @override
+  String get orgCheckInRate => 'نسبة الدخول';
+
+  @override
+  String orgOfCapacity(String sold, String capacity) {
+    return '$sold من $capacity';
+  }
+
+  @override
+  String orgCheckedInOf(String checkedIn, String total) {
+    return 'دخل $checkedIn من $total';
+  }
+
+  @override
+  String get orgSalesOverTime => 'المبيعات، آخر 14 يومًا';
+
+  @override
+  String orgTicketsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تذكرة',
+      many: '$count تذكرة',
+      few: '$count تذاكر',
+      two: 'تذكرتان',
+      one: 'تذكرة واحدة',
+      zero: 'لا تذاكر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgByTier => 'المبيعات حسب الفئة';
+
+  @override
+  String get orgDrafts => 'المسودات';
+
+  @override
+  String get orgDraftUntitled => 'فعالية بلا عنوان';
+
+  @override
+  String orgDraftSavedAt(String when) {
+    return 'حُفظت $when';
+  }
+
+  @override
+  String get orgDraftDeleted => 'حُذفت المسودة';
+
+  @override
+  String get orgDelete => 'حذف';
+
+  @override
+  String get orgUpcoming => 'الفعاليات القادمة';
+
+  @override
+  String get orgNoEvents => 'لا توجد فعاليات قادمة بعد. أنشئ أول فعالية.';
+
+  @override
+  String get orgStatusLive => 'جارية الآن';
+
+  @override
+  String get orgStatusOnSale => 'متاحة للبيع';
+
+  @override
+  String get orgStatusSoldOut => 'نفدت التذاكر';
+
+  @override
+  String get orgCheckIn => 'تسجيل الدخول';
+
+  @override
+  String get orgEdit => 'تعديل';
+
+  @override
+  String get orgScanTab => 'المسح';
+
+  @override
+  String get orgGuestsTab => 'قائمة الضيوف';
+
+  @override
+  String get orgScanHint => 'وجّه الكاميرا نحو رمز QR في تذكرة الحاضر.';
+
+  @override
+  String get orgCameraUnavailable => 'الكاميرا غير متاحة. أدخل الرمز يدويًا.';
+
+  @override
+  String get orgEnterCode => 'إدخال الرمز يدويًا';
+
+  @override
+  String get orgEnterCodeBody => 'الصق محتوى رمز QR أو اكتب رقم التذكرة.';
+
+  @override
+  String get orgCodeHint => 'ETK1… أو رقم التذكرة';
+
+  @override
+  String get orgVerify => 'تحقّق';
+
+  @override
+  String get orgSearchGuests => 'ابحث بالاسم أو الفئة أو التذكرة';
+
+  @override
+  String get orgNoGuests => 'لا ضيوف';
+
+  @override
+  String get orgNoGuestsBody => 'ستظهر هنا التذاكر المباعة لهذه الفعالية.';
+
+  @override
+  String get orgNoMatches => 'لا يوجد ضيف يطابق بحثك.';
+
+  @override
+  String get orgCheckInAction => 'سجّل الدخول';
+
+  @override
+  String orgPendingSync(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count للمزامنة',
+      many: '$count للمزامنة',
+      few: '$count للمزامنة',
+      two: 'اثنان للمزامنة',
+      one: 'واحد للمزامنة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgSynced => 'تمت مزامنة جميع عمليات الدخول.';
+
+  @override
+  String orgSyncOffline(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'غير متصل: ستتم مزامنة $count عملية دخول لاحقًا.',
+      many: 'غير متصل: ستتم مزامنة $count عملية دخول لاحقًا.',
+      few: 'غير متصل: ستتم مزامنة $count عمليات دخول لاحقًا.',
+      two: 'غير متصل: ستتم مزامنة عمليتي دخول لاحقًا.',
+      one: 'غير متصل: ستتم مزامنة عملية دخول واحدة لاحقًا.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get resValid => 'تذكرة صالحة. أهلًا بك!';
+
+  @override
+  String get resAlready => 'سُجّل دخوله مسبقًا';
+
+  @override
+  String resAlreadyBody(String time) {
+    return 'استُخدمت هذه التذكرة في $time.';
+  }
+
+  @override
+  String get resWrongEvent => 'فعالية خاطئة';
+
+  @override
+  String get resWrongEventBody => 'هذه التذكرة لفعالية أخرى.';
+
+  @override
+  String get resExpired => 'انتهت صلاحية الرمز';
+
+  @override
+  String get resExpiredBody =>
+      'تتجدد رموز التذاكر كل 30 ثانية. اطلب من الضيف فتح تذكرته مجددًا.';
+
+  @override
+  String get resForged => 'تذكرة غير صالحة';
+
+  @override
+  String get resForgedBody => 'هذا الرمز ليس تذكرة Eventra أصلية.';
+
+  @override
+  String get resCancelled => 'ملغاة';
+
+  @override
+  String get resCancelledBody => 'تم استرداد هذه التذكرة أو إلغاؤها.';
+
+  @override
+  String get resNextScan => 'امسح التالي';
+
+  @override
+  String get wizNewTitle => 'فعالية جديدة';
+
+  @override
+  String get wizEditTitle => 'تعديل الفعالية';
+
+  @override
+  String get wizSaveDraft => 'حفظ المسودة';
+
+  @override
+  String get wizDraftSaved => 'حُفظت المسودة';
+
+  @override
+  String wizStepOf(int step, int total) {
+    return 'الخطوة $step من $total';
+  }
+
+  @override
+  String get wizStepBasics => 'الأساسيات';
+
+  @override
+  String get wizStepSchedule => 'التاريخ والوقت';
+
+  @override
+  String get wizStepVenue => 'المكان';
+
+  @override
+  String get wizStepTiers => 'التذاكر والأسعار';
+
+  @override
+  String get wizStepCover => 'صورة الغلاف';
+
+  @override
+  String get wizStepReview => 'المراجعة والنشر';
+
+  @override
+  String get wizNext => 'متابعة';
+
+  @override
+  String get wizPublish => 'نشر الفعالية';
+
+  @override
+  String get wizSaveChanges => 'حفظ التغييرات';
+
+  @override
+  String get wizPublished => 'فعاليتك منشورة الآن.';
+
+  @override
+  String get wizUpdated => 'تم تحديث الفعالية.';
+
+  @override
+  String get wizPublishFailed => 'تعذّر نشر الفعالية. حاول مجددًا.';
+
+  @override
+  String get wizTitle => 'عنوان الفعالية';
+
+  @override
+  String get wizCategory => 'الفئة';
+
+  @override
+  String get wizDescription => 'الوصف';
+
+  @override
+  String get wizStarts => 'البداية';
+
+  @override
+  String get wizEnds => 'النهاية';
+
+  @override
+  String get wizPick => 'اختر';
+
+  @override
+  String wizDuration(int hours, int minutes) {
+    return 'المدة: $hours س $minutes د';
+  }
+
+  @override
+  String get wizVenueName => 'اسم المكان';
+
+  @override
+  String get wizAddress => 'العنوان';
+
+  @override
+  String get wizPinHint => 'انقر على الخريطة لتحديد المدخل.';
+
+  @override
+  String get wizPinHere => 'استخدم موقعي';
+
+  @override
+  String wizTierN(int n) {
+    return 'الفئة $n';
+  }
+
+  @override
+  String get wizTierName => 'اسم الفئة';
+
+  @override
+  String get wizTierNameHint => 'دخول عام';
+
+  @override
+  String get wizTierPrice => 'السعر';
+
+  @override
+  String get wizTierCapacity => 'الكمية';
+
+  @override
+  String get wizFreeTier => 'السعر 0 يجعل هذه الفئة مجانية (بالتسجيل).';
+
+  @override
+  String get wizAddTier => 'إضافة فئة';
+
+  @override
+  String wizCapacityTotal(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مقعد إجمالًا',
+      many: '$count مقعدًا إجمالًا',
+      few: '$count مقاعد إجمالًا',
+      two: 'مقعدان إجمالًا',
+      one: 'مقعد واحد إجمالًا',
+      zero: 'لا مقاعد بعد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String wizCoverN(int n) {
+    return 'صورة الغلاف $n';
+  }
+
+  @override
+  String get wizCoverCredit => 'الصور: Unsplash (ترخيص Unsplash).';
+
+  @override
+  String get wizDefaultPolicy =>
+      'استرداد كامل حتى 48 ساعة قبل الفعالية. لا استرداد خلال 48 ساعة من موعد البدء.';
+
+  @override
+  String wizErrTitle(int min, int max) {
+    return 'استخدم من $min إلى $max حرفًا.';
+  }
+
+  @override
+  String get wizErrCategory => 'اختر فئة.';
+
+  @override
+  String wizErrDescription(int n) {
+    return 'صف الفعالية في $n حرفًا على الأقل.';
+  }
+
+  @override
+  String get wizErrStart => 'اختر موعد بدء الفعالية.';
+
+  @override
+  String get wizErrStartPast => 'يجب أن يكون موعد البدء في المستقبل.';
+
+  @override
+  String get wizErrEnd => 'اختر موعد انتهاء الفعالية.';
+
+  @override
+  String get wizErrEndBefore => 'يجب أن تكون النهاية بعد البداية.';
+
+  @override
+  String get wizErrTooLong => 'لا يمكن أن تتجاوز مدة الفعالية 7 أيام.';
+
+  @override
+  String get wizErrVenue => 'أدخل اسم المكان.';
+
+  @override
+  String get wizErrAddress => 'أدخل العنوان.';
+
+  @override
+  String get wizErrPin => 'ضع العلامة على الخريطة.';
+
+  @override
+  String wizErrTiers(int n) {
+    return 'أضف من فئة واحدة إلى $n فئات.';
+  }
+
+  @override
+  String get wizErrTierName => 'سمِّ الفئة (من 2 إلى 30 حرفًا).';
+
+  @override
+  String get wizErrTierDuplicate => 'يجب أن يكون لكل فئة اسم مختلف.';
+
+  @override
+  String get wizErrTierPrice => 'أدخل سعرًا من 0 إلى 10,000.';
+
+  @override
+  String get wizErrTierCapacity => 'أدخل كمية من 1 إلى 100,000.';
+
+  @override
+  String get wizErrTierBelowSold => 'لا يمكن أن تقل الكمية عن التذاكر المباعة.';
+
+  @override
+  String wizErrTierBelowSoldN(int n) {
+    return '$n على الأقل (مباعة بالفعل).';
+  }
+
+  @override
+  String get wizErrCover => 'اختر صورة غلاف.';
 }
