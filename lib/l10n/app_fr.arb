@@ -661,5 +661,6 @@
   "wizErrTierCapacity": "Saisissez une quantité entre 1 et 100 000.",
   "wizErrTierBelowSold": "La quantité ne peut pas être inférieure aux billets déjà vendus.",
   "wizErrTierBelowSoldN": "Au moins {n} (déjà vendus).",
-  "wizErrCover": "Choisissez une photo de couverture."
+  "wizErrCover": "Choisissez une photo de couverture.",
+  "orgPctOfCapacity": "{pct} des {capacity} places"
 }

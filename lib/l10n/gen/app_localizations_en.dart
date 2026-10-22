@@ -2413,4 +2413,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wizErrCover => 'Pick a cover photo.';
+
+  @override
+  String orgPctOfCapacity(String pct, String capacity) {
+    return '$pct of $capacity seats';
+  }
 }

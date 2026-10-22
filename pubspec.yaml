@@ -1,7 +1,7 @@
 name: eventra
 description: "Eventra - Discover. Book. Feel the moment."
 publish_to: 'none'
-version: 0.8.1+9
+version: 0.9.0+10
 
 environment:
   sdk: ^3.9.0

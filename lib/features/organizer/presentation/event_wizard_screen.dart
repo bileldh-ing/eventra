@@ -267,7 +267,11 @@ class _EventWizardScreenState extends ConsumerState<EventWizardScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(d.isEdit ? l.wizUpdated : l.wizPublished)),
       );
-      context.pop();
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/organizer/dashboard');
+      }
     } on Object {
       if (!mounted) return;
       setState(() => _publishing = false);

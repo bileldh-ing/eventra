@@ -2442,4 +2442,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wizErrCover => 'Choisissez une photo de couverture.';
+
+  @override
+  String orgPctOfCapacity(String pct, String capacity) {
+    return '$pct des $capacity places';
+  }
 }

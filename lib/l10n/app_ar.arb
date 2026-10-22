@@ -661,5 +661,6 @@
   "wizErrTierCapacity": "أدخل كمية من 1 إلى 100,000.",
   "wizErrTierBelowSold": "لا يمكن أن تقل الكمية عن التذاكر المباعة.",
   "wizErrTierBelowSoldN": "{n} على الأقل (مباعة بالفعل).",
-  "wizErrCover": "اختر صورة غلاف."
+  "wizErrCover": "اختر صورة غلاف.",
+  "orgPctOfCapacity": "{pct} من {capacity} مقعد"
 }

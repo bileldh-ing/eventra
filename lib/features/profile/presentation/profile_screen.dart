@@ -300,42 +300,50 @@ class _OrganizerSwitch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.tokens;
-    return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 8, 8),
-      decoration: BoxDecoration(
+    final radius = BorderRadius.circular(t.radii.listCard);
+    return DecoratedBox(
+      decoration: BoxDecoration(borderRadius: radius, boxShadow: t.softShadow),
+      child: Material(
         color: t.surface,
-        borderRadius: BorderRadius.circular(t.radii.listCard),
-        boxShadow: t.softShadow,
-        border: enabled ? Border.all(color: t.primary, width: 1.5) : null,
-      ),
-      child: SwitchListTile.adaptive(
-        key: const ValueKey('organizer-switch'),
-        contentPadding: EdgeInsets.zero,
-        value: enabled,
-        activeTrackColor: t.primary,
-        secondary: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            gradient: t.primaryGradient,
-            shape: BoxShape.circle,
+        shape: RoundedRectangleBorder(
+          borderRadius: radius,
+          side: enabled
+              ? BorderSide(color: t.primary, width: 1.5)
+              : BorderSide.none,
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 8, 8),
+          child: SwitchListTile.adaptive(
+            key: const ValueKey('organizer-switch'),
+            contentPadding: EdgeInsets.zero,
+            value: enabled,
+            activeTrackColor: t.primary,
+            secondary: Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                gradient: t.primaryGradient,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.storefront_outlined, color: Colors.white),
+            ),
+            title: Text(
+              context.l10n.profOrganizerMode,
+              style: context.text.cardTitle.copyWith(fontSize: 17),
+            ),
+            subtitle: Text(
+              context.l10n.profOrganizerModeBody,
+              style: context.text.caption,
+            ),
+            onChanged: (on) async {
+              await ref.read(organizerModeProvider.notifier).set(enabled: on);
+              if (on && context.mounted) {
+                await context.push('/organizer/dashboard');
+              }
+            },
           ),
-          child: const Icon(Icons.storefront_outlined, color: Colors.white),
         ),
-        title: Text(
-          context.l10n.profOrganizerMode,
-          style: context.text.cardTitle.copyWith(fontSize: 17),
-        ),
-        subtitle: Text(
-          context.l10n.profOrganizerModeBody,
-          style: context.text.caption,
-        ),
-        onChanged: (on) async {
-          await ref.read(organizerModeProvider.notifier).set(enabled: on);
-          if (on && context.mounted) {
-            await context.push('/organizer/dashboard');
-          }
-        },
       ),
     );
   }

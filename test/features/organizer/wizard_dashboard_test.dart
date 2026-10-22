@@ -84,7 +84,10 @@ void main() {
     test('schedule: future start, end after start, at most 7 days', () {
       final d = validDraft();
       expect(
-        issues(WizardStep.schedule, d.copyWith(startAt: now)),
+        issues(
+          WizardStep.schedule,
+          d.copyWith(startAt: now, endAt: now.add(const Duration(hours: 2))),
+        ),
         [DraftIssue.startInPast],
       );
       expect(
@@ -133,7 +136,10 @@ void main() {
           DraftValidator.step(WizardStep.tiers, d.copyWith(tiers: t), now: now);
       expect(tierErrors(const []), [const DraftError(DraftIssue.tiersCount)]);
       expect(
-        tierErrors([for (var i = 0; i < 6; i++) DraftTier(id: '$i', name: 'Tier $i', capacity: 1)]),
+        tierErrors([
+          for (var i = 0; i < 6; i++)
+            DraftTier(id: '$i', name: 'Tier $i', capacity: 1),
+        ]),
         [const DraftError(DraftIssue.tiersCount)],
       );
       expect(
@@ -145,7 +151,7 @@ void main() {
       );
       expect(
         tierErrors(const [
-          DraftTier(id: 'a', name: 'Gold', priceCents: 1000001, capacity: 0),
+          DraftTier(id: 'a', name: 'Gold', priceCents: 1000001),
         ]),
         [
           const DraftError(DraftIssue.tierPrice, tier: 0),
@@ -216,28 +222,29 @@ void main() {
       expect(await repo.drafts('u1'), hasLength(1));
     });
 
-    test('publish creates the event, its stock and removes the draft',
-        () async {
-      await repo.saveDraft('u1', validDraft());
-      final e = await repo.publish(
-        ownerId: 'u1',
-        draft: validDraft(),
-        organizer: org,
-        policy: 'Refunds up to 48 h before.',
-      );
-      expect(e.title, 'Night Market Live');
-      expect(e.organizer.id, org.id);
-      expect(e.capacity, 220);
-      expect(e.tiers.map((t) => t.price), [25.0, 79.99]);
-      expect(e.tags, contains('organizer'));
-      expect(await repo.draft('drf_1'), isNull);
-      final published = await repo.publishedEvents();
-      expect(published.single.id, e.id);
-      expect(await repo.soldByTier(e.id), {'ga': 0, 'vip': 0});
-    });
+    test(
+      'publish creates the event, its stock and removes the draft',
+      () async {
+        await repo.saveDraft('u1', validDraft());
+        final e = await repo.publish(
+          ownerId: 'u1',
+          draft: validDraft(),
+          organizer: org,
+          policy: 'Refunds up to 48 h before.',
+        );
+        expect(e.title, 'Night Market Live');
+        expect(e.organizer.id, org.id);
+        expect(e.capacity, 220);
+        expect(e.tiers.map((t) => t.price), [25.0, 79.99]);
+        expect(e.tags, contains('organizer'));
+        expect(await repo.draft('drf_1'), isNull);
+        final published = await repo.publishedEvents();
+        expect(published.single.id, e.id);
+        expect(await repo.soldByTier(e.id), {'ga': 0, 'vip': 0});
+      },
+    );
 
-    test('editing keeps the id and refuses capacity below seats sold',
-        () async {
+    test('editing keeps the id and refuses capacity below sold', () async {
       final e = await repo.publish(
         ownerId: 'u1',
         draft: validDraft(),
@@ -245,7 +252,8 @@ void main() {
         policy: 'p',
       );
       await db.customStatement(
-        "UPDATE tier_stock SET sold = 15 WHERE event_id = ? AND tier_id = 'vip'",
+        'UPDATE tier_stock SET sold = 15 '
+        "WHERE event_id = ? AND tier_id = 'vip'",
         [e.id],
       );
       final edit = EventDraft.fromEvent(e, draftId: 'drf_e');
@@ -256,7 +264,10 @@ void main() {
         policy: 'p',
       );
       expect(renamed.id, e.id);
-      expect((await repo.publishedEvents()).single.title, 'Night Market Live II');
+      expect(
+        (await repo.publishedEvents()).single.title,
+        'Night Market Live II',
+      );
       final shrink = edit.copyWith(
         tiers: [
           edit.tiers.first,
@@ -300,12 +311,18 @@ void main() {
         'a',
         tiers: const [
           TicketTier(id: 'ga', name: 'GA', price: 10, capacity: 100, sold: 40),
-          TicketTier(id: 'vip', name: 'VIP', price: 50.5, capacity: 10, sold: 2),
+          TicketTier(
+            id: 'vip',
+            name: 'VIP',
+            price: 50.5,
+            capacity: 10,
+            sold: 2,
+          ),
         ],
       );
       final b = ev(
         'b',
-        start: DateTime(2026, 10, 1),
+        start: DateTime(2026, 10, 2),
         tiers: const [
           TicketTier(id: 'ga', name: 'GA', price: 20, capacity: 50, sold: 50),
         ],

@@ -1561,5 +1561,16 @@
       }
     }
   },
-  "wizErrCover": "Pick a cover photo."
+  "wizErrCover": "Pick a cover photo.",
+  "orgPctOfCapacity": "{pct} of {capacity} seats",
+  "@orgPctOfCapacity": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      },
+      "capacity": {
+        "type": "String"
+      }
+    }
+  }
 }

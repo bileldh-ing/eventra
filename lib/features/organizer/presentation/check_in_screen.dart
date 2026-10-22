@@ -29,18 +29,26 @@ class CheckInScreen extends ConsumerStatefulWidget {
 class _CheckInScreenState extends ConsumerState<CheckInScreen> {
   bool _cameraUnavailable = false;
   bool _busy = false;
+  bool _showing = false;
   String? _lastCode;
   DateTime? _lastAt;
 
   Future<void> _handle(Future<CheckInResult> Function() run) async {
-    if (_busy) return;
+    if (_busy || _showing) return;
     setState(() => _busy = true);
+    CheckInResult r;
     try {
-      final r = await run();
-      if (!mounted) return;
-      await showScanResult(context, r);
+      r = await run();
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+    if (!mounted) return;
+    // Scans that arrive while the result is on screen are ignored.
+    _showing = true;
+    try {
+      await showScanResult(context, r);
+    } finally {
+      _showing = false;
     }
   }
 

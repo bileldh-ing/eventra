@@ -2464,4 +2464,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wizErrCover => 'اختر صورة غلاف.';
+
+  @override
+  String orgPctOfCapacity(String pct, String capacity) {
+    return '$pct من $capacity مقعد';
+  }
 }

@@ -101,10 +101,12 @@ final organizerDraftsProvider = FutureProvider<List<EventDraft>>((ref) async {
 });
 
 final FutureProviderFamily<List<Attendee>, String> attendeesProvider =
-    FutureProvider.family<List<Attendee>, String>((ref, eventId) {
+    FutureProvider.family<List<Attendee>, String>((ref, eventId) async {
       ref
         ..watch(organizerRevisionProvider)
         ..watch(ticketingRevisionProvider);
+      // Seeds the demo door lists the first time the door is opened.
+      await ref.watch(organizerEventsProvider.future);
       return ref.read(organizerRepositoryProvider).attendees(eventId);
     });
 

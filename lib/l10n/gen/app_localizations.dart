@@ -4078,6 +4078,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pick a cover photo.'**
   String get wizErrCover;
+
+  /// No description provided for @orgPctOfCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct} of {capacity} seats'**
+  String orgPctOfCapacity(String pct, String capacity);
 }
 
 class _AppLocalizationsDelegate

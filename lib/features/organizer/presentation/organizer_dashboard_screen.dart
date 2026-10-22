@@ -149,8 +149,12 @@ class _DashboardBody extends StatelessWidget {
                   icon: Icons.confirmation_number_outlined,
                   label: l.orgTicketsSold,
                   value: formatCount(stats.ticketsSold),
-                  footer: l.orgOfCapacity(
-                    formatCount(stats.ticketsSold),
+                  footer: l.orgPctOfCapacity(
+                    formatPercent(
+                      stats.capacity == 0
+                          ? 0
+                          : stats.ticketsSold / stats.capacity,
+                    ),
                     formatCount(stats.capacity),
                   ),
                   gradient: LinearGradient(
