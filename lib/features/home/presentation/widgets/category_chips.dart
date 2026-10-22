@@ -78,7 +78,10 @@ class _Chip extends StatelessWidget {
                   ]
                 : [
                     BoxShadow(
-                      color: context.tokens.shadow(0.07),
+                      color: context.tokens.shadowOr(
+                        const Color(0x128A4FC8),
+                        0.07,
+                      ),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),

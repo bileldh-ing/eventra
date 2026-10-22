@@ -482,7 +482,7 @@ class MapCircleButton extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: context.tokens.shadow(0.1),
+                color: context.tokens.shadowOr(const Color(0x1A3A2A5A), 0.1),
                 blurRadius: 18,
                 offset: const Offset(0, 6),
               ),

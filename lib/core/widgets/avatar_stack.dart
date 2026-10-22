@@ -1,5 +1,6 @@
 import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/core/widgets/event_image.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Overlapping circular avatars, optionally followed by a purple "+N" circle.
@@ -54,7 +55,7 @@ class AvatarStack extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(3),
                     child: Text(
-                      '+$extraCount',
+                      context.bidi('+$extraCount'),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: size * 0.36,

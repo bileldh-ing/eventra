@@ -84,7 +84,9 @@ class _CardFormSheetState extends State<CardFormSheet> {
                     width: 44,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: context.tokens.disabled,
+                      color: context.tokens.isDark
+                          ? context.tokens.disabled
+                          : const Color(0xFFE2DDEA),
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),

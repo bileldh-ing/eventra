@@ -134,7 +134,7 @@ class QuickPreview extends ConsumerWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        event.venue,
+                        context.bidi(event.venue),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: context.text.caption,

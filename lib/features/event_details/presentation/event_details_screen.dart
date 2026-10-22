@@ -387,7 +387,7 @@ class _SheetContent extends ConsumerWidget {
                           ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 150),
                             child: Text(
-                              e.address,
+                              context.bidi(e.address),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: meta,
@@ -445,7 +445,10 @@ class _SheetContent extends ConsumerWidget {
         DetailsSectionTitle(context.l10n.detailsLocation),
         MiniMapCard(event: e, onOpen: onOpenMap),
         const SizedBox(height: 8),
-        Text('${e.venue}, ${e.address}', style: context.text.caption),
+        Text(
+          context.bidi('${e.venue}, ${e.address}'),
+          style: context.text.caption,
+        ),
         DetailsSectionTitle(context.l10n.detailsOrganizer),
         OrganizerCard(organizer: e.organizer),
         if (e.lineup.isNotEmpty) ...[
@@ -500,7 +503,7 @@ class _BottomBar extends ConsumerWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
-            color: context.tokens.shadow(0.12),
+            color: context.tokens.shadowOr(const Color(0x1F8A4FC8), 0.12),
             blurRadius: 30,
             offset: const Offset(0, -6),
           ),

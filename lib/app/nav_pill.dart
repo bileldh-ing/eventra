@@ -148,24 +148,32 @@ class _NavButton extends StatelessWidget {
                     color: active ? Colors.white : t.navInactive,
                   ),
                 ),
-                AnimatedSize(
-                  duration: duration,
-                  curve: Curves.easeOutCubic,
-                  child: active
-                      ? Padding(
-                          padding: const EdgeInsetsDirectional.only(start: 10),
-                          child: Text(
-                            item.label,
-                            maxLines: 1,
-                            overflow: TextOverflow.fade,
-                            softWrap: false,
-                            style: context.text.button.copyWith(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500,
+                // Flexible + scaleDown: long labels (French, Arabic) shrink
+                // to fit the active pill instead of overflowing it.
+                Flexible(
+                  child: AnimatedSize(
+                    duration: duration,
+                    curve: Curves.easeOutCubic,
+                    child: active
+                        ? Padding(
+                            padding: const EdgeInsetsDirectional.only(
+                              start: 10,
                             ),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                item.label,
+                                maxLines: 1,
+                                softWrap: false,
+                                style: context.text.button.copyWith(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                 ),
               ],
             ),

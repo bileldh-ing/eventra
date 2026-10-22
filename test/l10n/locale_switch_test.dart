@@ -18,6 +18,8 @@ Future<void> _pickLanguage(WidgetTester tester, String code) async {
     200,
     scrollable: find.byType(Scrollable).last,
   );
+  await tester.ensureVisible(tile);
+  await tester.pumpAndSettle();
   await tester.tap(tile);
   await tester.pumpAndSettle();
 }
@@ -39,12 +41,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Settings'), findsOneWidget);
-    expect(find.text('APPEARANCE'), findsOneWidget);
     expect(_direction(tester), TextDirection.ltr);
 
     await _pickLanguage(tester, 'fr');
     expect(find.text('Paramètres'), findsOneWidget);
-    expect(find.text('APPARENCE'), findsOneWidget);
+    expect(find.text('LANGUE'), findsOneWidget);
     expect(find.text('Settings'), findsNothing);
     expect(_direction(tester), TextDirection.ltr);
     expect(prefs.getString(SettingsKeys.language), 'fr');

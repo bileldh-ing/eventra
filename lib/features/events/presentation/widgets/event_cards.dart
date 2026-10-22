@@ -98,7 +98,7 @@ class EventCarouselCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            event.address,
+                            context.bidi(event.address),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: context.text.caption.copyWith(
@@ -223,9 +223,12 @@ class _ArrowButtonState extends State<ArrowButton> {
             child: Glass(
               shape: BoxShape.circle,
               fill: Colors.black.withValues(alpha: 0.18),
-              child: const Center(
+              child: Center(
+                // Points toward the reading direction's far corner.
                 child: Icon(
-                  Icons.north_east_rounded,
+                  context.isRtl
+                      ? Icons.north_west_rounded
+                      : Icons.north_east_rounded,
                   color: Colors.white,
                   size: 24,
                 ),
@@ -425,8 +428,10 @@ class EventListTile extends StatelessWidget {
                       Expanded(
                         child: HighlightedText(
                           highlight.isEmpty
-                              ? event.address
-                              : '${event.venue}, ${event.address}',
+                              ? context.bidi(event.address)
+                              : context.bidi(
+                                  '${event.venue}, ${event.address}',
+                                ),
                           query: highlight,
                           style: context.text.caption,
                           highlightStyle: TextStyle(

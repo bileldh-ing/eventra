@@ -233,7 +233,7 @@ class _SuccessTicket extends StatelessWidget {
         shape: const TicketShapeBorder(notchY: photoH + infoH),
         shadows: [
           BoxShadow(
-            color: context.tokens.shadow(0.2),
+            color: context.tokens.shadowOr(const Color(0x339A5BD6), 0.2),
             blurRadius: 30,
             offset: const Offset(0, 14),
           ),

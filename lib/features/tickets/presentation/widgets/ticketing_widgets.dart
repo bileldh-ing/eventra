@@ -172,7 +172,7 @@ class QuantityStepper extends StatelessWidget {
             gradient: on && icon == Icons.add ? t.primaryGradient : null,
             color: on
                 ? (icon == Icons.add ? null : t.primary.withValues(alpha: 0.1))
-                : t.surfaceMuted,
+                : (t.isDark ? t.surfaceMuted : const Color(0xFFEDEAF2)),
           ),
           child: Icon(
             icon,

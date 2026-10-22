@@ -39,7 +39,7 @@ class PreviewCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(t.radii.previewCard),
             boxShadow: [
               BoxShadow(
-                color: t.shadow(0.12),
+                color: t.shadowOr(const Color(0x1F6B3FA0), 0.12),
                 blurRadius: 30,
                 offset: const Offset(0, 10),
               ),
@@ -87,7 +87,7 @@ class PreviewCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            mapAddress(event),
+                            context.bidi(mapAddress(event)),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: meta,
@@ -203,7 +203,7 @@ class NearestSheet extends StatelessWidget {
                       width: 48,
                       height: 7,
                       decoration: BoxDecoration(
-                        color: t.disabled,
+                        color: t.isDark ? t.disabled : const Color(0xFFD9D3E3),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -290,7 +290,7 @@ class _SearchField extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: t.shadow(0.06),
+            color: t.shadowOr(const Color(0x0F6B3FA0), 0.06),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -384,7 +384,7 @@ class NearestLocationCard extends StatelessWidget {
               BoxShadow(
                 color: selected
                     ? t.primary.withValues(alpha: 0.18)
-                    : t.shadow(0.05),
+                    : t.shadowOr(const Color(0x0D6B3FA0), 0.05),
                 blurRadius: selected ? 22 : 14,
                 offset: const Offset(0, 6),
               ),
@@ -414,7 +414,7 @@ class NearestLocationCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      mapAddress(item.event),
+                      context.bidi(mapAddress(item.event)),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: context.text.body.copyWith(

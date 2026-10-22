@@ -243,6 +243,11 @@ class EventraTokens extends ThemeExtension<EventraTokens> {
   Color shadow(double alpha) =>
       shadowTint.withValues(alpha: isDark ? (alpha * 3).clamp(0, 0.6) : alpha);
 
+  /// [light] as designed in light mode; in dark mode a neutral shadow at
+  /// [darkAlpha] (scaled like [shadow]).
+  Color shadowOr(Color light, double darkAlpha) =>
+      isDark ? shadow(darkAlpha) : light;
+
   /// centerLeft -> centerRight: #E58CFF -> #B83BF4
   LinearGradient get primaryGradient => const LinearGradient(
     colors: [EventraPalette.primaryLight, EventraPalette.primaryDeep],
@@ -267,7 +272,11 @@ class EventraTokens extends ThemeExtension<EventraTokens> {
 
   /// Soft shadow used by cards, chips and the nav pill.
   List<BoxShadow> get softShadow => [
-    BoxShadow(color: shadow(0.1), blurRadius: 24, offset: const Offset(0, 8)),
+    BoxShadow(
+      color: shadowOr(const Color(0x1A8A4FC8), 0.1),
+      blurRadius: 24,
+      offset: const Offset(0, 8),
+    ),
   ];
 
   @override

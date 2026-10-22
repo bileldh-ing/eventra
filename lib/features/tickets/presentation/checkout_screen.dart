@@ -642,7 +642,7 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         boxShadow: [
           BoxShadow(
-            color: context.tokens.shadow(0.08),
+            color: context.tokens.shadowOr(const Color(0x149A5BD6), 0.08),
             blurRadius: 24,
             offset: const Offset(0, -6),
           ),
