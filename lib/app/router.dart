@@ -1,4 +1,10 @@
 import 'package:eventra/app/app_shell.dart';
+import 'package:eventra/app/auth_guard.dart';
+import 'package:eventra/features/auth/domain/auth_models.dart';
+import 'package:eventra/features/auth/presentation/forgot_password_screen.dart';
+import 'package:eventra/features/auth/presentation/login_screen.dart';
+import 'package:eventra/features/auth/presentation/otp_screen.dart';
+import 'package:eventra/features/auth/presentation/signup_screen.dart';
 import 'package:eventra/features/design_system/presentation/design_system_screen.dart';
 import 'package:eventra/features/event_details/presentation/event_details_screen.dart';
 import 'package:eventra/features/explore/presentation/explore_screen.dart';
@@ -6,6 +12,10 @@ import 'package:eventra/features/favorites/presentation/favorites_screen.dart';
 import 'package:eventra/features/home/presentation/all_events_screen.dart';
 import 'package:eventra/features/home/presentation/home_screen.dart';
 import 'package:eventra/features/notifications/presentation/notifications_screen.dart';
+import 'package:eventra/features/onboarding/presentation/interests_screen.dart';
+import 'package:eventra/features/onboarding/presentation/location_setup_screen.dart';
+import 'package:eventra/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:eventra/features/onboarding/presentation/splash_screen.dart';
 import 'package:eventra/features/profile/presentation/profile_screen.dart';
 import 'package:eventra/features/search/presentation/search_screen.dart';
 import 'package:eventra/features/tickets/presentation/tickets_placeholder_screen.dart';
@@ -36,10 +46,73 @@ List<RouteBase> _eventRoutes() => [
   ),
 ];
 
-GoRouter buildRouter({String initialLocation = '/home'}) {
+/// Fades auth and onboarding pages in place (no platform slide).
+Page<void> _fade(GoRouterState state, Widget child) => CustomTransitionPage(
+  key: state.pageKey,
+  child: child,
+  transitionDuration: const Duration(milliseconds: 320),
+  transitionsBuilder: (context, anim, _, child) => FadeTransition(
+    opacity: CurvedAnimation(parent: anim, curve: Curves.easeOutCubic),
+    child: child,
+  ),
+);
+
+GoRouter buildRouter({
+  required AuthState Function() readAuth,
+  required bool Function() readOnboardingSeen,
+  String initialLocation = '/splash',
+  Listenable? refresh,
+}) {
+  String? from(GoRouterState s) => s.uri.queryParameters['from'];
+  String email(GoRouterState s) => s.uri.queryParameters['email'] ?? '';
   return GoRouter(
     initialLocation: initialLocation,
+    refreshListenable: refresh,
+    redirect: (context, state) => authRedirect(
+      auth: readAuth(),
+      onboardingSeen: readOnboardingSeen(),
+      uri: state.uri,
+    ),
     routes: [
+      GoRoute(
+        path: '/splash',
+        pageBuilder: (context, s) => _fade(s, SplashScreen(from: from(s))),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        pageBuilder: (context, s) => _fade(s, const OnboardingScreen()),
+      ),
+      GoRoute(
+        path: '/auth/login',
+        pageBuilder: (context, s) => _fade(s, LoginScreen(from: from(s))),
+      ),
+      GoRoute(
+        path: '/auth/signup',
+        builder: (context, s) => SignUpScreen(from: from(s)),
+      ),
+      GoRoute(
+        path: '/auth/otp',
+        builder: (context, s) => OtpScreen(email: email(s), from: from(s)),
+      ),
+      GoRoute(
+        path: '/auth/forgot',
+        builder: (context, s) => ForgotPasswordScreen(initialEmail: email(s)),
+      ),
+      GoRoute(
+        path: '/interests',
+        pageBuilder: (context, s) => _fade(
+          s,
+          InterestsScreen(
+            from: from(s),
+            editing: s.uri.queryParameters['edit'] == '1',
+          ),
+        ),
+      ),
+      GoRoute(
+        path: '/location-setup',
+        pageBuilder: (context, s) =>
+            _fade(s, LocationSetupScreen(from: from(s))),
+      ),
       // Deep link from shares: https://eventra.app/event/<id>
       GoRoute(
         path: '/event/:id',

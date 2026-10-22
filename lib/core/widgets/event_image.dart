@@ -152,19 +152,21 @@ class NetAvatar extends ConsumerWidget {
             : null,
       ),
       child: ClipOval(
-        child: Image(
-          image: ResizeImage(
-            factory(url),
-            width: (size * 3).round(),
-            policy: ResizeImagePolicy.fit,
-          ),
-          fit: BoxFit.cover,
-          width: size,
-          height: size,
-          frameBuilder: (context, child, frame, sync) =>
-              (sync || frame != null) ? child : fallback,
-          errorBuilder: (context, error, stack) => fallback,
-        ),
+        child: url.isEmpty
+            ? fallback
+            : Image(
+                image: ResizeImage(
+                  factory(url),
+                  width: (size * 3).round(),
+                  policy: ResizeImagePolicy.fit,
+                ),
+                fit: BoxFit.cover,
+                width: size,
+                height: size,
+                frameBuilder: (context, child, frame, sync) =>
+                    (sync || frame != null) ? child : fallback,
+                errorBuilder: (context, error, stack) => fallback,
+              ),
       ),
     );
   }

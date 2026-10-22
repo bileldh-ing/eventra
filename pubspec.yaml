@@ -1,29 +1,38 @@
 name: eventra
 description: "Eventra - Discover. Book. Feel the moment."
 publish_to: 'none'
-version: 0.4.0+4
+version: 0.5.0+5
 
 environment:
   sdk: ^3.9.0
 
 dependencies:
+  # Add a booked event to the device calendar (spec: platform; Phase 7).
+  add_2_calendar: ^3.1.1
   # Network images with disk cache (spec: images).
   cached_network_image: ^3.4.1
   # firstWhereOrNull and friends.
   collection: ^1.19.0
-  # Drift SQLite persistence for events/favorites (spec: local_data).
+  # Vetted HMAC-SHA256 primitive under the PBKDF2 password hashing
+  # (spec: security). Pure Dart, already a transitive dependency.
+  crypto: ^3.0.7
+  # Drift SQLite persistence for events/favorites/users (spec: local_data).
   drift: ^2.28.0
   flutter:
     sdk: flutter
+  # Event reminders (spec: platform; Phase 7).
+  flutter_local_notifications: ^22.3.2
   # Map tiles + markers with CARTO Positron, no API key (spec: maps).
   flutter_map: ^8.2.0
   # State management (spec: state).
   flutter_riverpod: ^3.0.0
+  # Session token in the iOS Keychain / Android Keystore (spec: security).
+  flutter_secure_storage: ^10.3.4
   # Immutable models / unions (spec: state, freezed).
   freezed_annotation: ^3.1.0
   # Device location for locate-me / distances (spec: maps).
   geolocator: ^14.0.2
-  # Declarative routing with shell route (spec: routing).
+  # Declarative routing with shell route and auth guard (spec: routing).
   go_router: ^16.2.0
   # Date formatting.
   intl: ^0.20.2
@@ -36,8 +45,16 @@ dependencies:
   path: ^1.9.0
   # Resolve the DB file location.
   path_provider: ^2.1.5
+  # QR ticket rendering (spec: ticket wallet; Phase 7).
+  qr_flutter: ^4.1.0
+  # Full brightness while a QR ticket is shown (spec: ticket wallet; Phase 7).
+  screen_brightness: ^2.1.11
   # Share an event (spec: Event Details share).
   share_plus: ^12.0.0
+  # Onboarding flag, guest mode, interests, home city (spec: local_data).
+  shared_preferences: ^2.5.6
+  # Time-zone aware reminder scheduling (spec: platform; Phase 7).
+  timezone: ^0.11.2
   # Open external maps app for directions (spec: location card long-press).
   url_launcher: ^6.3.2
 

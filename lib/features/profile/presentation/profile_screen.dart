@@ -2,7 +2,10 @@ import 'package:eventra/core/theme/app_theme.dart';
 import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/core/widgets/event_image.dart';
 import 'package:eventra/core/widgets/faceted_painter.dart';
+import 'package:eventra/core/widgets/gradient_button.dart';
 import 'package:eventra/core/widgets/pressable.dart';
+import 'package:eventra/features/auth/domain/auth_models.dart';
+import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/home/presentation/widgets/home_header.dart';
 import 'package:eventra/features/notifications/presentation/notifications_providers.dart';
@@ -12,7 +15,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
-/// Profile (Phase 8 adds settings, auth and editing).
+/// Profile: the signed-in account or guest mode, with Log in / Log out
+/// (Phase 8 adds settings and editing).
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
@@ -23,6 +27,7 @@ class ProfileScreen extends ConsumerWidget {
     final upcoming = ref.watch(upcomingEventsProvider).value?.length ?? 0;
     final unread = ref.watch(unreadCountProvider);
     final top = MediaQuery.paddingOf(context).top;
+    final user = ref.watch(authControllerProvider).user;
 
     Widget stat(String value, String label) => Expanded(
       child: Column(
@@ -87,19 +92,23 @@ class ProfileScreen extends ConsumerWidget {
               padding: EdgeInsets.fromLTRB(24, top + 24, 24, 28),
               child: Column(
                 children: [
-                  const NetAvatar(
-                    url: kDemoUserAvatar,
+                  NetAvatar(
+                    key: const ValueKey('profile-avatar'),
+                    // Only the demo account has a portrait; others get
+                    // their initials (guests a person icon).
+                    url: user?.email == kDemoEmail ? kDemoUserAvatar : '',
                     size: 96,
                     borderWidth: 3,
-                    name: kDemoUserName,
+                    name: user?.name,
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    kDemoUserName,
+                    user?.name ?? 'Guest',
+                    key: const ValueKey('profile-name'),
                     style: EventraText.heroTitle.copyWith(fontSize: 26),
                   ),
                   Text(
-                    kDemoUserEmail,
+                    user?.email ?? 'Log in to buy tickets and sync favorites',
                     style: EventraText.body.copyWith(color: Colors.white),
                   ),
                   const SizedBox(height: 20),
@@ -118,6 +127,19 @@ class ProfileScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 130),
             child: Column(
               children: [
+                if (user == null) ...[
+                  GradientPillButton(
+                    key: const ValueKey('profile-login'),
+                    label: 'Log in or sign up',
+                    onPressed: () => context.push(
+                      Uri(
+                        path: '/auth/login',
+                        queryParameters: {'from': '/profile'},
+                      ).toString(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 action(
                   Icons.confirmation_number_outlined,
                   'My Tickets',
@@ -147,12 +169,26 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 12),
+                action(
+                  Icons.interests_outlined,
+                  'Interests',
+                  () => context.push('/interests?edit=1'),
+                ),
                 if (kDebugMode) ...[
                   const SizedBox(height: 12),
                   action(
                     Icons.palette_outlined,
                     'Design System',
                     () => context.push('/profile/design-system'),
+                  ),
+                ],
+                if (user != null) ...[
+                  const SizedBox(height: 12),
+                  action(
+                    Icons.logout_rounded,
+                    'Log out',
+                    () => _confirmLogOut(context, ref),
                   ),
                 ],
               ],
@@ -162,4 +198,29 @@ class ProfileScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+Future<void> _confirmLogOut(BuildContext context, WidgetRef ref) async {
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Log out?'),
+      content: const Text(
+        'Your tickets and favorites stay on this device for when you are '
+        'back.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          key: const ValueKey('logout-confirm'),
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text('Log out'),
+        ),
+      ],
+    ),
+  );
+  if (ok ?? false) await ref.read(authControllerProvider.notifier).logOut();
 }

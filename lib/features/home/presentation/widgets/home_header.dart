@@ -22,7 +22,15 @@ class HomeHeader extends StatelessWidget {
     required this.activeFilters,
     super.key,
     this.parallax = 0,
+    this.userName = kDemoUserName,
+    this.avatarUrl = kDemoUserAvatar,
   });
+
+  /// Signed-in user's name for the initials fallback (null for guests).
+  final String? userName;
+
+  /// Portrait URL; empty shows initials.
+  final String avatarUrl;
 
   final VoidCallback onAvatar;
   final VoidCallback onBell;
@@ -54,11 +62,11 @@ class HomeHeader extends StatelessWidget {
                   label: 'Open profile',
                   child: Pressable(
                     onTap: onAvatar,
-                    child: const NetAvatar(
-                      key: ValueKey('home-avatar'),
-                      url: kDemoUserAvatar,
+                    child: NetAvatar(
+                      key: const ValueKey('home-avatar'),
+                      url: avatarUrl,
                       size: 56,
-                      name: kDemoUserName,
+                      name: userName,
                     ),
                   ),
                 ),

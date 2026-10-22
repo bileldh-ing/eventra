@@ -2,10 +2,16 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:eventra/app/app.dart';
-import 'package:eventra/app/router.dart';
 import 'package:eventra/core/location/location_service.dart';
 import 'package:eventra/core/map/map_layers.dart';
+import 'package:eventra/core/storage/prefs_store.dart';
+import 'package:eventra/core/storage/secure_store.dart';
+import 'package:eventra/core/storage/storage_providers.dart';
 import 'package:eventra/core/widgets/event_image.dart';
+import 'package:eventra/features/auth/domain/auth_models.dart';
+import 'package:eventra/features/auth/domain/password_hasher.dart';
+import 'package:eventra/features/auth/presentation/auth_providers.dart';
+import 'package:eventra/features/events/data/db/app_database.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart' as widgets;
@@ -67,12 +73,41 @@ ImageProvider<Object> fixtureImage(String url) {
   });
 }
 
+/// The demo account, already signed in (default for screen tests).
+final kTestUser = AppUser(
+  id: 'u_demo',
+  name: kDemoName,
+  email: kDemoEmail,
+  verified: true,
+  createdAt: kTestNow,
+);
+
+/// Fast hashing for tests (production uses 60k iterations).
+const kTestHasher = PasswordHasher(iterations: 2);
+
 class TestApp {
+  /// [auth] is the starting state (default: the demo user, signed in, with
+  /// interests). Pass `restore: true` to start unknown and restore from
+  /// [secure] on the splash like a real launch.
   TestApp({
     FakeEventsRepository? events,
     FakeFavoritesRepository? favorites,
     FakeLocationService? location,
-  }) : events = events ?? FakeEventsRepository(loadSeed().events),
+    AuthState? auth,
+    this.restore = false,
+    bool onboardingSeen = true,
+    MemoryPrefsStore? prefs,
+    MemorySecureStore? secure,
+    this.db,
+  }) : auth = auth ?? AuthState.signedIn(kTestUser),
+       prefs =
+           prefs ??
+           MemoryPrefsStore({
+             'onboarding.seen': onboardingSeen,
+             'interests.u_demo': ['music', 'tech', 'food'],
+           }),
+       secure = secure ?? MemorySecureStore(),
+       events = events ?? FakeEventsRepository(loadSeed().events),
        favorites = favorites ?? FakeFavoritesRepository(),
        location =
            location ??
@@ -83,8 +118,25 @@ class TestApp {
   final FakeEventsRepository events;
   final FakeFavoritesRepository favorites;
   final FakeLocationService location;
+  final AuthState auth;
+  final bool restore;
+  final MemoryPrefsStore prefs;
+  final MemorySecureStore secure;
+
+  /// Shared database (to simulate a relaunch); a fresh in-memory one if null.
+  final AppDatabase? db;
 
   List<Override> get overrides => [
+    prefsStoreProvider.overrideWithValue(prefs),
+    secureStoreProvider.overrideWithValue(secure),
+    authBootstrapProvider.overrideWithValue(restore ? null : auth),
+    passwordHasherProvider.overrideWithValue(kTestHasher),
+    appDatabaseProvider.overrideWith((ref) {
+      if (db case final shared?) return shared;
+      final fresh = memoryDb();
+      ref.onDispose(fresh.close);
+      return fresh;
+    }),
     eventsRepositoryProvider.overrideWithValue(events),
     favoritesRepositoryProvider.overrideWithValue(favorites),
     clockProvider.overrideWithValue(() => kTestNow),
@@ -97,7 +149,7 @@ class TestApp {
   Widget build({String initialLocation = '/home'}) => ProviderScope(
     retry: (_, _) => null,
     overrides: overrides,
-    child: EventraApp(router: buildRouter(initialLocation: initialLocation)),
+    child: EventraApp(initialLocation: initialLocation),
   );
 }
 

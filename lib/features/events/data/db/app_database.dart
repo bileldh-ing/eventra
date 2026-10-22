@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:eventra/features/events/data/db/extra_schema.dart';
 
 part 'app_database.g.dart';
 
@@ -41,6 +42,15 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    beforeOpen: (details) async {
+      for (final statement in kExtraSchema) {
+        await customStatement(statement);
+      }
+    },
+  );
 
   Future<int> eventCount() async {
     final count = eventRows.id.count();

@@ -2,6 +2,8 @@ import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/core/utils/geo.dart';
 import 'package:eventra/core/widgets/entrance.dart';
 import 'package:eventra/core/widgets/state_views.dart';
+import 'package:eventra/features/auth/domain/auth_models.dart';
+import 'package:eventra/features/auth/presentation/auth_providers.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/home/presentation/filters_sheet.dart';
@@ -55,6 +57,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final filter = ref.watch(homeFilterProvider);
     final feed = ref.watch(filteredEventsProvider);
     final hasUnread = ref.watch(unreadCountProvider) > 0;
+    final user = ref.watch(authControllerProvider).user;
     final cardHeight = _cardHeight(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -77,6 +80,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   valueListenable: _parallax,
                   builder: (context, shift, _) => HomeHeader(
                     parallax: shift,
+                    userName: user?.name,
+                    avatarUrl: user?.email == kDemoEmail ? kDemoUserAvatar : '',
                     hasUnread: hasUnread,
                     activeFilters: filter.refinementCount,
                     onAvatar: () => StatefulNavigationShell.maybeOf(

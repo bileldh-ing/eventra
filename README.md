@@ -74,6 +74,20 @@ match the code.*
 - Continue opens the selected venue's events (straight to details when the
   venue has a single event).
 
+### Onboarding and accounts
+- Splash with the brand logo, a 3-slide onboarding (shown once), then Log in,
+  Sign up (live password strength meter), a 6-box email code (resend
+  countdown) and Forgot password.
+- **Try demo account** on the login screen signs in instantly
+  (`demo@eventra.app` / `Eventra#2026`); in debug builds the mock email code
+  `123456` is shown on screen.
+- Guest mode: browse Home, Explore and Details without an account; Get a
+  Ticket asks you to log in and brings you back to the same event.
+- Pick at least 3 interests and a home city (or use your location).
+- Local auth that behaves like the real thing: PBKDF2-SHA256 salted hashes
+  (never plain text), session token in the Keychain/Keystore, 30-day
+  sessions, 5 failed logins lock the email for 30 seconds with a countdown.
+
 ### Quality
 - Respects reduce-motion (looping and entrance animations are skipped).
 - Semantics labels on every icon button, card and list row.
@@ -87,7 +101,7 @@ Feature-first clean architecture with Riverpod 3 and go_router.
 
 ```
 lib/
-  app/            app widget, router (StatefulShellRoute, 4 tabs), nav pill, shell
+  app/            app widget, router (StatefulShellRoute, 4 tabs), auth guard, nav pill
   core/
     theme/        design tokens (EventraTokens ThemeExtension), text styles
     widgets/      glass, gradient button, pressable, skeleton, avatar stack, images
@@ -95,11 +109,15 @@ lib/
     location/     LocationService abstraction (geolocator implementation)
     utils/        formatters, Haversine geo helpers
     result/       Result<T> + typed failures
+    crypto/       PBKDF2-HMAC-SHA256 on the crypto package
+    storage/      prefs + secure storage abstractions
   features/
     events/       domain entities (freezed), repositories, drift DB, demo backend
     home/         feed sections, filters, chips, carousel, See All
     event_details/ details screen and its sections
     explore/      nearest-events domain, map screen, sheet widgets
+    auth/         AuthRepository, local PBKDF2 implementation, login/sign-up/OTP
+    onboarding/   splash, slides, interests, location setup
     favorites/ notifications/ profile/ search/ tickets/ design_system/
 ```
 

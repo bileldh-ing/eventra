@@ -21,6 +21,23 @@ final class StorageFailure extends AppFailure {
   const StorageFailure([super.message = 'Local storage is unavailable.']);
 }
 
+enum AuthErrorCode {
+  emailTaken,
+  invalidCredentials,
+  lockedOut,
+  unverified,
+  invalidCode,
+  userNotFound,
+  weakPassword,
+}
+
+/// Sign-in / sign-up problems. [retryAfter] is set while locked out.
+final class AuthFailure extends AppFailure {
+  const AuthFailure(this.code, super.message, {this.retryAfter});
+  final AuthErrorCode code;
+  final Duration? retryAfter;
+}
+
 final class UnknownFailure extends AppFailure {
   const UnknownFailure([super.message = 'Something went wrong.']);
 }
