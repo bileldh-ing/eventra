@@ -54,6 +54,11 @@ Future<void> _open(
   bool tiles = false,
 }) async {
   await setPhoneSize(tester);
+  // iPhone-style safe areas (status bar and home indicator), so the device
+  // frame's status bar and island sit over empty space as on a real phone.
+  tester.view
+    ..padding = const FakeViewPadding(top: 47 * 3, bottom: 34 * 3)
+    ..viewPadding = const FakeViewPadding(top: 47 * 3, bottom: 34 * 3);
   await tester.pumpWidget(
     RepaintBoundary(
       key: _boundary,

@@ -1,31 +1,79 @@
+<div align="center">
+
 # EVENTRA
 
-**Discover. Book. Feel the moment.**
+**Discover. Book. Go.**
 
-EVENTRA is an event discovery and ticketing app built with Flutter. The three
-core screens (Home, Event Details and the Explore map) are rebuilt from a
-Dribbble-style reference design with close visual fidelity: a faceted
-lavender gradient header, glassmorphism controls, photo cards with parallax,
-a floating gradient nav pill and a full light-gray map with a draggable
-"Nearest Location" sheet.
+An event discovery and ticketing app built with Flutter: a smart feed, a live
+map, a full booking flow with signed QR tickets, reviews, an organizer mode
+with offline check-in, three languages (EN / FR / AR with full RTL), light and
+dark themes, and CI/CD for Android and iOS.
 
-| Home | Event Details | Explore map |
-|:---:|:---:|:---:|
-| ![Home](test/features/home/goldens/home.png) | ![Event Details](test/features/event_details/goldens/details.png) | ![Explore](test/features/explore/goldens/explore.png) |
+[![CI](https://github.com/bileldh-ing/eventra/actions/workflows/ci.yml/badge.svg)](https://github.com/bileldh-ing/eventra/actions/workflows/ci.yml)
+[![Android release](https://github.com/bileldh-ing/eventra/actions/workflows/android-release.yml/badge.svg)](https://github.com/bileldh-ing/eventra/actions/workflows/android-release.yml)
+[![iOS build](https://github.com/bileldh-ing/eventra/actions/workflows/ios-build.yml/badge.svg)](https://github.com/bileldh-ing/eventra/actions/workflows/ios-build.yml)
+![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter)
+![Tests](https://img.shields.io/badge/tests-352%20passing-22c55e)
+![Coverage](https://img.shields.io/badge/coverage-91.5%25-22c55e)
 
-| Checkout | Ticket (rotating QR) |
-|:---:|:---:|
-| ![Checkout](test/features/tickets/goldens/checkout.png) | ![Ticket](test/features/tickets/goldens/ticket_detail.png) |
+<img src="docs/media/eventra_demo.gif" alt="EVENTRA demo" width="300">
 
-*Screenshots are the golden files rendered by the widget tests (390x844 at
-2x, real Urbanist fonts, real photos and offline map tiles), so they always
-match the code.*
+**Demo video:** __VIDEO_LINKS__
+
+</div>
+
+> Every screen on this page is the real app, rendered by Flutter widget tests
+> (`test/screenshots/`) with the production widgets, seed data, bundled fonts
+> and offline map tiles. They are not mockups, and they are not captured from
+> a physical device (see [Limitations](#honest-limitations)).
 
 ---
 
-## Features
+## Screens
 
-### Home
+| Onboarding | Login | Home | Home (dark) | Home (Arabic, RTL) |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/01_onboarding.png" width="160"> | <img src="docs/screenshots/02_login.png" width="160"> | <img src="docs/screenshots/03_home_light.png" width="160"> | <img src="docs/screenshots/04_home_dark.png" width="160"> | <img src="docs/screenshots/05_home_arabic_rtl.png" width="160"> |
+| **Explore map** | **Search** | **Filters** | **Event details** | **Reviews** |
+| <img src="docs/screenshots/06_explore_map.png" width="160"> | <img src="docs/screenshots/07_search_results.png" width="160"> | <img src="docs/screenshots/08_filters.png" width="160"> | <img src="docs/screenshots/09_event_details.png" width="160"> | <img src="docs/screenshots/10_reviews.png" width="160"> |
+| **Ticket picker** | **Checkout** | **Booked** | **Ticket QR** | **Favorites** |
+| <img src="docs/screenshots/11_ticket_picker.png" width="160"> | <img src="docs/screenshots/12_checkout.png" width="160"> | <img src="docs/screenshots/13_booking_success.png" width="160"> | <img src="docs/screenshots/14_ticket_qr.png" width="160"> | <img src="docs/screenshots/15_favorites.png" width="160"> |
+| **Notifications** | **Profile** | **Settings** | **Organizer dashboard** | **Event wizard** |
+| <img src="docs/screenshots/16_notifications.png" width="160"> | <img src="docs/screenshots/17_profile.png" width="160"> | <img src="docs/screenshots/18_settings.png" width="160"> | <img src="docs/screenshots/19_organizer_dashboard.png" width="160"> | <img src="docs/screenshots/20_event_wizard.png" width="160"> |
+| **Check-in result** | | | | |
+| <img src="docs/screenshots/21_checkin_result.png" width="160"> | | | | |
+
+---
+
+## Highlights
+
+- **Discover**: a smart feed ranked on the device by an explainable scorer
+  (interests, distance, popularity, how soon, your saves), category chips,
+  debounced live search with highlighted matches, and one filters sheet
+  (category, date, price, distance, free, tickets left, sort).
+- **Map**: OpenStreetMap through flutter_map, pulsing selected marker, a
+  three-stop draggable "Nearest Location" sheet sorted by Haversine distance,
+  locate-me with a permission-denied fallback.
+- **Book & Pay**: tier picker with live stock, 10-minute seat holds, promo
+  codes, integer-cent pricing, a mock card gateway with 3-D Secure, declines
+  and timeouts, idempotent payments and a database CHECK that makes
+  overselling impossible.
+- **Wallet**: tickets with an HMAC-SHA256 signed QR that rotates every 30
+  seconds and verifies offline; refunds (full refund more than 48 h before the
+  start), reminders 24 h and 2 h before, add to calendar.
+- **Reviews**: only ticket holders of an ended event can review; average,
+  histogram, sort and star filters.
+- **Organizer mode**: dashboard (revenue, sales, check-in rate, 14-day chart),
+  a 6-step create/edit wizard with draft autosave, camera or typed QR check-in
+  that is exactly-once and queues offline for sync.
+- **Everywhere**: English, French and Arabic (666 keys, full RTL), light and
+  dark palettes (WCAG AA checked by test), 48 dp tap targets, semantics
+  labels, layouts that hold at 1.3x text, reduce-motion support.
+
+<details>
+<summary><b>Full feature list</b></summary>
+
+#### Home
 - Faceted gradient header with avatar, notification bell (unread dot) and the
   "Discover Amazing Events Near You" headline.
 - Glass search pill (opens live search) and a filters button (categories,
@@ -48,7 +96,7 @@ match the code.*
   resets filters.
 - Favorites tab, notifications screen (mark all read), profile tab.
 
-### Event Details
+#### Event Details
 - Shared-element Hero from any card into a full-bleed photo with parallax on
   scroll and stretch on overscroll; pull down past a threshold to dismiss.
 - Glass back and bookmark buttons over the photo; the top bar turns solid and
@@ -64,7 +112,7 @@ match the code.*
   loading ring, self-drawing check mark, then navigation). Sold-out events
   show a disabled "Sold Out" button and a "Join waitlist" toggle.
 
-### Explore (map)
+#### Explore (map)
 - Full-screen light-gray map with street labels (no API key, attribution
   shown) with pinch, drag and double-tap zoom.
 - White circular back and locate-me buttons; a floating preview card for the
@@ -84,13 +132,13 @@ match the code.*
 - Continue opens the selected venue's events (straight to details when the
   venue has a single event).
 
-### Search
+#### Search
 - Auto-focused field with debounced live results, best title matches first,
   matched text highlighted; the shared filters narrow the results.
 - Recent searches saved per account (swipe to delete with undo, Clear all),
   trending search chips, and a no-results state with suggestions.
 
-### Onboarding and accounts
+#### Onboarding and accounts
 - Splash with the brand logo, a 3-slide onboarding (shown once), then Log in,
   Sign up (live password strength meter), a 6-box email code (resend
   countdown) and Forgot password.
@@ -104,7 +152,7 @@ match the code.*
   (never plain text), session token in the Keychain/Keystore, 30-day
   sessions, 5 failed logins lock the email for 30 seconds with a countdown.
 
-### Tickets, checkout and wallet
+#### Tickets, checkout and wallet
 - Tier picker with live availability (other buyers' holds count), quantity
   steppers with per-tier and 8-per-order limits, low-stock and sold-out
   states, and a running total with fees and tax.
@@ -131,11 +179,11 @@ match the code.*
 - Local reminders 24 hours and 2 hours before the event (tapping one opens
   the ticket).
 
-### Profile, settings, favorites, notifications, reviews
+#### Profile, settings, favorites, notifications, reviews
 - Profile with an initials avatar on your color, city, bio and stats
   (tickets, saved, reviews); edit profile with validation.
-- Settings: theme mode (System/Light/Dark), language (EN/FR/AR, stored now,
-  strings later), notification toggles that really gate reminders and inbox
+- Settings: theme mode (System/Light/Dark), language (EN/FR/AR,
+  switched at runtime), notification toggles that really gate reminders and inbox
   items, personalized feed, clear cache, about/version, log out, delete
   account (type DELETE).
 - Favorites in a list or grid, sortable, swipe to remove with Undo.
@@ -148,14 +196,46 @@ match the code.*
   a See all screen (star filter, sort). The demo account attends one past
   event, so you can try it.
 
-### Quality
+#### Quality
 - Respects reduce-motion (looping and entrance animations are skipped).
 - Semantics labels on every icon button, card and list row.
 - Offline-first demo backend with simulated latency and fault injection.
 
+</details>
+
 ---
 
 ## Architecture
+
+```mermaid
+flowchart TB
+  subgraph UI["Presentation (features/*/presentation)"]
+    Screens["Screens + widgets<br/>Home, Explore, Details, Checkout,<br/>Wallet, Reviews, Organizer"]
+    Router["go_router<br/>StatefulShellRoute (5 tabs) + auth guard"]
+  end
+  subgraph State["State (Riverpod 3)"]
+    Providers["Notifiers / Providers<br/>feed, filters, favorites, ticketing,<br/>settings, locale, organizer"]
+  end
+  subgraph Domain["Domain (pure Dart)"]
+    Rules["Pricing, promo, Luhn, refund policy,<br/>QR token (HMAC), smart feed scorer,<br/>check-in verification, dashboard aggregates"]
+  end
+  subgraph Data["Data"]
+    Repos["Repositories (Result&lt;T&gt;)"]
+    Drift[("Drift SQLite<br/>events, tier_stock, orders, tickets,<br/>reviews, notifications, drafts, checkins")]
+    Backend["LocalDemoBackend<br/>(seed JSON, latency, faults)"]
+    Platform["Platform services<br/>secure storage, prefs, GPS,<br/>notifications, camera, share"]
+  end
+  Screens --> Providers
+  Router --> Screens
+  Providers --> Rules
+  Providers --> Repos
+  Repos --> Drift
+  Repos --> Backend
+  Repos --> Platform
+```
+
+<details>
+<summary><b>Folder layout and data notes</b></summary>
 
 Feature-first clean architecture with Riverpod 3 and go_router.
 
@@ -205,70 +285,108 @@ lib/
 - **Design system**: every color, radius, shadow and motion value lives in
   `EventraTokens`; there is an in-app Design System screen (Profile).
 
+</details>
+
+## Tech stack
+
+| Area | Choice |
+|---|---|
+| UI | Flutter 3.47 (Dart 3.9+), Material 3, custom design tokens (`EventraTokens`), Urbanist + Noto Sans Arabic |
+| State | Riverpod 3 (`flutter_riverpod`) |
+| Navigation | go_router 16 (StatefulShellRoute, guards, deep links) |
+| Data | Drift (SQLite) with raw-SQL extras, freezed + json_serializable models |
+| Maps and location | flutter_map 8 + latlong2 (OpenStreetMap), geolocator |
+| Tickets | qr_flutter, crypto (HMAC-SHA256, PBKDF2), mobile_scanner, screen_brightness |
+| Device | flutter_local_notifications, flutter_secure_storage, share_plus, url_launcher |
+| i18n | flutter gen-l10n, ARB files for EN / FR / AR, intl formatting |
+| Quality | very_good_analysis, mocktail, golden + accessibility tests, lcov coverage gate |
+| CI/CD | GitHub Actions (CI, Android release, iOS build, tag release), Fastlane skeleton |
+
 ---
 
 ## Getting started
 
-Requirements: Flutter 3.35+ (Dart 3.9+); developed and tested on Flutter 3.47.
+Requirements: Flutter 3.47.x (Dart 3.9+).
 
 ```bash
 flutter pub get
-flutter run                 # Android, iOS or desktop
+flutter run                     # Android, iOS or desktop
 ```
 
-Quality gate (format check, analyze, tests with coverage):
+Demo account: tap **Try demo account** on the login screen
+(`demo@eventra.app` / `Eventra#2026`). In debug builds the mock email code
+`123456` is shown on screen. Payments: the saved Visa ····4242 pays;
+as a new card,
+`4000 0000 0000 0002` is declined, `4000 0000 0000 3220` asks for 3-D Secure.
+
+### Test
 
 ```bash
-./tool/check.sh             # add -j 1 on low-memory machines
+./tool/check.sh                 # format, gen-l10n drift, analyze, tests + coverage threshold
+flutter test -j 1               # low-memory machines: one file at a time
+flutter test --update-goldens --tags golden   # after an intentional UI change
 ```
 
-Update the golden screenshots after an intentional UI change:
+### Screenshots and demo video
 
 ```bash
-flutter test --update-goldens --tags golden
+flutter test --tags screenshots test/screenshots -j 1   # writes docs/screenshots/*.png (1170x2532)
 ```
 
-Regenerate code (freezed, json_serializable, drift) after model changes:
+The screenshot test is tagged `screenshots` and excluded from CI. The demo
+video is assembled from those PNGs with ImageMagick (device frame) and ffmpeg
+(title cards, xfade transitions, captions, a locally synthesized ambient pad).
 
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
+### Release
+
+- `android-release.yml`: AAB + APK, signed with the upload key from
+  repository secrets (falls back to the debug key when they are absent).
+- `ios-build.yml`: unsigned `flutter build ipa --no-codesign`; the signed IPA
+  and TestFlight path runs only when signing secrets exist.
+- `release.yml`: pushing a `v*` tag builds both and publishes a GitHub
+  Release with the CHANGELOG section.
+
+Details: [docs/RELEASE.md](docs/RELEASE.md), [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
-## Testing
+## Quality in numbers
 
-Unit tests (Haversine, nearest sorting, filters, Result, seed integrity,
-repositories with an in-memory drift DB) and widget tests for every
-interaction on the three reference screens: chip filtering, bookmark, carousel
-navigation, filters sheet, search, See more, Get a Ticket, follow, Hero
-navigation, map selection, search, locate-me (granted and denied), sheet
-snapping and Continue, plus the ticketing rules (pricing, promo codes, Luhn,
-holds with a fake clock, no oversell under concurrency, idempotency, QR
-signing and rotation, refunds) and the full purchase journey. Golden tests
-render Home, Event Details, Explore, Checkout and the ticket
-with real fonts, photos (test/fixtures/images) and map tiles
-(test/fixtures/tiles). See [PROGRESS.md](PROGRESS.md) for exact counts per
-phase.
+| Metric | Value |
+|---|---|
+| Tests on CI (goldens excluded) | 352 passing, 0 failing |
+| Line coverage (generated code excluded) | 91.50 % (threshold 89.5 %) |
+| Hand-written Dart in `lib/` | 147 files, ~27.3k lines |
+| Test files | 49 (~7.2k lines) |
+| Localized strings | 666 keys x 3 languages |
+| Seed catalogue | 60 events (56 upcoming, 4 past), 8 categories |
 
-Accessibility tests check six screens at 1.3x text size and the tap-target
-and labelled-target guidelines. `tool/check.sh` runs the same gate as CI
-(format, gen-l10n drift, analyze, tests with coverage and the threshold in
-`tool/coverage_threshold.txt`).
+Case study: [docs/CASE_STUDY.md](docs/CASE_STUDY.md). Phase-by-phase log with
+exact gates: [PROGRESS.md](PROGRESS.md).
 
-## CI and releases
+---
 
-[![CI](https://github.com/bileldh-ing/eventra/actions/workflows/ci.yml/badge.svg)](https://github.com/bileldh-ing/eventra/actions/workflows/ci.yml)
+## Honest limitations
 
-GitHub Actions run the quality gate on every push and pull request, build
-Android release artifacts (AAB/APK) and an unsigned iOS archive on demand,
-and publish a GitHub Release for each `v*` tag. Signing and store uploads
-are optional and driven by repository secrets; see
-[docs/RELEASE.md](docs/RELEASE.md) and [CHANGELOG.md](CHANGELOG.md).
+- **No real-device test by the author.** Everything was built and verified
+  in a headless Linux sandbox: widget, golden and accessibility tests, and
+  CI builds of the Android APK/AAB and an unsigned iOS archive. GPS
+  prompts, camera scanning, the share sheet, notifications and haptics are
+  covered through abstractions, not on hardware.
+- **Payments are mocked.** The gateway simulates cards, 3-D Secure, declines
+  and timeouts; nothing is charged and no payment provider is integrated.
+- **Local demo backend.** Accounts, orders and tickets live on the device
+  (drift + secure storage); the check-in sync endpoint is a local demo, and
+  a real scanner fleet would need per-event QR keys from a server.
+- **Map tiles.** The app uses OpenStreetMap's public tile servers, which are
+  for light use only; production needs a tile provider agreement (a CARTO
+  style is ready behind a key).
+- **Not built:** biometric login, Google / Apple sign-in, voice search, a
+  friends graph ("friends going"), ticket transfer, Apple / Google Pay,
+  image upload for organizer covers. No store upload has been run.
+- Seed event content is in English in every language.
 
 ## Credits
 
 Fonts, photos and map data are credited in [CREDITS.md](CREDITS.md). Map
-data and tiles © OpenStreetMap contributors. For production traffic, point
-`MapStyle` at a tile provider you have an agreement with (OSM's public tile
-servers are for light use only).
+data and tiles © OpenStreetMap contributors.
