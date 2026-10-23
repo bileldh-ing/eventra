@@ -18,7 +18,7 @@ dark themes, and CI/CD for Android and iOS.
 
 <img src="docs/media/eventra_demo.gif" alt="EVENTRA demo" width="300">
 
-**Demo video:** __VIDEO_LINKS__
+**Demo video (80 s, rendered app screens):** [vertical 1080x1920](docs/media/eventra_demo_vertical.mp4) · [landscape 1920x1080](docs/media/eventra_demo_landscape.mp4)
 
 </div>
 
