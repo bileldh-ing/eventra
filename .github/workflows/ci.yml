@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: subosito/flutter-action@v2
         with:
@@ -53,7 +53,7 @@ jobs:
       - name: Coverage threshold
         run: python3 tool/coverage.py --min "$(cat tool/coverage_threshold.txt)" --worst 15 coverage/lcov.info
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: lcov
@@ -66,8 +66,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -78,7 +78,7 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: flutter build apk --debug
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: eventra-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
