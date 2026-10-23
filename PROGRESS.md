@@ -512,14 +512,14 @@ new screen reads colors from `EventraTokens`, so they inherit it.
   from a backend. Not built in Phase 7: ticket transfer to a friend,
   Apple/Google Pay and cash-at-venue methods, a debug outcome switcher for
   payments, gyroscope tilt on the ticket shine, waitlists, saving new cards.
-- Live stock is tracked in `tier_stock`; Home/Details still read sold-out
-  state from the seed snapshot, so an event can look available there after
-  its last ticket is bought on this device (the picker is always live).
+- Live stock is tracked in `tier_stock`; since Phase 10a the cards, Event
+  Details CTA and the map sheet read it too (sold + running holds). The
+  Home "tickets left" filter still uses the catalogue snapshot.
 - Phase 8a: language choice is stored but strings are English until 8b;
   dark mode uses the light tokens until the dark palette lands (8b). Review
-  tags and helpful votes from the spec are not built. Event cards still show
-  the catalogue's aggregate rating; the Reviews section shows the live
-  average from the `reviews` table. Deleting an account does not refund or
+  tags and helpful votes from the spec are not built. Since Phase 10a event
+  cards, details and the map sheet show the live average from the `reviews`
+  table (the catalogue aggregate only while an event has no stored reviews). Deleting an account does not refund or
   restock its tickets (the dialog says so).
 - Goldens are rendered on Linux (arm64) with the Flutter test font stack; on
   another OS, regenerate them before comparing.
