@@ -1,10 +1,12 @@
 name: eventra
 description: "Eventra - Discover. Book. Feel the moment."
 publish_to: 'none'
-version: 0.9.0+10
+version: 1.0.0-rc.1+11
 
 environment:
   sdk: ^3.9.0
+  # CI pins Flutter 3.47.x (.github/workflows); keep both in sync.
+  flutter: ">=3.47.0 <4.0.0"
 
 dependencies:
   # Add a booked event to the device calendar (spec: platform; Phase 7).
