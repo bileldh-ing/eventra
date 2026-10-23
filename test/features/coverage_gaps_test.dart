@@ -141,6 +141,9 @@ void main() {
   });
 
   test('logWarning does not throw', () {
-    expect(() => logWarning('Brightness unavailable', StateError('x')), returnsNormally);
+    expect(
+      () => logWarning('Brightness unavailable', StateError('x')),
+      returnsNormally,
+    );
   });
 }
