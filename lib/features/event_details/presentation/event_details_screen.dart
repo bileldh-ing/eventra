@@ -430,25 +430,28 @@ class _SheetContent extends ConsumerWidget {
           key: const ValueKey('details-participants'),
           onTap: () => showParticipantsSheet(context, e),
           pressedScale: 0.98,
-          child: Row(
-            children: [
-              AvatarStack(
-                urls: e.participantAvatars.take(4).toList(),
-                size: 42,
-                overlap: 0.28,
-                borderWidth: 0,
-              ),
-              const SizedBox(width: 14),
-              Text(
-                context.l10n.plusParticipants(
-                  math.max(0, e.participantsCount - 4).toString(),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
+            child: Row(
+              children: [
+                AvatarStack(
+                  urls: e.participantAvatars.take(4).toList(),
+                  size: 42,
+                  overlap: 0.28,
+                  borderWidth: 0,
                 ),
-                style: context.text.body.copyWith(
-                  fontSize: 18,
-                  color: t.textPrimary.withValues(alpha: 0.85),
+                const SizedBox(width: 14),
+                Text(
+                  context.l10n.plusParticipants(
+                    math.max(0, e.participantsCount - 4).toString(),
+                  ),
+                  style: context.text.body.copyWith(
+                    fontSize: 18,
+                    color: t.textPrimary.withValues(alpha: 0.85),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         DetailsSectionTitle(context.l10n.detailsAbout),

@@ -126,7 +126,7 @@ class EventCarouselCard extends StatelessWidget {
               PositionedDirectional(
                 start: 18,
                 end: 16,
-                bottom: 20,
+                bottom: 9,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -142,20 +142,33 @@ class EventCarouselCard extends StatelessWidget {
                               height: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 10),
                           Row(
                             children: [
                               GestureDetector(
                                 key: ValueKey('avatars-${event.id}'),
+                                behavior: HitTestBehavior.opaque,
                                 onTap: () =>
                                     showParticipantsSheet(context, event),
-                                child: AvatarStack(
-                                  urls: event.participantAvatars
-                                      .take(3)
-                                      .toList(),
-                                  extraCount: extra,
-                                  size: 26,
-                                  overlap: 0.42,
+                                // 48 dp tall tap target around the 26 dp
+                                // avatars (the card's bottom inset is
+                                // reduced to keep the visual position).
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    minHeight: 48,
+                                    minWidth: 48,
+                                  ),
+                                  child: Align(
+                                    widthFactor: 1,
+                                    heightFactor: 1,
+                                    child: AvatarStack(
+                                      urls: event.participantAvatars
+                                          .take(3)
+                                          .toList(),
+                                      extraCount: extra,
+                                      size: 26,
+                                      overlap: 0.42,
+                                    ),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -279,8 +292,9 @@ class CompactEventCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 112,
+            // The photo takes what the text leaves, so larger text sizes
+            // shrink it instead of overflowing the fixed-height card.
+            Expanded(
               child: Stack(
                 fit: StackFit.expand,
                 children: [

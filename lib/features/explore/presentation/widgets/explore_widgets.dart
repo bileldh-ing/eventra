@@ -325,6 +325,10 @@ class _SearchField extends StatelessWidget {
               controller: controller,
               onChanged: onChanged,
               textInputAction: TextInputAction.search,
+              // Fill the 56 dp pill so the whole field is the tap target.
+              expands: true,
+              maxLines: null,
+              textAlignVertical: TextAlignVertical.center,
               style: context.text.body.copyWith(
                 color: t.textPrimary,
                 fontSize: 16,
