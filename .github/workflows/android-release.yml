@@ -12,6 +12,11 @@ on:
         required: false
         default: internal
   workflow_call:
+    inputs:
+      play_track:
+        type: string
+        required: false
+        default: internal
     secrets:
       ANDROID_KEYSTORE_BASE64:
         required: false
