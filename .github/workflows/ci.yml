@@ -4,28 +4,67 @@ on:
   push:
     branches: [main, master]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Keep in sync with pubspec.yaml `environment.flutter` and docs/RELEASE.md.
+  FLUTTER_VERSION: 3.47.x
 
 jobs:
   check:
+    name: format, analyze, l10n, tests + coverage
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
+
+      - run: flutter --version
       - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
-      - name: Format, analyze, test (goldens are platform-specific, excluded on CI)
-        run: ./tool/check.sh --exclude-tags golden
+
+      - name: Format check
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Generated localizations are up to date
+        run: |
+          flutter gen-l10n
+          git diff --exit-code -- lib/l10n/gen || {
+            echo "::error::lib/l10n/gen is stale: run 'flutter gen-l10n' and commit the result"
+            exit 1
+          }
+
+      - name: Analyze
+        run: flutter analyze --no-pub
+
+      # Goldens are rendered on Linux arm64 locally; pixel output differs on
+      # the x64 runners, so they are excluded here (see dart_test.yaml).
+      - name: Tests with coverage
+        run: flutter test --no-pub --coverage --exclude-tags golden
+
+      - name: Coverage threshold
+        run: python3 tool/coverage.py --min "$(cat tool/coverage_threshold.txt)" --worst 15 coverage/lcov.info
+
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: coverage
+          name: lcov
           path: coverage/lcov.info
+          if-no-files-found: ignore
 
   build-apk:
+    name: debug APK
     needs: check
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -35,9 +74,9 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter pub get
-      - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter build apk --debug
       - uses: actions/upload-artifact@v4
         with:

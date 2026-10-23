@@ -1,0 +1,126 @@
+name: iOS build
+
+# Unsigned by default: `flutter build ipa --no-codesign` proves the iOS
+# project compiles and produces an .xcarchive (not installable, not
+# uploadable). When the signing secrets below exist, the same job imports
+# the distribution certificate and provisioning profile, builds a signed
+# .ipa, and can upload it to TestFlight. See docs/RELEASE.md.
+on:
+  workflow_dispatch:
+    inputs:
+      testflight:
+        description: Upload a signed build to TestFlight (needs all iOS secrets)
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      testflight:
+        type: boolean
+        default: false
+    secrets:
+      IOS_DIST_CERT_P12_BASE64:
+        required: false
+      IOS_DIST_CERT_PASSWORD:
+        required: false
+      IOS_PROVISIONING_PROFILE_BASE64:
+        required: false
+      IOS_KEYCHAIN_PASSWORD:
+        required: false
+      APPSTORE_ISSUER_ID:
+        required: false
+      APPSTORE_API_KEY_ID:
+        required: false
+      APPSTORE_API_PRIVATE_KEY:
+        required: false
+
+env:
+  FLUTTER_VERSION: 3.47.x
+
+jobs:
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    env:
+      IOS_DIST_CERT_P12_BASE64: ${{ secrets.IOS_DIST_CERT_P12_BASE64 }}
+      IOS_DIST_CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
+      IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+      IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+      APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+      APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
+      APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Signing mode
+        id: mode
+        run: |
+          if [ -n "$IOS_DIST_CERT_P12_BASE64" ] && [ -n "$IOS_PROVISIONING_PROFILE_BASE64" ]; then
+            echo "signed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::iOS signing secrets are not set: building unsigned (--no-codesign)."
+          fi
+
+      - name: Build unsigned archive
+        if: steps.mode.outputs.signed == 'false'
+        run: flutter build ipa --release --no-codesign
+
+      - name: Install certificate and provisioning profile
+        if: steps.mode.outputs.signed == 'true'
+        run: |
+          KEYCHAIN="$RUNNER_TEMP/build.keychain-db"
+          KC_PASS="${IOS_KEYCHAIN_PASSWORD:-$(uuidgen)}"
+          echo "$IOS_DIST_CERT_P12_BASE64" | base64 --decode > "$RUNNER_TEMP/dist.p12"
+          echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$RUNNER_TEMP/profile.mobileprovision"
+          security create-keychain -p "$KC_PASS" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KC_PASS" "$KEYCHAIN"
+          security import "$RUNNER_TEMP/dist.p12" -P "$IOS_DIST_CERT_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KC_PASS" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp "$RUNNER_TEMP/profile.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/
+
+      - name: Build signed IPA
+        if: steps.mode.outputs.signed == 'true'
+        run: flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
+
+      - name: Collect artifacts
+        run: |
+          version=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          mkdir -p dist
+          if ls build/ios/ipa/*.ipa >/dev/null 2>&1; then
+            cp build/ios/ipa/*.ipa "dist/eventra-$version.ipa"
+          fi
+          if [ -d build/ios/archive/Runner.xcarchive ]; then
+            (cd build/ios/archive && zip -qry "$GITHUB_WORKSPACE/dist/eventra-$version-unsigned.xcarchive.zip" Runner.xcarchive)
+          fi
+          ls -l dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eventra-ios
+          path: dist/
+          if-no-files-found: error
+
+      - name: Upload to TestFlight
+        if: steps.mode.outputs.signed == 'true' && inputs.testflight && env.APPSTORE_API_PRIVATE_KEY != ''
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "$APPSTORE_API_PRIVATE_KEY" > ~/.appstoreconnect/private_keys/AuthKey_${APPSTORE_API_KEY_ID}.p8
+          xcrun altool --upload-app --type ios -f build/ios/ipa/*.ipa \
+            --apiKey "$APPSTORE_API_KEY_ID" --apiIssuer "$APPSTORE_ISSUER_ID"
+
+      - name: Clean up signing material
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/dist.p12" "$RUNNER_TEMP/profile.mobileprovision" ~/.appstoreconnect/private_keys/*.p8
+          security delete-keychain "$RUNNER_TEMP/build.keychain-db" 2>/dev/null || true

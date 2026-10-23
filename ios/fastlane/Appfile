@@ -1,0 +1,3 @@
+app_identifier("com.eventra.eventra")
+# apple_id("you@example.com")   # only for interactive use
+# team_id("TEAM_ID")

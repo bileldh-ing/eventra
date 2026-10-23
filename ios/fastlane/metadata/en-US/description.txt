@@ -1,0 +1,13 @@
+PLACEHOLDER - review before the first store submission.
+
+Eventra helps you discover concerts, festivals, meetups, comedy nights and
+food fairs near you, book tickets in a few taps and keep them on your phone.
+
+- A smart feed of upcoming events, with filters for date, price, distance
+  and category
+- A full-screen map of what is on nearby
+- Secure checkout with a rotating QR ticket that works offline
+- Reminders and add-to-calendar
+- Reviews from people who went
+- Organizer mode: create events, track sales and check guests in with QR
+- English, French and Arabic (right-to-left), light and dark themes

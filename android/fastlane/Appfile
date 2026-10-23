@@ -1,0 +1,4 @@
+# Google Play service account JSON (never commit it). CI passes it through
+# the PLAY_SERVICE_ACCOUNT_JSON secret; locally point this at your file.
+json_key_file(ENV["PLAY_JSON_KEY_FILE"] || "play-service-account.json")
+package_name("com.eventra.eventra")

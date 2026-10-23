@@ -1,0 +1,69 @@
+name: Release
+
+# Pushing a tag like v1.0.0-rc.1 builds Android (and iOS, unsigned unless
+# secrets exist) and publishes a GitHub Release with the changelog section
+# for that version and the build outputs attached. Tags containing a hyphen
+# (-rc, -beta) are marked as pre-releases.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    uses: ./.github/workflows/android-release.yml
+    secrets: inherit
+
+  ios:
+    uses: ./.github/workflows/ios-build.yml
+    secrets: inherit
+
+  publish:
+    needs: [android, ios]
+    # Publish what was built even if the iOS job failed.
+    if: always() && needs.android.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Release notes
+        id: notes
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+          # The CHANGELOG.md section for this version, else the commit log
+          # since the previous tag.
+          awk -v v="$version" '
+            $0 ~ "^## \\[?"v"\\]?" {on=1; next}
+            on && /^## / {exit}
+            on {print}
+          ' CHANGELOG.md > notes.md || true
+          if [ ! -s notes.md ]; then
+            prev=$(git describe --tags --abbrev=0 "${tag}^" 2>/dev/null || true)
+            range="${prev:+$prev..}$tag"
+            git log --pretty='- %s (%h)' "$range" > notes.md
+          fi
+          {
+            echo
+            echo "Android builds are signed with the upload key only when the signing secrets are configured; files named *-debug.* are debug-signed and for testing only. iOS artifacts are unsigned unless the iOS secrets are configured."
+          } >> notes.md
+          if [[ "$tag" == *-* ]]; then echo "prerelease=true" >> "$GITHUB_OUTPUT"; else echo "prerelease=false" >> "$GITHUB_OUTPUT"; fi
+          find artifacts -type f | sort
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: Eventra ${{ github.ref_name }}
+          body_path: notes.md
+          prerelease: ${{ steps.notes.outputs.prerelease == 'true' }}
+          files: |
+            artifacts/eventra-android-release/*
+            artifacts/eventra-ios/*
+          fail_on_unmatched_files: false

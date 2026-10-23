@@ -1,0 +1,46 @@
+# Fastlane skeleton for Eventra (Android). Run from android/:
+#   bundle install && bundle exec fastlane android internal
+# Builds are produced by Flutter; these lanes only upload and manage the
+# store listing. Nothing here has been verified against a live Play account.
+default_platform(:android)
+
+platform :android do
+  desc "Build the release AAB with Flutter (signed when android/key.properties exists)"
+  lane :build do
+    sh("cd ../.. && flutter build appbundle --release")
+  end
+
+  desc "Upload the AAB to the internal testing track as a draft"
+  lane :internal do
+    build
+    upload_to_play_store(
+      track: "internal",
+      release_status: "draft",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Push the store listing text in fastlane/metadata (no binary)"
+  lane :metadata do
+    upload_to_play_store(
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_changelogs: false
+    )
+  end
+
+  desc "Promote internal -> production (staged)"
+  lane :promote do
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "production",
+      rollout: "0.1",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end

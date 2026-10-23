@@ -1,0 +1,1 @@
+First release candidate: discovery, booking with QR tickets, reviews, organizer mode, EN/FR/AR.

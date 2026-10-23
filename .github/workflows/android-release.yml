@@ -1,0 +1,111 @@
+name: Android release
+
+# Builds a release AAB (Play) and APK (sideload). Run it by hand from the
+# Actions tab, or let release.yml call it when a v* tag is pushed (so a tag
+# builds once, not twice). Signing and Play upload are optional and driven
+# by secrets; see docs/RELEASE.md.
+on:
+  workflow_dispatch:
+    inputs:
+      play_track:
+        description: Google Play track for the optional upload
+        required: false
+        default: internal
+  workflow_call:
+    secrets:
+      ANDROID_KEYSTORE_BASE64:
+        required: false
+      KEYSTORE_PASSWORD:
+        required: false
+      KEY_ALIAS:
+        required: false
+      KEY_PASSWORD:
+        required: false
+      PLAY_SERVICE_ACCOUNT_JSON:
+        required: false
+
+env:
+  FLUTTER_VERSION: 3.47.x
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Release keystore from secrets (optional)
+        id: signing
+        run: |
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ] && [ -n "$KEY_PASSWORD" ]; then
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+            cat > android/key.properties <<PROPS
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=upload-keystore.jks
+          PROPS
+            echo "mode=release" >> "$GITHUB_OUTPUT"
+            echo "Signing with the upload keystore from secrets."
+          else
+            echo "mode=debug" >> "$GITHUB_OUTPUT"
+            echo "::warning::Signing secrets are not set: the release build is signed with the debug key and cannot be uploaded to Google Play."
+          fi
+
+      - name: Build app bundle
+        run: flutter build appbundle --release
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Name artifacts
+        id: names
+        run: |
+          version=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          mkdir -p dist
+          cp build/app/outputs/bundle/release/app-release.aab "dist/eventra-$version-${{ steps.signing.outputs.mode }}.aab"
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/eventra-$version-${{ steps.signing.outputs.mode }}.apk"
+          (cd dist && sha256sum * > SHA256SUMS.txt)
+          ls -l dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eventra-android-release
+          path: dist/
+          if-no-files-found: error
+
+      # Only with a real upload key and a Play service account. The first
+      # upload of a new app must be done by hand in the Play Console.
+      - name: Upload to Google Play (internal track)
+        if: steps.signing.outputs.mode == 'release' && env.PLAY_SERVICE_ACCOUNT_JSON != ''
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.eventra.eventra
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: ${{ inputs.play_track || 'internal' }}
+          status: draft
+
+      - name: Clean up signing material
+        if: always()
+        run: rm -f android/key.properties android/app/upload-keystore.jks

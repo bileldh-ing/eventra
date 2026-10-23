@@ -1,0 +1,42 @@
+# Fastlane skeleton for Eventra (iOS). Run from ios/ on a Mac:
+#   bundle install && bundle exec fastlane ios beta
+# Uses an App Store Connect API key from the environment (APPSTORE_ISSUER_ID,
+# APPSTORE_API_KEY_ID, APPSTORE_API_PRIVATE_KEY). Nothing here has been
+# verified against a live App Store Connect account.
+default_platform(:ios)
+
+platform :ios do
+  def api_key
+    app_store_connect_api_key(
+      key_id: ENV.fetch("APPSTORE_API_KEY_ID"),
+      issuer_id: ENV.fetch("APPSTORE_ISSUER_ID"),
+      key_content: ENV.fetch("APPSTORE_API_PRIVATE_KEY"),
+      in_house: false
+    )
+  end
+
+  desc "Build a signed IPA with Flutter (needs a distribution cert + profile)"
+  lane :build do
+    sh("cd ../.. && flutter build ipa --release --export-options-plist=ios/ExportOptions.plist")
+  end
+
+  desc "Upload the IPA to TestFlight"
+  lane :beta do
+    build
+    upload_to_testflight(
+      api_key: api_key,
+      ipa: Dir["../../build/ios/ipa/*.ipa"].first,
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Push the App Store listing text in fastlane/metadata (no binary)"
+  lane :metadata do
+    deliver(
+      api_key: api_key,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      force: true
+    )
+  end
+end
