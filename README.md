@@ -251,6 +251,21 @@ with real fonts, photos (test/fixtures/images) and map tiles
 (test/fixtures/tiles). See [PROGRESS.md](PROGRESS.md) for exact counts per
 phase.
 
+Accessibility tests check six screens at 1.3x text size and the tap-target
+and labelled-target guidelines. `tool/check.sh` runs the same gate as CI
+(format, gen-l10n drift, analyze, tests with coverage and the threshold in
+`tool/coverage_threshold.txt`).
+
+## CI and releases
+
+[![CI](https://github.com/bileldh-ing/eventra/actions/workflows/ci.yml/badge.svg)](https://github.com/bileldh-ing/eventra/actions/workflows/ci.yml)
+
+GitHub Actions run the quality gate on every push and pull request, build
+Android release artifacts (AAB/APK) and an unsigned iOS archive on demand,
+and publish a GitHub Release for each `v*` tag. Signing and store uploads
+are optional and driven by repository secrets; see
+[docs/RELEASE.md](docs/RELEASE.md) and [CHANGELOG.md](CHANGELOG.md).
+
 ## Credits
 
 Fonts, photos and map data are credited in [CREDITS.md](CREDITS.md). Map
