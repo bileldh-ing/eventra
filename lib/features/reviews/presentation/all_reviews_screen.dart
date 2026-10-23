@@ -107,9 +107,20 @@ class _AllReviewsScreenState extends ConsumerState<AllReviewsScreen> {
                         padding: const EdgeInsetsDirectional.only(end: 8),
                         child: ChoiceChip(
                           key: ValueKey('reviews-filter-${s ?? 'all'}'),
-                          label: Text(
-                            s == null ? context.l10n.filtersAll : '$s ★',
-                          ),
+                          label: s == null
+                              ? Text(context.l10n.filtersAll)
+                              : Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text('$s'),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      Icons.star_rounded,
+                                      size: 16,
+                                      color: context.tokens.accentOrange,
+                                    ),
+                                  ],
+                                ),
                           selected: _stars == s,
                           onSelected: (_) => setState(() => _stars = s),
                         ),

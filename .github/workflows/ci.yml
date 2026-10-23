@@ -48,7 +48,7 @@ jobs:
       # Goldens are rendered on Linux arm64 locally; pixel output differs on
       # the x64 runners, so they are excluded here (see dart_test.yaml).
       - name: Tests with coverage
-        run: flutter test --no-pub --coverage --exclude-tags golden
+        run: flutter test --no-pub --coverage --exclude-tags golden,screenshots
 
       - name: Coverage threshold
         run: python3 tool/coverage.py --min "$(cat tool/coverage_threshold.txt)" --worst 15 coverage/lcov.info
