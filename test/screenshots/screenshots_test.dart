@@ -4,6 +4,7 @@ library;
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:eventra/core/crypto/pbkdf2.dart';
 import 'package:eventra/core/storage/prefs_store.dart';
 import 'package:eventra/features/auth/domain/auth_models.dart';
 import 'package:eventra/features/organizer/presentation/organizer_providers.dart';
@@ -13,7 +14,6 @@ import 'package:eventra/features/tickets/presentation/booking_success_screen.dar
 import 'package:eventra/features/tickets/presentation/ticket_detail_screen.dart';
 import 'package:eventra/features/tickets/presentation/ticketing_providers.dart';
 import 'package:eventra/features/tickets/presentation/widgets/ticket_visuals.dart';
-import 'package:eventra/core/crypto/pbkdf2.dart';
 import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -32,7 +32,7 @@ import '../helpers/seed.dart';
 /// (excluded from CI by its tag).
 const _highland = 'evt-001-highland-music-festival';
 const _past = 'evt-p04-late-laughs-showcase';
-final _boundary = GlobalKey();
+final GlobalKey _boundary = GlobalKey();
 
 MemoryPrefsStore _prefs({
   String? theme,
