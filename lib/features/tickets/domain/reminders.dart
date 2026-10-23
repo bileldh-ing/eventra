@@ -1,4 +1,5 @@
 import 'package:eventra/l10n/l10n.dart';
+import 'package:eventra/core/utils/app_log.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
@@ -88,7 +89,7 @@ class LocalReminderScheduler implements ReminderScheduler {
           ?.requestNotificationsPermission();
       return true;
     } on Object catch (e) {
-      debugPrint('Reminders unavailable: $e');
+      logWarning('Reminders unavailable', e);
       return false;
     }
   }();
@@ -129,7 +130,7 @@ class LocalReminderScheduler implements ReminderScheduler {
         );
         done.add(at);
       } on Object catch (e) {
-        debugPrint('Could not schedule reminder: $e');
+        logWarning('Could not schedule reminder', e);
       }
     }
     return done;
@@ -142,7 +143,7 @@ class LocalReminderScheduler implements ReminderScheduler {
       try {
         await _plugin.cancel(id: reminderId(orderId, slot));
       } on Object catch (e) {
-        debugPrint('Could not cancel reminder: $e');
+        logWarning('Could not cancel reminder', e);
       }
     }
   }

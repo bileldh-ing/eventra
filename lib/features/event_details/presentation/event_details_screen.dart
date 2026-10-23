@@ -16,12 +16,15 @@ import 'package:eventra/features/event_details/presentation/widgets/expandable_t
 import 'package:eventra/features/event_details/presentation/widgets/mini_map.dart';
 import 'package:eventra/features/event_details/presentation/widgets/ticket_button.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
+import 'package:eventra/features/events/presentation/live_event_stats.dart';
 import 'package:eventra/features/events/presentation/providers.dart';
 import 'package:eventra/features/events/presentation/widgets/bookmark_button.dart';
 import 'package:eventra/features/events/presentation/widgets/event_cards.dart';
+import 'package:eventra/features/events/presentation/widgets/live_badges.dart';
 import 'package:eventra/features/events/presentation/widgets/participants_sheet.dart';
 import 'package:eventra/features/events/presentation/widgets/share_event.dart';
 import 'package:eventra/features/reviews/presentation/review_widgets.dart';
+import 'package:eventra/features/tickets/domain/refund_policy.dart';
 import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -155,6 +158,8 @@ class _DetailsViewState extends ConsumerState<_DetailsView> {
                       child: EventImage(
                         url: e.coverImageUrl,
                         category: e.category,
+                        cacheWidth: 1200,
+                        semanticLabel: context.l10n.a11yEventPhoto(e.title),
                       ),
                     ),
                     const DecoratedBox(
@@ -403,10 +408,19 @@ class _SheetContent extends ConsumerWidget {
             const SizedBox(width: 12),
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                formatPrice(e.price),
-                key: const ValueKey('details-price'),
-                style: context.text.price,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    formatPrice(e.price),
+                    key: const ValueKey('details-price'),
+                    style: context.text.price,
+                  ),
+                  const SizedBox(height: 6),
+                  EventRatingLabel(event: e),
+                  const SizedBox(height: 4),
+                  EventStockBadge(event: e),
+                ],
               ),
             ),
           ],
@@ -456,7 +470,9 @@ class _SheetContent extends ConsumerWidget {
           LineupTimeline(items: e.lineup),
         ],
         DetailsSectionTitle(context.l10n.detailsPolicy),
-        PolicyCard(policy: e.policy),
+        // The rule the app enforces at cancellation (RefundPolicy), in the
+        // active language, rather than free text from the catalogue.
+        PolicyCard(policy: RefundPolicy.summary),
         EventReviewsSection(event: e),
         if (similar.isNotEmpty) ...[
           DetailsSectionTitle(context.l10n.detailsSimilar),
@@ -496,6 +512,7 @@ class _BottomBar extends ConsumerWidget {
     final waitlisted = ref.watch(
       waitlistProvider.select((s) => s.contains(event.id)),
     );
+    final stock = ref.watch(eventStockProvider(event));
     return Container(
       padding: EdgeInsetsDirectional.fromSTEB(20, 14, 20, 14 + bottomInset),
       decoration: BoxDecoration(
@@ -532,7 +549,7 @@ class _BottomBar extends ConsumerWidget {
           ),
           const SizedBox(width: 14),
           Expanded(
-            child: event.isSoldOut
+            child: stock.soldOut
                 ? Row(
                     children: [
                       Expanded(
@@ -572,7 +589,26 @@ class _BottomBar extends ConsumerWidget {
                       ),
                     ],
                   )
-                : TicketButton(onConfirmed: onTicket),
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (stock.lowStock)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Text(
+                            context.l10n.tpOnlyLeft(
+                              formatDecimal(stock.left, 0),
+                            ),
+                            key: const ValueKey('details-low-stock'),
+                            style: context.text.caption.copyWith(
+                              color: t.accentOrange,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      TicketButton(onConfirmed: onTicket),
+                    ],
+                  ),
           ),
         ],
       ),

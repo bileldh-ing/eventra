@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:eventra/core/theme/eventra_tokens.dart';
 import 'package:eventra/features/organizer/domain/dashboard.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Daily tickets sold as a smooth area chart with a highlighted last point.
@@ -29,16 +30,27 @@ class SalesLineChart extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(
-          height: height,
-          child: CustomPaint(
-            painter: SalesLinePainter(
-              values: [for (final d in series) d.tickets],
-              line: tokens.primary,
-              fill: tokens.primary,
-              grid: tokens.outline,
-              dot: tokens.surface,
-              mirror: rtl,
+        Semantics(
+          label: context.l10n.a11ySalesChart(
+            series.length.toString(),
+            series.fold<int>(0, (s, d) => s + d.tickets).toString(),
+            series.fold<int>(0, (m, d) => math.max(m, d.tickets)).toString(),
+          ),
+          image: true,
+          excludeSemantics: true,
+          child: RepaintBoundary(
+            child: SizedBox(
+              height: height,
+              child: CustomPaint(
+                painter: SalesLinePainter(
+                  values: [for (final d in series) d.tickets],
+                  line: tokens.primary,
+                  fill: tokens.primary,
+                  grid: tokens.outline,
+                  dot: tokens.surface,
+                  mirror: rtl,
+                ),
+              ),
             ),
           ),
         ),

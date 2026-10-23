@@ -273,57 +273,61 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
         body: Stack(
           children: [
             Positioned.fill(
-              child: FlutterMap(
-                key: const ValueKey('explore-map'),
-                mapController: _map,
-                options: MapOptions(
-                  initialCenter: initialTarget,
-                  initialZoom: _zoom,
-                  minZoom: 3,
-                  maxZoom: 19,
-                  backgroundColor: context.tokens.mapBackground,
-                  onMapReady: () {
-                    _mapReady = true;
-                    _centerInitially();
-                  },
-                ),
-                children: [
-                  const PositronTileLayer(),
-                  MarkerLayer(
-                    markers: [
-                      for (final n in list.take(40))
-                        if (n.event.id != selected?.event.id)
-                          Marker(
-                            point: n.point,
-                            child: MiniPin(
-                              key: ValueKey('pin-${n.event.id}'),
-                              onTap: () => _select(n),
-                              semanticLabel: n.event.title,
-                            ),
-                          ),
-                      if (user.fromDevice)
-                        Marker(
-                          point: user.position,
-                          width: 28,
-                          height: 28,
-                          child: const UserLocationDot(),
-                        ),
-                      if (selected != null)
-                        Marker(
-                          key: ValueKey('selected-marker-${selected.event.id}'),
-                          point: selected.point,
-                          width: 96,
-                          height: 96,
-                          child: PulsingMarker(
-                            key: ValueKey(
-                              'pulse-${selected.event.id}-$loopsOn',
-                            ),
-                            size: 96,
-                          ),
-                        ),
-                    ],
+              child: RepaintBoundary(
+                child: FlutterMap(
+                  key: const ValueKey('explore-map'),
+                  mapController: _map,
+                  options: MapOptions(
+                    initialCenter: initialTarget,
+                    initialZoom: _zoom,
+                    minZoom: 3,
+                    maxZoom: 19,
+                    backgroundColor: context.tokens.mapBackground,
+                    onMapReady: () {
+                      _mapReady = true;
+                      _centerInitially();
+                    },
                   ),
-                ],
+                  children: [
+                    const PositronTileLayer(),
+                    MarkerLayer(
+                      markers: [
+                        for (final n in list.take(40))
+                          if (n.event.id != selected?.event.id)
+                            Marker(
+                              point: n.point,
+                              child: MiniPin(
+                                key: ValueKey('pin-${n.event.id}'),
+                                onTap: () => _select(n),
+                                semanticLabel: n.event.title,
+                              ),
+                            ),
+                        if (user.fromDevice)
+                          Marker(
+                            point: user.position,
+                            width: 28,
+                            height: 28,
+                            child: const UserLocationDot(),
+                          ),
+                        if (selected != null)
+                          Marker(
+                            key: ValueKey(
+                              'selected-marker-${selected.event.id}',
+                            ),
+                            point: selected.point,
+                            width: 96,
+                            height: 96,
+                            child: PulsingMarker(
+                              key: ValueKey(
+                                'pulse-${selected.event.id}-$loopsOn',
+                              ),
+                              size: 96,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             // Top controls.

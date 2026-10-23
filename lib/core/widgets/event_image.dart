@@ -61,10 +61,15 @@ class EventImage extends ConsumerWidget {
     this.fit = BoxFit.cover,
     this.alignment = Alignment.center,
     this.cacheWidth,
+    this.semanticLabel,
   });
 
   final String url;
   final EventCategory? category;
+
+  /// Read by screen readers; null marks the photo decorative (the card or
+  /// tile around it already carries a label).
+  final String? semanticLabel;
   final BoxFit fit;
   final Alignment alignment;
   final int? cacheWidth;
@@ -87,6 +92,8 @@ class EventImage extends ConsumerWidget {
       width: double.infinity,
       height: double.infinity,
       gaplessPlayback: true,
+      semanticLabel: semanticLabel,
+      excludeFromSemantics: semanticLabel == null,
       frameBuilder: (context, child, frame, sync) {
         if (sync || frame != null) return child;
         return ImageFallback(category: category);

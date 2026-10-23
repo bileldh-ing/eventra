@@ -2469,4 +2469,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String orgPctOfCapacity(String pct, String capacity) {
     return '$pct من $capacity مقعد';
   }
+
+  @override
+  String a11yRating(String rating, String count) {
+    return 'التقييم $rating من 5 بناءً على $count مراجعة';
+  }
+
+  @override
+  String a11yEventPhoto(String title) {
+    return 'صورة $title';
+  }
+
+  @override
+  String a11ySalesChart(String days, String total, String peak) {
+    return 'التذاكر المبيعة خلال آخر $days يومًا: $total إجمالًا، وأفضل يوم $peak';
+  }
 }

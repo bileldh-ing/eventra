@@ -9,6 +9,7 @@ import 'package:eventra/core/widgets/highlighted_text.dart';
 import 'package:eventra/core/widgets/pressable.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
 import 'package:eventra/features/events/presentation/widgets/bookmark_button.dart';
+import 'package:eventra/features/events/presentation/widgets/live_badges.dart';
 import 'package:eventra/features/events/presentation/widgets/participants_sheet.dart';
 import 'package:eventra/features/feed/presentation/quick_preview.dart';
 import 'package:eventra/l10n/l10n.dart';
@@ -113,8 +114,13 @@ class EventCarouselCard extends StatelessWidget {
                 ),
               ),
               PositionedDirectional(
-                top: 18,
-                end: 18,
+                top: 66,
+                start: 20,
+                child: EventStockBadge(event: event, onPhoto: true),
+              ),
+              PositionedDirectional(
+                top: 16,
+                end: 16,
                 child: BookmarkButton(eventId: event.id, size: 44),
               ),
               PositionedDirectional(
@@ -291,7 +297,12 @@ class CompactEventCard extends StatelessWidget {
                   ),
                   PositionedDirectional(
                     top: 8,
-                    end: 8,
+                    start: 8,
+                    child: EventStockBadge(event: event, onPhoto: true),
+                  ),
+                  PositionedDirectional(
+                    top: 1,
+                    end: 1,
                     child: BookmarkButton(
                       eventId: event.id,
                       size: 34,
@@ -323,8 +334,8 @@ class CompactEventCard extends StatelessWidget {
                           style: context.text.caption,
                         ),
                       ),
-                      Text(
-                        formatPrice(event.price),
+                      EventPriceLabel(
+                        event: event,
                         style: context.text.caption.copyWith(
                           color: t.primary,
                           fontWeight: FontWeight.w700,
@@ -412,9 +423,19 @@ class EventListTile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    formatCardDate(event.startAt),
-                    style: context.text.caption,
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          formatCardDate(event.startAt),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.text.caption,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      EventRatingLabel(event: event),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -447,12 +468,20 @@ class EventListTile extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             trailing ??
-                Text(
-                  formatPrice(event.price),
-                  style: context.text.cardTitle.copyWith(
-                    color: t.primary,
-                    fontSize: 17,
-                  ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    EventPriceLabel(
+                      event: event,
+                      style: context.text.cardTitle.copyWith(
+                        color: t.primary,
+                        fontSize: 17,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    EventStockBadge(event: event),
+                  ],
                 ),
           ],
         ),

@@ -2418,4 +2418,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String orgPctOfCapacity(String pct, String capacity) {
     return '$pct of $capacity seats';
   }
+
+  @override
+  String a11yRating(String rating, String count) {
+    return 'Rated $rating out of 5 from $count reviews';
+  }
+
+  @override
+  String a11yEventPhoto(String title) {
+    return 'Photo of $title';
+  }
+
+  @override
+  String a11ySalesChart(String days, String total, String peak) {
+    return 'Tickets sold over the last $days days: $total in total, best day $peak';
+  }
 }

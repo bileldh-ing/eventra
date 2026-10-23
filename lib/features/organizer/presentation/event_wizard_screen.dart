@@ -636,42 +636,44 @@ class _EventWizardScreenState extends ConsumerState<EventWizardScreen> {
             height: 260,
             child: Stack(
               children: [
-                FlutterMap(
-                  key: const ValueKey('wiz-map'),
-                  options: MapOptions(
-                    initialCenter: pin ?? origin,
-                    initialZoom: 14,
-                    backgroundColor: t.mapBackground,
-                    interactionOptions: const InteractionOptions(
-                      flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-                    ),
-                    onTap: (_, p) => _update(
-                      (d) => d.copyWith(
-                        latitude: p.latitude,
-                        longitude: p.longitude,
+                RepaintBoundary(
+                  child: FlutterMap(
+                    key: const ValueKey('wiz-map'),
+                    options: MapOptions(
+                      initialCenter: pin ?? origin,
+                      initialZoom: 14,
+                      backgroundColor: t.mapBackground,
+                      interactionOptions: const InteractionOptions(
+                        flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                      ),
+                      onTap: (_, p) => _update(
+                        (d) => d.copyWith(
+                          latitude: p.latitude,
+                          longitude: p.longitude,
+                        ),
                       ),
                     ),
-                  ),
-                  children: [
-                    const PositronTileLayer(),
-                    if (pin != null)
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: pin,
-                            width: 44,
-                            height: 44,
-                            alignment: Alignment.topCenter,
-                            child: Icon(
-                              Icons.location_on_rounded,
-                              key: const ValueKey('wiz-pin'),
-                              color: t.primary,
-                              size: 44,
+                    children: [
+                      const PositronTileLayer(),
+                      if (pin != null)
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: pin,
+                              width: 44,
+                              height: 44,
+                              alignment: Alignment.topCenter,
+                              child: Icon(
+                                Icons.location_on_rounded,
+                                key: const ValueKey('wiz-pin'),
+                                color: t.primary,
+                                size: 44,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                  ],
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
                 const PositionedDirectional(
                   end: 8,

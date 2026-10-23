@@ -53,7 +53,11 @@ class Glass extends StatelessWidget {
   }
 }
 
-/// Circular glass icon button (40-56dp) used over photos and gradients.
+/// Minimum interactive size (Material guidance, WCAG 2.5.8).
+const double kMinTapTarget = 48;
+
+/// Circular glass icon button (34-56dp visual) used over photos and
+/// gradients; the tap target is never below [kMinTapTarget].
 class GlassCircleButton extends StatelessWidget {
   const GlassCircleButton({
     required this.icon,
@@ -85,33 +89,38 @@ class GlassCircleButton extends StatelessWidget {
       child: Pressable(
         onTap: onPressed,
         child: SizedBox.square(
-          dimension: size,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Glass(
-                  shape: BoxShape.circle,
-                  fill: fill,
-                  child: Center(
-                    child: Icon(icon, color: iconColor, size: iconSize),
-                  ),
-                ),
-              ),
-              if (badge)
-                PositionedDirectional(
-                  top: size * 0.26,
-                  end: size * 0.3,
-                  child: Container(
-                    key: const ValueKey('notification-dot'),
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: t.notificationRed,
+          dimension: size < kMinTapTarget ? kMinTapTarget : size,
+          child: Center(
+            child: SizedBox.square(
+              dimension: size,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: Glass(
                       shape: BoxShape.circle,
+                      fill: fill,
+                      child: Center(
+                        child: Icon(icon, color: iconColor, size: iconSize),
+                      ),
                     ),
                   ),
-                ),
-            ],
+                  if (badge)
+                    PositionedDirectional(
+                      top: size * 0.26,
+                      end: size * 0.3,
+                      child: Container(
+                        key: const ValueKey('notification-dot'),
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: t.notificationRed,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

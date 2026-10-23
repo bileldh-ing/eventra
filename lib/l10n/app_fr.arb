@@ -662,5 +662,8 @@
   "wizErrTierBelowSold": "La quantité ne peut pas être inférieure aux billets déjà vendus.",
   "wizErrTierBelowSoldN": "Au moins {n} (déjà vendus).",
   "wizErrCover": "Choisissez une photo de couverture.",
-  "orgPctOfCapacity": "{pct} des {capacity} places"
+  "orgPctOfCapacity": "{pct} des {capacity} places",
+  "a11yRating": "Noté {rating} sur 5 d'après {count} avis",
+  "a11yEventPhoto": "Photo de {title}",
+  "a11ySalesChart": "Billets vendus sur les {days} derniers jours : {total} au total, meilleur jour {peak}"
 }

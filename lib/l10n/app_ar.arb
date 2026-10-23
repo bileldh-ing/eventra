@@ -662,5 +662,8 @@
   "wizErrTierBelowSold": "لا يمكن أن تقل الكمية عن التذاكر المباعة.",
   "wizErrTierBelowSoldN": "{n} على الأقل (مباعة بالفعل).",
   "wizErrCover": "اختر صورة غلاف.",
-  "orgPctOfCapacity": "{pct} من {capacity} مقعد"
+  "orgPctOfCapacity": "{pct} من {capacity} مقعد",
+  "a11yRating": "التقييم {rating} من 5 بناءً على {count} مراجعة",
+  "a11yEventPhoto": "صورة {title}",
+  "a11ySalesChart": "التذاكر المبيعة خلال آخر {days} يومًا: {total} إجمالًا، وأفضل يوم {peak}"
 }

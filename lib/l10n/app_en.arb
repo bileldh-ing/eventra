@@ -1572,5 +1572,38 @@
         "type": "String"
       }
     }
+  },
+  "a11yRating": "Rated {rating} out of 5 from {count} reviews",
+  "@a11yRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "a11yEventPhoto": "Photo of {title}",
+  "@a11yEventPhoto": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "a11ySalesChart": "Tickets sold over the last {days} days: {total} in total, best day {peak}",
+  "@a11ySalesChart": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      },
+      "peak": {
+        "type": "String"
+      }
+    }
   }
 }

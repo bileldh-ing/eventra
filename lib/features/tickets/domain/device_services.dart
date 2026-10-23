@@ -1,4 +1,5 @@
 import 'package:add_2_calendar/add_2_calendar.dart' as cal;
+import 'package:eventra/core/utils/app_log.dart';
 import 'package:flutter/foundation.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:share_plus/share_plus.dart';
@@ -17,7 +18,7 @@ class ScreenBrightnessController implements BrightnessController {
     try {
       await ScreenBrightness.instance.setApplicationScreenBrightness(1);
     } on Object catch (e) {
-      debugPrint('Brightness unavailable: $e');
+      logWarning('Brightness unavailable', e);
     }
   }
 
@@ -26,7 +27,7 @@ class ScreenBrightnessController implements BrightnessController {
     try {
       await ScreenBrightness.instance.resetApplicationScreenBrightness();
     } on Object catch (e) {
-      debugPrint('Brightness unavailable: $e');
+      logWarning('Brightness unavailable', e);
     }
   }
 }
@@ -71,7 +72,7 @@ class DeviceCalendarService implements CalendarService {
         ),
       );
     } on Object catch (e) {
-      debugPrint('Calendar unavailable: $e');
+      logWarning('Calendar unavailable', e);
       return false;
     }
   }

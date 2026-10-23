@@ -4084,6 +4084,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{pct} of {capacity} seats'**
   String orgPctOfCapacity(String pct, String capacity);
+
+  /// No description provided for @a11yRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rated {rating} out of 5 from {count} reviews'**
+  String a11yRating(String rating, String count);
+
+  /// No description provided for @a11yEventPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo of {title}'**
+  String a11yEventPhoto(String title);
+
+  /// No description provided for @a11ySalesChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets sold over the last {days} days: {total} in total, best day {peak}'**
+  String a11ySalesChart(String days, String total, String peak);
 }
 
 class _AppLocalizationsDelegate

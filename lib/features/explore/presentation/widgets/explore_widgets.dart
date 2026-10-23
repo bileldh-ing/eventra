@@ -5,6 +5,7 @@ import 'package:eventra/core/utils/geo.dart';
 import 'package:eventra/core/widgets/event_image.dart';
 import 'package:eventra/core/widgets/pressable.dart';
 import 'package:eventra/features/events/domain/entities/event.dart';
+import 'package:eventra/features/events/presentation/widgets/live_badges.dart';
 import 'package:eventra/features/explore/domain/nearest.dart';
 import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/material.dart';
@@ -63,18 +64,35 @@ class PreviewCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      event.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.text.cardTitle.copyWith(fontSize: 18),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            event.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.text.cardTitle.copyWith(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        EventStockBadge(event: event),
+                      ],
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      formatPreviewRange(event.startAt, event.endAt),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: meta,
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            formatPreviewRange(event.startAt, event.endAt),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: meta,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        EventRatingLabel(event: event),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Row(
@@ -406,11 +424,21 @@ class NearestLocationCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.event.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.text.cardTitle.copyWith(fontSize: 17),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            item.event.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.text.cardTitle.copyWith(
+                              fontSize: 17,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        EventStockBadge(event: item.event),
+                      ],
                     ),
                     const SizedBox(height: 5),
                     Text(
@@ -475,7 +503,10 @@ class VenueEventTile extends StatelessWidget {
         formatPreviewRange(event.startAt, event.endAt),
         style: context.text.caption,
       ),
-      trailing: Text(formatPrice(event.price)),
+      trailing: EventPriceLabel(
+        event: event,
+        style: context.text.body.copyWith(fontWeight: FontWeight.w600),
+      ),
     );
   }
 }

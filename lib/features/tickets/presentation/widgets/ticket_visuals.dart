@@ -158,66 +158,70 @@ class RotatingQr extends ConsumerWidget {
     final service = ref.watch(qrServiceProvider);
     final clock = ref.watch(clockProvider);
     return switch (service) {
-      AsyncData(value: final qr) => ClockTicker(
-        clock: clock,
-        builder: (context, now) {
-          final data = qr.payload(
-            ticketId: entry.ticket.id,
-            eventId: entry.ticket.eventId,
-            holderId: entry.ticket.userId,
-            now: now,
-          );
-          final left = QrTokenService.secondsLeft(now);
-          return Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: t.primary.withValues(alpha: 0.15)),
-                ),
-                child: Semantics(
-                  label: context.l10n.tvQrLabel,
-                  child: QrImageView(
-                    key: ValueKey('qr-$data'),
-                    data: data,
-                    size: size,
-                    padding: EdgeInsets.zero,
-                    errorCorrectionLevel: QrErrorCorrectLevel.M,
-                    eyeStyle: QrEyeStyle(
-                      eyeShape: QrEyeShape.square,
-                      color: t.textPrimary,
-                    ),
-                    dataModuleStyle: QrDataModuleStyle(
-                      dataModuleShape: QrDataModuleShape.square,
-                      color: t.textPrimary,
+      AsyncData(value: final qr) => RepaintBoundary(
+        child: ClockTicker(
+          clock: clock,
+          builder: (context, now) {
+            final data = qr.payload(
+              ticketId: entry.ticket.id,
+              eventId: entry.ticket.eventId,
+              holderId: entry.ticket.userId,
+              now: now,
+            );
+            final left = QrTokenService.secondsLeft(now);
+            return Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: t.primary.withValues(alpha: 0.15),
                     ),
                   ),
+                  child: Semantics(
+                    label: context.l10n.tvQrLabel,
+                    child: QrImageView(
+                      key: ValueKey('qr-$data'),
+                      data: data,
+                      size: size,
+                      padding: EdgeInsets.zero,
+                      errorCorrectionLevel: QrErrorCorrectLevel.M,
+                      eyeStyle: QrEyeStyle(
+                        eyeShape: QrEyeShape.square,
+                        color: t.textPrimary,
+                      ),
+                      dataModuleStyle: QrDataModuleStyle(
+                        dataModuleShape: QrDataModuleShape.square,
+                        color: t.textPrimary,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CountdownRing(
-                    key: const ValueKey('qr-countdown'),
-                    fraction: left / QrTokenService.windowSeconds,
-                    label: '$left',
-                    size: 34,
-                    stroke: 3,
-                    color: left <= 5 ? t.accentOrange : t.primary,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    context.l10n.tvRefreshIn(left.toString()),
-                    style: context.text.caption,
-                  ),
-                ],
-              ),
-            ],
-          );
-        },
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CountdownRing(
+                      key: const ValueKey('qr-countdown'),
+                      fraction: left / QrTokenService.windowSeconds,
+                      label: '$left',
+                      size: 34,
+                      stroke: 3,
+                      color: left <= 5 ? t.accentOrange : t.primary,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      context.l10n.tvRefreshIn(left.toString()),
+                      style: context.text.caption,
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
       ),
       AsyncError() => SizedBox.square(
         dimension: size,
