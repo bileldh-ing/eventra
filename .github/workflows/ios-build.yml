@@ -6,9 +6,6 @@ name: iOS build
 # the distribution certificate and provisioning profile, builds a signed
 # .ipa, and can upload it to TestFlight. See docs/RELEASE.md.
 on:
-  # TEMP (Phase 10a bring-up): run on the wip branch; removed before merge.
-  push:
-    branches: ['wip/**']
   workflow_dispatch:
     inputs:
       testflight:

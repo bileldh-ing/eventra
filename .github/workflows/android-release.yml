@@ -5,9 +5,6 @@ name: Android release
 # builds once, not twice). Signing and Play upload are optional and driven
 # by secrets; see docs/RELEASE.md.
 on:
-  # TEMP (Phase 10a bring-up): run on the wip branch; removed before merge.
-  push:
-    branches: ['wip/**']
   workflow_dispatch:
     inputs:
       play_track:
