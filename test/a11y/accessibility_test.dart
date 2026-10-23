@@ -34,8 +34,9 @@ void main() {
       await pump(tester, location, scale: 1.3);
       expect(tester.takeException(), isNull);
       expect(
-        MediaQuery.textScalerOf(tester.element(find.byType(Scaffold).first))
-            .scale(10),
+        MediaQuery.textScalerOf(
+          tester.element(find.byType(Scaffold).first),
+        ).scale(10),
         closeTo(13, 0.01),
       );
     });

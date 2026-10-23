@@ -6,7 +6,6 @@ import 'package:eventra/features/tickets/data/ticketing_repository.dart';
 import 'package:eventra/features/tickets/domain/cards.dart';
 import 'package:eventra/features/tickets/domain/payment.dart';
 import 'package:eventra/features/tickets/domain/refund_policy.dart';
-import 'package:eventra/features/tickets/domain/ticketing_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -79,35 +78,38 @@ void main() {
       expect(LiveEventStats.empty.stockFor(e).left, stock.left);
     });
 
-    test('purchases and running holds reduce stock; expired holds do not', () async {
-      final e = _event(_highland);
-      final seedLeft = EventStock.fromSeed(e).left;
-      final repo = _repo(db);
-      final hold = (await repo.createHold(
-        userId: kTestUser.id,
-        event: e,
-        quantities: {'ga': 3},
-      )).valueOrNull!;
-      var s = await LiveEventStats.read(db, now: kTestNow);
-      expect(s.stockFor(e).left, seedLeft - 3, reason: 'active hold');
-      final later = kTestNow.add(const Duration(minutes: 11));
-      s = await LiveEventStats.read(db, now: later);
-      expect(s.stockFor(e).left, seedLeft, reason: 'hold expired');
-
-      await repo.placeOrder(
-        CheckoutRequest(
-          holdId: hold.id,
+    test(
+      'purchases and running holds reduce stock; expired holds do not',
+      () async {
+        final e = _event(_highland);
+        final seedLeft = EventStock.fromSeed(e).left;
+        final repo = _repo(db);
+        final hold = (await repo.createHold(
           userId: kTestUser.id,
           event: e,
-          attendeeName: kTestUser.name,
-          attendeeEmail: kTestUser.email,
-          idempotencyKey: 'live-1',
-          method: SavedCardMethod(kDemoCards.first),
-        ),
-      );
-      s = await LiveEventStats.read(db, now: later);
-      expect(s.stockFor(e).left, seedLeft - 3, reason: 'sold');
-    });
+          quantities: {'ga': 3},
+        )).valueOrNull!;
+        var s = await LiveEventStats.read(db, now: kTestNow);
+        expect(s.stockFor(e).left, seedLeft - 3, reason: 'active hold');
+        final later = kTestNow.add(const Duration(minutes: 11));
+        s = await LiveEventStats.read(db, now: later);
+        expect(s.stockFor(e).left, seedLeft, reason: 'hold expired');
+
+        await repo.placeOrder(
+          CheckoutRequest(
+            holdId: hold.id,
+            userId: kTestUser.id,
+            event: e,
+            attendeeName: kTestUser.name,
+            attendeeEmail: kTestUser.email,
+            idempotencyKey: 'live-1',
+            method: SavedCardMethod(kDemoCards.first),
+          ),
+        );
+        s = await LiveEventStats.read(db, now: later);
+        expect(s.stockFor(e).left, seedLeft - 3, reason: 'sold');
+      },
+    );
 
     test('low stock and sold out thresholds', () async {
       final e = _event(_highland);
@@ -193,7 +195,10 @@ void main() {
       final r = stats.ratingFor(_event(_highland));
       expect(r.count, _event(_highland).reviews.length);
       expect(
-        find.descendant(of: label, matching: find.textContaining('(${r.count})')),
+        find.descendant(
+          of: label,
+          matching: find.textContaining('(${r.count})'),
+        ),
         findsOneWidget,
       );
     });
