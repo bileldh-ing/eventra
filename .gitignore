@@ -49,3 +49,12 @@ app.*.map.json
 
 # Coverage / local
 coverage/
+
+# Release signing (never commit)
+/android/key.properties
+*.jks
+*.keystore
+/ios/fastlane/report.xml
+/android/fastlane/report.xml
+*.p12
+*.mobileprovision

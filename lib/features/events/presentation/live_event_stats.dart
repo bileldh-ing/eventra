@@ -24,6 +24,12 @@ class LiveRating {
 class EventStock {
   const EventStock({required this.left, required this.capacity});
 
+  /// Catalogue snapshot only (no database).
+  factory EventStock.fromSeed(Event e) => EventStock(
+    left: e.tiers.fold(0, (s, t) => s + t.remaining),
+    capacity: e.tiers.fold(0, (s, t) => s + t.capacity),
+  );
+
   /// Seats that can still be bought across all tiers.
   final int left;
   final int capacity;
@@ -32,12 +38,6 @@ class EventStock {
 
   /// Same threshold as the tier picker's "Only N left".
   bool get lowStock => !soldOut && left <= kLowStockThreshold;
-
-  /// Catalogue snapshot only (no database).
-  factory EventStock.fromSeed(Event e) => EventStock(
-    left: e.tiers.fold(0, (s, t) => s + t.remaining),
-    capacity: e.tiers.fold(0, (s, t) => s + t.capacity),
-  );
 }
 
 /// Per-event live numbers read in two queries for the whole catalogue.

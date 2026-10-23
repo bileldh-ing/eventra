@@ -1,5 +1,5 @@
-import 'package:eventra/l10n/l10n.dart';
 import 'package:eventra/core/utils/app_log.dart';
+import 'package:eventra/l10n/l10n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
